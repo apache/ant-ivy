@@ -341,31 +341,13 @@ public class IvyReport extends IvyTask {
                     }
                 }
 
-                InputStream inStream = null;
-                OutputStream outStream = null;
-                try {
-                    inStream = new BufferedInputStream(new FileInputStream(reportFile));
-                    outStream = new BufferedOutputStream(new FileOutputStream(outFile));
+                try (InputStream inStream = new BufferedInputStream(new FileInputStream(reportFile));
+                     OutputStream outStream = new BufferedOutputStream(new FileOutputStream(outFile))) {
                     StreamResult res = new StreamResult(outStream);
                     Source src = new StreamSource(inStream, JAXPUtils.getSystemId(style));
                     transformer.transform(src, res);
                 } catch (TransformerException e) {
                     throw new BuildException(e);
-                } finally {
-                    if (inStream != null) {
-                        try {
-                            inStream.close();
-                        } catch (IOException e) {
-                            // ignore
-                        }
-                    }
-                    if (outStream != null) {
-                        try {
-                            outStream.close();
-                        } catch (IOException e) {
-                            // ignore
-                        }
-                    }
                 }
             }
         } catch (TransformerConfigurationException e) {

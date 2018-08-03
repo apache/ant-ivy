@@ -497,9 +497,7 @@ public class TestHelper {
      * after this method since the associated socket is released and some other process can now use it.
      */
     public static int getMaybeAvailablePort() {
-        ServerSocket s = null;
-        try {
-            s = new ServerSocket(0);
+        try (ServerSocket s = new ServerSocket(0)) {
             s.setReuseAddress(true);
             int port = s.getLocalPort();
             try {
@@ -510,14 +508,6 @@ public class TestHelper {
             return port;
         } catch (IOException e) {
             // ignore
-        } finally {
-            if (s != null) {
-                try {
-                    s.close();
-                } catch (IOException e) {
-                    // ignore
-                }
-            }
         }
         throw new IllegalStateException("Not TCP/IP port available");
     }
