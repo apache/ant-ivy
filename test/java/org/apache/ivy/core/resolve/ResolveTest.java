@@ -4335,6 +4335,60 @@ public class ResolveTest {
         assertTrue(getArchiveFileInCache("org5", "mod5.1", "4.1", "art51B", "jar", "jar").exists());
     }
 
+
+    /**
+     * Test for issues IVY-982 and IVY-1547,
+     * which have to do with resolve engine ignoring negated configurations
+     * on the left side of the maps-to operator.
+     */
+
+    @Test
+    public void testResolveWithNegation() throws Exception {
+        ConfigurationResolveReport crp;
+        ResolveReport report = ivy.resolve(new File(
+                "test/java/org/apache/ivy/core/resolve/ivy-982.xml"),
+                getResolveOptions(new String[] {"*"}));
+
+        // mod1.2: A->default
+        // mod2.1: *,!A->A
+        // mod2.2: *,!A->myconf1; *,!A,!B->myconf2
+        assertFalse(report.hasError());
+
+        ModuleRevisionId mod12 = ModuleRevisionId.newInstance("org1", "mod1.2", "2.0");
+        ModuleRevisionId mod21 = ModuleRevisionId.newInstance("org2", "mod2.1", "0.5");
+        ModuleRevisionId mod22 = ModuleRevisionId.newInstance("org2", "mod2.2", "0.9");
+
+        crp = report.getConfigurationReport("A");
+        assertTrue(crp.getDependency(mod12) != null);
+        assertTrue(Arrays.equals(
+                crp.getDependency(mod12).getConfigurations(crp.getConfiguration()),
+                new String[] {"default"}));
+        assertEquals(crp.getDependency(mod21), null);
+        assertEquals(crp.getDependency(mod22), null);
+
+        crp = report.getConfigurationReport("B");
+        assertEquals(crp.getDependency(mod12), null);
+        assertTrue(crp.getDependency(mod21) != null);
+        assertTrue(Arrays.equals(
+                crp.getDependency(mod21).getConfigurations(crp.getConfiguration()),
+                new String[] {"A"}));
+        assertTrue(crp.getDependency(mod22) != null);
+        assertTrue(Arrays.equals(
+                crp.getDependency(mod22).getConfigurations(crp.getConfiguration()),
+                new String[] {"myconf1"}));
+
+        crp = report.getConfigurationReport("C");
+        assertEquals(crp.getDependency(mod12), null);
+        assertTrue(crp.getDependency(mod21) != null);
+        assertTrue(Arrays.equals(
+                crp.getDependency(mod21).getConfigurations(crp.getConfiguration()),
+                new String[] {"A"}));
+        assertTrue(crp.getDependency(mod22) != null);
+        assertTrue(Arrays.equals(
+                crp.getDependency(mod22).getConfigurations(crp.getConfiguration()),
+                new String[] {"myconf1", "myconf2"}));
+    }
+
     @Test
     public void testResolveIntersectConfiguration1() throws Exception {
         // mod5.2;3.0 -> mod5.1;4.4 (*->@)

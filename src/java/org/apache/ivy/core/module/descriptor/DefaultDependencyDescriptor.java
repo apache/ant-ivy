@@ -356,6 +356,12 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
         }
         if (defConfs != null) {
             ret.addAll(defConfs);
+
+            // Fixes bugs IVY-1547, IVY-982 which have to do with
+            // negation (e.g. `*, !foo`) not working on the left side of the maps-to operator.
+            List<String> excludedConfs = confs.get("!" + moduleConfiguration);
+            if (excludedConfs != null)
+                ret.removeAll(excludedConfs);
         }
 
         Collection<String> replacedRet = new LinkedHashSet<>();
