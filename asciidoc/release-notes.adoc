@@ -81,6 +81,7 @@ For details about the following changes, check our JIRA install at link:https://
 - FIX: Correct parent classloader when lauching resolved artifacts from CLI (jira:IVY-1483[]) (Thanks to Stephan Feder)
 - FIX: Make Main.run() public (usable with REPL) (jira:IVY-1321[] jira:IVY-1578[]) (Thanks to Greg Perry)
 - FIX: Make ivy.deps.changed work with extra attributes (jira:IVY-1104[]) (Thanks to Arseny Aprelev)
+- FIX: Implement dependency configuration negation (jira:IVY-982[] jira:IVY-1547[]) (Thanks to Arseny Aprelev)
 
 - IMPROVEMENT: Throw an IllegalStateException when retrieving the resolutionCacheRoot on the DefaultResolutionCacheManager if the basedir (or IvySettings) is not set (jira:IVY-1482[])
 - IMPROVEMENT: Optimization: limit the revision numbers scanned if revision prefix is specified (Thanks to Ernestas Vaiciukevi&ccaron;ius)
