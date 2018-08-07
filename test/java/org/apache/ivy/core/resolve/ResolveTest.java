@@ -4361,7 +4361,7 @@ public class ResolveTest {
         crp = report.getConfigurationReport("A");
         assertTrue(crp.getDependency(mod12) != null);
         assertTrue(Arrays.asList(crp.getDependency(mod12).getConfigurations(crp.getConfiguration()))
-            .containsAll(Arrays.asList("default")));
+            .containsAll(Collections.singletonList("default")));
         assertEquals(crp.getDependency(mod21), null);
         assertEquals(crp.getDependency(mod22), null);
 
@@ -4369,16 +4369,16 @@ public class ResolveTest {
         assertEquals(crp.getDependency(mod12), null);
         assertTrue(crp.getDependency(mod21) != null);
         assertTrue(Arrays.asList(crp.getDependency(mod21).getConfigurations(crp.getConfiguration()))
-            .containsAll(Arrays.asList("A")));
+            .containsAll(Collections.singletonList("A")));
         assertTrue(crp.getDependency(mod22) != null);
         assertTrue(Arrays.asList(crp.getDependency(mod22).getConfigurations(crp.getConfiguration()))
-            .containsAll(Arrays.asList("myconf1")));
+            .containsAll(Collections.singletonList("myconf1")));
 
         crp = report.getConfigurationReport("C");
         assertEquals(crp.getDependency(mod12), null);
         assertTrue(crp.getDependency(mod21) != null);
         assertTrue(Arrays.asList(crp.getDependency(mod21).getConfigurations(crp.getConfiguration()))
-            .containsAll(Arrays.asList("A")));
+            .containsAll(Collections.singletonList("A")));
         assertTrue(crp.getDependency(mod22) != null);
         assertTrue(Arrays.asList(crp.getDependency(mod22).getConfigurations(crp.getConfiguration()))
             .containsAll(Arrays.asList("myconf1", "myconf2")));
