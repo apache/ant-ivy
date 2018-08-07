@@ -4360,33 +4360,28 @@ public class ResolveTest {
 
         crp = report.getConfigurationReport("A");
         assertTrue(crp.getDependency(mod12) != null);
-        assertTrue(Arrays.equals(
-                crp.getDependency(mod12).getConfigurations(crp.getConfiguration()),
-                new String[] {"default"}));
+        assertTrue(Arrays.asList(crp.getDependency(mod12).getConfigurations(crp.getConfiguration()))
+            .containsAll(Arrays.asList("default")));
         assertEquals(crp.getDependency(mod21), null);
         assertEquals(crp.getDependency(mod22), null);
 
         crp = report.getConfigurationReport("B");
         assertEquals(crp.getDependency(mod12), null);
         assertTrue(crp.getDependency(mod21) != null);
-        assertTrue(Arrays.equals(
-                crp.getDependency(mod21).getConfigurations(crp.getConfiguration()),
-                new String[] {"A"}));
+        assertTrue(Arrays.asList(crp.getDependency(mod21).getConfigurations(crp.getConfiguration()))
+            .containsAll(Arrays.asList("A")));
         assertTrue(crp.getDependency(mod22) != null);
-        assertTrue(Arrays.equals(
-                crp.getDependency(mod22).getConfigurations(crp.getConfiguration()),
-                new String[] {"myconf1"}));
+        assertTrue(Arrays.asList(crp.getDependency(mod22).getConfigurations(crp.getConfiguration()))
+            .containsAll(Arrays.asList("myconf1")));
 
         crp = report.getConfigurationReport("C");
         assertEquals(crp.getDependency(mod12), null);
         assertTrue(crp.getDependency(mod21) != null);
-        assertTrue(Arrays.equals(
-                crp.getDependency(mod21).getConfigurations(crp.getConfiguration()),
-                new String[] {"A"}));
+        assertTrue(Arrays.asList(crp.getDependency(mod21).getConfigurations(crp.getConfiguration()))
+            .containsAll(Arrays.asList("A")));
         assertTrue(crp.getDependency(mod22) != null);
-        assertTrue(Arrays.equals(
-                crp.getDependency(mod22).getConfigurations(crp.getConfiguration()),
-                new String[] {"myconf1", "myconf2"}));
+        assertTrue(Arrays.asList(crp.getDependency(mod22).getConfigurations(crp.getConfiguration()))
+            .containsAll(Arrays.asList("myconf1", "myconf2")));
     }
 
     @Test
