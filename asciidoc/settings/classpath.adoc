@@ -34,7 +34,7 @@ This lets you add Ivy plugins without relying on an external classpath (the Ant 
 [options="header",cols="15%,50%,35%"]
 |=======
 |Attribute|Description|Required
-|url|the url of a jar to add to the classpath|Yes, unless file is specified
+|url|the URL of a jar to add to the classpath|Yes, unless file is specified
 |file|a jar to add to the classpath|Yes, unless url is specified
 |=======
 
