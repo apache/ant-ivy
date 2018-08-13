@@ -52,6 +52,7 @@ import org.apache.ivy.util.CacheCleaner;
 import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.MockMessageLogger;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -4994,6 +4995,29 @@ public class ResolveTest {
             // ok
             assertEquals("org.apache.dm#parent4;1.0->org.apache.dm#parent5;1.0", e.getMessage());
         }
+    }
+
+    /**
+     * Tests that when a pom {@code A1} has a {@code dependencyManagement} section with a {@code import} scoped
+     * dependency and such a dependency has the same parent {@code P}, as {@code A1}, then a {@link CircularDependencyException}
+     * isn't thrown
+     *
+     * @throws Exception
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1588">IVY-1588</a> for more details
+     */
+    @Test
+    public void testDepMgmtImportWithSameParent() throws Exception {
+        // - sibling1 has parent "org.apache.dm:parent:1.0"
+        // - sibling1 further has dependencyManagement section with a dependency on sibling2 with scope=import
+        // - sibling2 has parent "org.apache.dm:parent:1.0" (same parent as sibling1)
+        // This should *not* trigger a CircularDependencyException for the parent
+        final Ivy ivy = new Ivy();
+        ivy.configure(new File("test/repositories/parentPom/ivysettings.xml"));
+        ivy.getSettings().setDefaultResolver("parentChain");
+        final File pom = new File("test/repositories/parentPom/org/apache/dm/sibling1/1.0/sibling1-1.0.pom");
+        final ResolveReport report = ivy.resolve(pom, getResolveOptions(new String[]{"*"}));
+        Assert.assertNotNull("Resolve report is null", report);
+        Assert.assertFalse("Resolve report has errors", report.hasError());
     }
 
     @Test

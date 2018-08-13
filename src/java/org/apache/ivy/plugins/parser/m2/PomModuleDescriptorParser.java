@@ -24,10 +24,10 @@ import java.net.URL;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.cache.ArtifactOrigin;
@@ -131,7 +131,7 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
 
         try {
             final IvyContext ivyContext = IvyContext.pushNewCopyContext();
-            HashSet<ModuleRevisionId> parents = ivyContext.get(PARENT_MAP_KEY);
+            Set<ModuleRevisionId> parents = ivyContext.get(PARENT_MAP_KEY);
             if (parents == null) {
                 parents = new LinkedHashSet<>();
                 ivyContext.set(PARENT_MAP_KEY, parents);
@@ -185,7 +185,7 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
                     parents.add(parentModRevID);
                 }
 
-                ResolvedModuleRevision parentModule = parseOtherPom(ivySettings, parentModRevID);
+                final ResolvedModuleRevision parentModule = parseOtherPom(ivySettings, parentModRevID, true);
                 if (parentModule == null) {
                     throw new IOException("Impossible to load parent for " + res.getName()
                             + ". Parent=" + parentModRevID);
@@ -225,7 +225,7 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
                             + ". Please update your dependency to directly use the right version.");
                     Message.warn("Resolution will only pick dependencies of the relocated element."
                             + "  Artifact and other metadata will be ignored.");
-                    ResolvedModuleRevision relocatedModule = parseOtherPom(ivySettings, relocation);
+                    ResolvedModuleRevision relocatedModule = parseOtherPom(ivySettings, relocation, false);
                     if (relocatedModule == null) {
                         throw new ParseException(
                                 "impossible to load module " + relocation + " to which "
@@ -334,9 +334,13 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
     private void addTo(PomModuleDescriptorBuilder mdBuilder, PomDependencyMgt dep,
             ParserSettings ivySettings) throws ParseException, IOException {
         if ("import".equals(dep.getScope())) {
+            // In Maven, "import" scope semantics are equivalent to getting (only) the
+            // dependency management section of the imported module, into the current
+            // module, so that those "managed dependency versions" are usable/applicable
+            // in the current module's dependencies
             ModuleRevisionId importModRevID = ModuleRevisionId.newInstance(dep.getGroupId(),
-                dep.getArtifactId(), dep.getVersion());
-            ResolvedModuleRevision importModule = parseOtherPom(ivySettings, importModRevID);
+                    dep.getArtifactId(), dep.getVersion());
+            ResolvedModuleRevision importModule = parseOtherPom(ivySettings, importModRevID, false);
             if (importModule == null) {
                 throw new IOException("Impossible to import module for "
                         + mdBuilder.getModuleDescriptor().getResource().getName() + ". Import="
@@ -424,24 +428,41 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
         }
     }
 
-    private ResolvedModuleRevision parseOtherPom(ParserSettings ivySettings,
-            ModuleRevisionId parentModRevID) throws ParseException {
-        DependencyDescriptor dd = new DefaultDependencyDescriptor(parentModRevID, true);
-        ResolveData data = IvyContext.getContext().getResolveData();
-        if (data == null) {
-            ResolveEngine engine = IvyContext.getContext().getIvy().getResolveEngine();
-            ResolveOptions options = new ResolveOptions();
-            options.setDownload(false);
-            data = new ResolveData(engine, options);
-        }
+    private ResolvedModuleRevision parseOtherPom(final ParserSettings ivySettings,
+            final ModuleRevisionId parentModRevID, final boolean isParentPom) throws ParseException {
 
-        DependencyResolver resolver = ivySettings.getResolver(parentModRevID);
-        if (resolver == null) {
-            // TODO: Throw exception here?
-            return null;
+        Set<ModuleRevisionId> previousParents = null;
+        if (!isParentPom) {
+            // IVY-1588: we "reset" the parent tracking, since the parent tracking should only be
+            // non-null when we are parsing a parent pom.
+            previousParents = IvyContext.getContext().get(PARENT_MAP_KEY);
+            if (previousParents != null) {
+                IvyContext.getContext().set(PARENT_MAP_KEY, null);
+            }
         }
-        dd = toSystem(dd, ivySettings.getContextNamespace());
-        return resolver.getDependency(dd, data);
+        try {
+            DependencyDescriptor dd = new DefaultDependencyDescriptor(parentModRevID, true);
+            ResolveData data = IvyContext.getContext().getResolveData();
+            if (data == null) {
+                ResolveEngine engine = IvyContext.getContext().getIvy().getResolveEngine();
+                ResolveOptions options = new ResolveOptions();
+                options.setDownload(false);
+                data = new ResolveData(engine, options);
+            }
+
+            DependencyResolver resolver = ivySettings.getResolver(parentModRevID);
+            if (resolver == null) {
+                // TODO: Throw exception here?
+                return null;
+            }
+            dd = toSystem(dd, ivySettings.getContextNamespace());
+            return resolver.getDependency(dd, data);
+        } finally {
+            if (!isParentPom) {
+                // switch back to the previous state of the parent tracking
+                IvyContext.getContext().set(PARENT_MAP_KEY, previousParents);
+            }
+        }
     }
 
     private ParseException newParserException(Exception e) {
