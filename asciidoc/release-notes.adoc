@@ -92,6 +92,7 @@ For details about the following changes, check our JIRA install at link:https://
 - IMPROVEMENT: Support timestamped SNAPSHOT versions from Maven repository (jira:IVY-1153[]) and (jira:IVY-1476[])
 - IMPROVEMENT: Update Commons VFS to 2.2
 - IMPROVEMENT: Ivy now supports activating of Maven profiles, in `pom.xml`, by `jdk`, `os`, `property` and `file` (jira:IVY-1558[]) and (jira:IVY-1577[])
+- FIX: Improved thread-safety of the resolve process
 
 - NEW: Lets SSH-based resolvers use an `~/.ssh/config` file to find username/hostname/keyfile options (Thanks to Colin Stanfill)
 - NEW: Add ivy.maven.lookup.sources and ivy.maven.lookup.javadoc variables to control the lookup of the additional artifacts. Defaults to true, for backward compatibility (jira:IVY-1529[])
