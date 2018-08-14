@@ -17,16 +17,19 @@
  */
 package org.apache.ivy.core.resolve;
 
+import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.Stack;
 
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.Configuration;
+import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
@@ -208,6 +211,21 @@ public class IvyNodeCallers {
         return callers.values().toArray(new Caller[callers.values().size()]);
     }
 
+    private Set<Caller> getCallersByMrid(String rootModuleConf, ModuleRevisionId mrid) {
+        Map<ModuleRevisionId, Caller> callers = callersByRootConf.get(rootModuleConf);
+        if (callers == null) {
+            return Collections.emptySet();
+        }
+
+        Set<Caller> mridCallers = new HashSet<>();
+        for (Caller caller : callers.values()) {
+            if (caller.getAskedDependencyId().equals(mrid)) {
+                mridCallers.add(caller);
+            }
+        }
+        return mridCallers;
+    }
+
     public Caller[] getAllCallers() {
         Set<Caller> all = new HashSet<>();
         for (Map<ModuleRevisionId, Caller> callers : callersByRootConf.values()) {
@@ -263,19 +281,35 @@ public class IvyNodeCallers {
      * @return boolean
      */
     boolean doesCallersExclude(String rootModuleConf, Artifact artifact) {
-        return doesCallersExclude(rootModuleConf, artifact, new Stack<ModuleRevisionId>());
+        return doesCallersExclude(rootModuleConf, artifact, new ArrayDeque<IvyNode>());
     }
 
     boolean doesCallersExclude(String rootModuleConf, Artifact artifact,
-            Stack<ModuleRevisionId> callersStack) {
-        callersStack.push(node.getId());
+            Deque<IvyNode> callersStack) {
+        /* The caller stack is, from bottom to top, the path from the
+           artifact we're considering excluding up towards the
+           root. */
+        callersStack.push(node);
         try {
-            Caller[] callers = getCallers(rootModuleConf);
-            if (callers.length == 0) {
+            Set<Caller> callers = getCallersByMrid(rootModuleConf, node.getId());
+            if (callers.isEmpty()) {
                 return false;
             }
             boolean allInconclusive = true;
-            for (Caller caller : callers) {
+            String[] moduleConfs = new String[] {rootModuleConf};
+            callers: for (Caller caller : callers) {
+                /* Each ancestor of this artifact (called "descendant", here, since it's
+                   a descendant relative to this.node) might itself have been excluded by
+                   an older ancestor (this.node); if it is, then it is as if artifact
+                   itself were excluded in this path. */
+                for (IvyNode descendant : callersStack) {
+                    if (node.directlyExcludes(node.getDescriptor(), moduleConfs,
+                            caller.getDependencyDescriptor(),
+                            DefaultArtifact.newIvyArtifact(descendant.getId(), null))) {
+                        allInconclusive = false;
+                        continue callers;
+                    }
+                }
                 if (!caller.canExclude()) {
                     return false;
                 }

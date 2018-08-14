@@ -499,13 +499,7 @@ public class TestHelper {
     public static int getMaybeAvailablePort() {
         try (ServerSocket s = new ServerSocket(0)) {
             s.setReuseAddress(true);
-            int port = s.getLocalPort();
-            try {
-                s.close();
-            } catch (IOException e) {
-                // ignore
-            }
-            return port;
+            return s.getLocalPort();
         } catch (IOException e) {
             // ignore
         }

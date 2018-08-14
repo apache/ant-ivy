@@ -4265,6 +4265,53 @@ public class ResolveTest {
     }
 
     @Test
+    public void testResolveExcludesModule2() throws Exception {
+        // root depends on a and (x 2 excluding y)
+        // a depends on x 1
+        // x 1 depends on y 1
+        // x 2 depends on y 2
+        ivy.configure(new File("test/repositories/IVY-1486/ivysettings.xml"));
+        ResolveReport report = ivy.resolve(new File(
+                        "test/repositories/IVY-1486/org/root/ivy-1.xml"),
+                getResolveOptions(new String[] {"*"}));
+        ModuleDescriptor md = report.getModuleDescriptor();
+        assertEquals(ModuleRevisionId.newInstance("org", "root", "1"),
+                md.getModuleRevisionId());
+        assertTrue(getIvyFileInCache(ModuleRevisionId.newInstance("org", "x", "2"))
+                .exists());
+        assertFalse(getIvyFileInCache(ModuleRevisionId.newInstance("org", "y", "2"))
+                .exists());
+        assertFalse(getIvyFileInCache(ModuleRevisionId.newInstance("org", "y", "1"))
+                .exists());
+    }
+
+    @Test
+    public void testResolveExcludesModule3() throws Exception {
+        // Ensure that search for unexcluded paths doesn't get confused by the exclusion
+        // of parents.
+        ivy.configure(new File("test/repositories/IVY-1486/ivysettings.xml"));
+        ResolveReport report = ivy.resolve(new File(
+                        "test/repositories/IVY-1486/org/root/ivy-2.xml"),
+                getResolveOptions(new String[] {"*"}));
+        ModuleDescriptor md = report.getModuleDescriptor();
+        assertEquals(ModuleRevisionId.newInstance("org", "root", "2"),
+                md.getModuleRevisionId());
+        assertTrue(getIvyFileInCache(ModuleRevisionId.newInstance("org", "l", "1"))
+                .exists());
+        assertFalse(getIvyFileInCache(ModuleRevisionId.newInstance("org", "l", "2"))
+                .exists());
+
+        assertTrue(getIvyFileInCache(ModuleRevisionId.newInstance("org", "h", "2"))
+                .exists());
+        assertTrue(getIvyFileInCache(ModuleRevisionId.newInstance("org", "i", "2"))
+                .exists());
+        assertTrue(getIvyFileInCache(ModuleRevisionId.newInstance("org", "j", "2"))
+                .exists());
+        assertTrue(getIvyFileInCache(ModuleRevisionId.newInstance("org", "k", "2"))
+                .exists());
+    }
+
+    @Test
     public void testResolveExcludesModuleWide() throws Exception {
         // mod2.6 depends on mod2.1 and excludes mod1.1 module wide
         // mod2.1 depends on mod1.1 which depends on mod1.2

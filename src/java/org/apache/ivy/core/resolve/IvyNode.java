@@ -17,10 +17,12 @@
  */
 package org.apache.ivy.core.resolve;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -401,33 +403,34 @@ public class IvyNode implements Comparable<IvyNode> {
         if (isRoot()) {
             // no callers, but maybe some exclude
             Boolean exclude = doesExclude(md, rootModuleConf, new String[] {rootModuleConf}, dd, a,
-                new Stack<ModuleRevisionId>());
+                new ArrayDeque<IvyNode>());
             return exclude != null && exclude;
         }
         return callers.doesCallersExclude(rootModuleConf, a);
     }
 
     Boolean doesExclude(ModuleDescriptor md, String rootModuleConf, String[] moduleConfs,
-            DependencyDescriptor dd, Artifact artifact, Stack<ModuleRevisionId> callersStack) {
+            DependencyDescriptor dd, Artifact artifact, Deque<IvyNode> callersStack) {
         // artifact is excluded if it match any of the exclude pattern for this dependency...
-        if (dd != null) {
-            if (dd.doesExclude(moduleConfs, artifact.getId().getArtifactId())) {
-                return Boolean.TRUE;
-            }
-        }
-        if (md.doesExclude(moduleConfs, artifact.getId().getArtifactId())) {
+        if (directlyExcludes(md, moduleConfs, dd, artifact)) {
             return Boolean.TRUE;
         }
         // ... or if it is excluded by all its callers
         IvyNode c = getData().getNode(md.getModuleRevisionId());
         if (c != null) {
-            if (callersStack.contains(c.getId())) {
+            if (callersStack.contains(c)) {
                 // a circular dependency, we cannot be conclusive here
                 return null;
             }
             return c.doesCallersExclude(rootModuleConf, artifact, callersStack);
         }
         return Boolean.FALSE;
+    }
+
+    public boolean directlyExcludes(ModuleDescriptor md, String[] moduleConfs,
+            DependencyDescriptor dd, Artifact artifact) {
+        return dd != null && dd.doesExclude(moduleConfs, artifact.getId().getArtifactId())
+                || md.doesExclude(moduleConfs, artifact.getId().getArtifactId());
     }
 
     public boolean hasConfigurationsToLoad() {
@@ -1073,8 +1076,22 @@ public class IvyNode implements Comparable<IvyNode> {
     }
 
     public boolean doesCallersExclude(String rootModuleConf, Artifact artifact,
-            Stack<ModuleRevisionId> callersStack) {
+            Deque<IvyNode> callersStack) {
         return callers.doesCallersExclude(rootModuleConf, artifact, callersStack);
+    }
+
+    @Deprecated
+    public boolean doesCallersExclude(String rootModuleConf, Artifact artifact,
+            Stack<ModuleRevisionId> callersStack) {
+        Deque<IvyNode> callersDeque = new ArrayDeque<>();
+        for (ModuleRevisionId mrid : callersStack) {
+            for (Caller caller : getCallers(rootModuleConf)) {
+                if (caller.getModuleRevisionId().equals(mrid)) {
+                    callersDeque.add(data.getNode(mrid));
+                }
+            }
+        }
+        return callers.doesCallersExclude(rootModuleConf, artifact, callersDeque);
     }
 
     private ModuleRevisionId[] toMrids(Collection<IvyNode> path, IvyNode depNode) {
