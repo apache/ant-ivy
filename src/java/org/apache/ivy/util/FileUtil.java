@@ -171,7 +171,7 @@ public final class FileUtil {
                 // existing folder, gather existing children
                 File[] children = dest.listFiles();
                 if (children != null) {
-                    existingChild = Arrays.asList(children);
+                    existingChild = new ArrayList<>(Arrays.asList(children));
                 }
             }
         } else {
@@ -185,7 +185,9 @@ public final class FileUtil {
                 // compute the destination file
                 File childDest = new File(dest, cf.getName());
                 // if file existing, 'mark' it as taken care of
-                existingChild.remove(childDest);
+                if (!existingChild.isEmpty()) {
+                    existingChild.remove(childDest);
+                }
                 if (cf.isDirectory()) {
                     deepCopy(cf, childDest, l, overwrite);
                 } else {
