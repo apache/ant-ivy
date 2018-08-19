@@ -20,6 +20,9 @@ package org.apache.ivy.core.cache;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.util.Checks;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 /**
  * This class contains information about the origin of an artifact.
  *
@@ -108,6 +111,23 @@ public class ArtifactOrigin {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    // the "location" of an ArtifactOrigin is expected to be URL. However,
+    // in certain versions of Ivy we used to save just the path as the location
+    // instead of the URL form. Here we try and read it as a URL. If it can be
+    // read as a URL, we return the URL#getPath. However, if it can't be read
+    // as a URL, then considering backward compatibility, we treat the "location"
+    // as a path and return it back.
+    String getLocationPath() {
+        if (this.location == null) {
+            return null;
+        }
+        try {
+            return new URL(this.location).getPath();
+        } catch (MalformedURLException e) {
+            return this.location;
+        }
     }
 
     /**

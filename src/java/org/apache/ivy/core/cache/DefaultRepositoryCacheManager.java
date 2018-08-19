@@ -384,7 +384,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
     public File getArchiveFileInCache(Artifact artifact, ArtifactOrigin origin) {
         File archive = new File(getRepositoryCacheRoot(), getArchivePathInCache(artifact, origin));
         if (!archive.exists() && !ArtifactOrigin.isUnknown(origin) && origin.isLocal()) {
-            File original = Checks.checkAbsolute(origin.getLocation(), artifact
+            File original = Checks.checkAbsolute(origin.getLocationPath(), artifact
                     + " origin location");
             if (original.exists()) {
                 return original;
@@ -406,7 +406,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
      */
     private File getArchiveFileInCache(Artifact artifact, ArtifactOrigin origin, boolean useOrigin) {
         if (useOrigin && !ArtifactOrigin.isUnknown(origin) && origin.isLocal()) {
-            return Checks.checkAbsolute(origin.getLocation(), artifact + " origin location");
+            return Checks.checkAbsolute(origin.getLocationPath(), artifact + " origin location");
         }
         return new File(getRepositoryCacheRoot(), getArchivePathInCache(artifact, origin));
     }
