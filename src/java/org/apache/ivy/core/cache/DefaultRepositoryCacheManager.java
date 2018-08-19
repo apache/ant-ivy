@@ -19,7 +19,6 @@ package org.apache.ivy.core.cache;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -1011,7 +1010,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
                         if (useOrigin && artifactRes.isLocal()) {
                             if (artifactRes instanceof LocalizableResource) {
                                 origin.setLocation(((LocalizableResource) artifactRes).getFile()
-                                        .getAbsolutePath());
+                                        .toURI().toURL().toExternalForm());
                             }
                             saveArtifactOrigin(artifact, origin);
                             archiveFile = getArchiveFileInCache(artifact, origin);

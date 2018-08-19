@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URL;
 import java.util.Date;
 
 import org.apache.ivy.Ivy;
@@ -48,6 +49,7 @@ import org.apache.ivy.util.Message;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -190,6 +192,23 @@ public class DefaultRepositoryCacheManagerTest {
 
         ResolvedModuleRevision rmrFromCache = cacheManager.findModuleInCache(ddLatest, mridLatest, options, "resolver1");
         assertEquals(rmr11, rmrFromCache);
+    }
+
+    /**
+     * Tests that the {@link ArtifactOrigin#getLocation()} and {@link ArtifactOrigin#setLocation(String)} values
+     * are treated as {@link URL} while saving and retrieving the artifact origin information
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testArtificationOriginalLocation() throws Exception {
+        final Artifact simpleArtifact = createArtifact("org", "dummy", "1.0.0", "hello", "jar", "jar");
+        final URL location = new File("dummylocation").toURI().toURL();
+        final ArtifactOrigin originatedFrom = new ArtifactOrigin(simpleArtifact, true, location.toExternalForm());
+        cacheManager.saveArtifactOrigin(simpleArtifact, originatedFrom);
+        final ArtifactOrigin restored = cacheManager.getSavedArtifactOrigin(simpleArtifact);
+        Assert.assertNotNull("Location of artifact origin wasn't expected to be null", restored.getLocation());
+        Assert.assertEquals("Unexpected artifact origin location", location, new URL(restored.getLocation()));
     }
 
     private static DefaultArtifact createArtifact(String org, String module, String rev,
