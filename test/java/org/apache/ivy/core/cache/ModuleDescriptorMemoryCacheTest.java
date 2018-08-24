@@ -17,19 +17,20 @@
  */
 package org.apache.ivy.core.cache;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.io.File;
-import java.io.IOException;
-import java.text.ParseException;
-
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.parser.ParserSettings;
+import org.junit.Before;
 import org.junit.Test;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.ParseException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class ModuleDescriptorMemoryCacheTest {
 
@@ -39,23 +40,38 @@ public class ModuleDescriptorMemoryCacheTest {
 
     private IvySettings ivySettings2 = new IvySettings();
 
-    private File url1 = new File("file://cached/file.txt");
+    private File url1 = null;
 
-    private File url2 = new File("file://cached/file2.txt");
+    private File url2 = null;
 
-    private File url3 = new File("file://cached/file3.txt");
+    private File url3 = null;
 
     private ModuleRevisionId mrid1 = ModuleRevisionId.newInstance("org", "name", "rev");
 
-    private ModuleDescriptor md1 = DefaultModuleDescriptor.newDefaultInstance(mrid1);
+    private DefaultModuleDescriptor md1 = DefaultModuleDescriptor.newDefaultInstance(mrid1);
 
     private ModuleRevisionId mrid2 = ModuleRevisionId.newInstance("org", "name", "rev2");
 
-    private ModuleDescriptor md2 = DefaultModuleDescriptor.newDefaultInstance(mrid2);
+    private DefaultModuleDescriptor md2 = DefaultModuleDescriptor.newDefaultInstance(mrid2);
 
     private ModuleRevisionId mrid3 = ModuleRevisionId.newInstance("org", "name", "rev3");
 
-    private ModuleDescriptor md3 = DefaultModuleDescriptor.newDefaultInstance(mrid3);
+    private DefaultModuleDescriptor md3 = DefaultModuleDescriptor.newDefaultInstance(mrid3);
+
+    @Before
+    public void setUp() throws IOException {
+        url1 = File.createTempFile("ivy", "xml");
+        md1.setLastModified(url1.lastModified());
+        url1.deleteOnExit();
+
+        url2 = File.createTempFile("ivy", "xml");
+        md2.setLastModified(url2.lastModified());
+        url2.deleteOnExit();
+
+        url3 = File.createTempFile("ivy", "xml");
+        md3.setLastModified(url3.lastModified());
+        url3.deleteOnExit();
+    }
 
     @Test
     public void testUseModuleDescriptorProviderWhenModuleNotCached() throws ParseException,
