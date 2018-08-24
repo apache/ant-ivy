@@ -84,6 +84,7 @@ For details about the following changes, check our JIRA install at link:https://
 - FIX: Implement dependency configuration negation (jira:IVY-982[] jira:IVY-1547[]) (Thanks to Arseny Aprelev)
 - FIX: Don't throw a CircularDependencyException when parsing an import scoped dependency in dependencyManagement section of a pom (jira:IVY-1588[])
 - FIX: Respect exclude regardless of resolution order (jira:IVY-1486[]) (thanks to David Turner)
+- FIX: ModuleDescriptorMemoryCache didn't detect outdated entries when Ivy file was updated in the cache by another process
 
 - IMPROVEMENT: Throw an IllegalStateException when retrieving the resolutionCacheRoot on the DefaultResolutionCacheManager if the basedir (or IvySettings) is not set (jira:IVY-1482[])
 - IMPROVEMENT: Optimization: limit the revision numbers scanned if revision prefix is specified (Thanks to Ernestas Vaiciukevi&ccaron;ius)

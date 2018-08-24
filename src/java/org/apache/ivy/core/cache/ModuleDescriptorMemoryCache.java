@@ -79,7 +79,7 @@ class ModuleDescriptorMemoryCache {
         synchronized (valueMap) {
             CacheEntry entry = valueMap.get(ivyFile);
             if (entry != null) {
-                if (entry.isStale(validated, ivySettings)) {
+                if (entry.isStale(ivyFile, validated, ivySettings)) {
                     Message.debug("Entry is found in the ModuleDescriptorCache but entry should be "
                             + "reevaluated : " + ivyFile);
                     valueMap.remove(ivyFile);
@@ -129,8 +129,9 @@ class ModuleDescriptorMemoryCache {
             this.parserSettingsMonitor = parserSettingsMonitor;
         }
 
-        boolean isStale(boolean validated, ParserSettings newParserSettings) {
+        boolean isStale(File ivyFile, boolean validated, ParserSettings newParserSettings) {
             return (validated && !this.validated)
+                    || md.getLastModified() != ivyFile.lastModified()
                     || parserSettingsMonitor.hasChanged(newParserSettings);
         }
     }
