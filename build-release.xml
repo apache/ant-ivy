@@ -124,6 +124,7 @@
         <echo file="${output.dir}/myrepository-content.txt">[ivy@apache:/]$ find ${tutorial.src.dir}/build-a-ivy-repository/myrepository/no-namespace -type f -print${line.separator}</echo>
         <echo file="${output.dir}/myrepository-content.txt" append="true">${myrepository.content}</echo>
         <delete dir="${tutorial.build.dir}"/>
+        <echo>NB! This tutorial fails deliberately!</echo>
         <run-tutorial antfile="${tutorial.src.dir}/build-a-ivy-repository/build.xml" target="maven2-deps" output="${output.dir}/install-deps.txt" failonerror="false"/>
         <pathconvert property="myrepository.content.deps" pathsep="${line.separator}">
             <fileset dir="${tutorial.src.dir}/build-a-ivy-repository/myrepository/no-namespace/org.hibernate/hibernate"/>
@@ -170,7 +171,7 @@
     </target>
 
     <target name="init-asciidoctor-extensions" depends="init-ivy" unless="skip.doc">
-        <ivy:cachepath pathid="asciidoctorj.path" organisation="org.asciidoctor" module="asciidoctorj" revision="1.5.7" inline="true"/>
+        <ivy:cachepath pathid="asciidoctorj.path" organisation="org.asciidoctor" module="asciidoctorj" revision="1.5.7" conf="default" inline="true"/>
         <mkdir dir="${build.dir}/asciidoc-extensions/classes"/>
         <javac srcdir="${doc.src.dir}/templates/extensions/src" destdir="${build.dir}/asciidoc-extensions/classes"
                debug="true" includeantruntime="no" classpathref="asciidoctorj.path"/>
@@ -184,12 +185,12 @@
     <target name="init-asciidoctor" depends="init-asciidoctor-extensions" unless="skip.doc">
         <mkdir dir="${build.dir}/asciidoc-lib/jars" />
         <mkdir dir="${build.dir}/asciidoc-lib/classes" />
-        <ivy:retrieve organisation="org.asciidoctor" module="asciidoctor-ant" revision="1.5.5" inline="true" pattern="${build.dir}/asciidoc-lib/jars/[artifact].[ext]" conf="default" />
+        <ivy:retrieve organisation="org.asciidoctor" module="asciidoctor-ant" revision="1.5.5" conf="default" inline="true" pattern="${build.dir}/asciidoc-lib/jars/[artifact].[ext]" conf="default" />
         <unzip src="${build.dir}/asciidoc-lib/jars/asciidoctor-ant.jar" dest="${build.dir}/asciidoc-lib/classes" />
         <taskdef uri="antlib:org.asciidoctor.ant" resource="org/asciidoctor/ant/antlib.xml">
             <classpath>
-                <pathelement location="${build.dir}/asciidoc-extensions/classes" />
-                <pathelement location="${build.dir}/asciidoc-lib/classes" />
+                <pathelement location="${build.dir}/asciidoc-extensions/classes"/>
+                <pathelement location="${build.dir}/asciidoc-lib/classes"/>
             </classpath>
         </taskdef>
     </target>
@@ -208,14 +209,14 @@
             <attribute key="basedir" value="${doc.src.dir}"/>
             <attribute key="imagesdir" value=""/>
             <attribute key="version" value="${build.version}"/>
-            <inlineMacroProcessor blockName="jira" className="org.apache.ivy.asciidoc.JiraMacro" />
+            <inlineMacroProcessor blockName="jira" className="org.apache.ivy.asciidoc.JiraMacro"/>
         </asciidoctor:convert>
     </target>
 
     <target name="generate-book-adoc" depends="default-version,copy-doc-files" unless="skip.doc">
         <scriptdef name="generate-book-adoc" language="javascript">
-            <attribute name="jsontocfile" />
-            <attribute name="destFile" />
+            <attribute name="jsontocfile"/>
+            <attribute name="destFile"/>
             <![CDATA[
                 var tocfile = self.getProject().resolveFile(attributes.get("jsontocfile"))
                 r = new java.io.BufferedReader(new java.io.FileReader(tocfile));
@@ -253,15 +254,15 @@
                 out.close();
             ]]>
         </scriptdef>
-        <mkdir dir="${build.dir}/book" />
-        <generate-book-adoc jsontocfile="${doc.src.dir}/toc.json" destFile="${build.dir}/book/book.adoc" />
+        <mkdir dir="${build.dir}/book"/>
+        <generate-book-adoc jsontocfile="${doc.src.dir}/toc.json" destFile="${build.dir}/book/book.adoc"/>
     </target>
 
     <target name="generate-book" depends="generate-book-adoc,init-asciidoctor">
         <asciidoctor:convert sourceDirectory="${build.dir}/book" outputDirectory="${doc.build.dir}" backend="xhtml5"
                              templateDir="${doc.src.dir}/templates/book" sourceHighlighter="highlightjs" doctype="book">
-            <attribute key="version" value="${build.version}" />
-            <inlineMacroProcessor blockName="jira" className="org.apache.ivy.asciidoc.JiraMacro" />
+            <attribute key="version" value="${build.version}"/>
+            <inlineMacroProcessor blockName="jira" className="org.apache.ivy.asciidoc.JiraMacro"/>
         </asciidoctor:convert>
     </target>
 
