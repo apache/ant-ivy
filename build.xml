@@ -339,6 +339,35 @@
     <!-- =================================================================
          PUBLISH LOCAL
          ================================================================= -->
+    <target name="fixcrlf">
+        <property name="eol.native.includes"
+                  value="**/*.html,**/*.json,**/*.java,**/*.xml,**/*.txt,**/*.MF,**/*.properties,**/*.patterns,**/*.pom,**/*.xsl,**/*.css"/>
+        <property name="eol.native.excludes"
+                  value="build/**,bin/**,lib/**"/>
+
+        <fileset id="eol.native.fileset"
+                 dir="${basedir}"
+                 includes="${eol.native.includes}"
+                 excludes="${eol.native.excludes}"/>
+
+        <fixcrlf srcdir="${basedir}"
+                 includes="${eol.native.includes}"
+                 excludes="${eol.native.excludes}"/>
+    </target>
+
+    <target name="sources" depends="default-version" description="Create source archive files">
+        <mkdir dir="${artifacts.build.dir}/sources/"/>
+        <jar destfile="${artifacts.build.dir}/sources/${final.name}">
+            <metainf dir="${basedir}" includes="LICENSE,NOTICE"/>
+            <manifest>
+                <attribute name="Specification-Title" value="Apache Ivy Sources"/>
+                <attribute name="Specification-Version" value="${build.version}"/>
+                <attribute name="Specification-Vendor" value="Apache Software Foundation"/>
+            </manifest>
+            <fileset dir="${src.dir}"/>
+        </jar>
+    </target>
+
     <target name="publish-local" depends="jar,sources" description="publishes Ivy to Ivy local repository">
         <ivy:publish resolver="local" pubrevision="${build.version}"
             artifactsPattern="${artifacts.build.dir}/[type]s/[artifact].[ext]"
@@ -503,6 +532,47 @@
         <ivy:report todir="${ivy.report.dir}"/>
     </target>
 
+    <target name="init-japicmp" depends="jar" unless="skip.test">
+        <ivy:cachepath organisation="com.github.siom79.japicmp" module="japicmp-ant-task" revision="0.13.0"
+                       inline="true" conf="default" pathid="japicmp.classpath" log="download-only"/>
+        <taskdef uri="antlib:japicmp.ant" resource="japicmp/ant/antlib.xml"
+                 classpathref="japicmp.classpath"/>
+        <ivy:cachepath organisation="org.apache.ivy" module="ivy" revision="${ivy.api.reference}"
+                       inline="true" conf="optional" pathid="ivyrefdeps.classpath" log="download-only"/>
+        <ivy:cachefileset organisation="org.apache.ivy" module="ivy" revision="${ivy.api.reference}"
+                          inline="true" conf="master" setid="ivyref.fileset" log="download-only"/>
+        <pathconvert property="ivyref.name" refid="ivyref.fileset"/>
+    </target>
+
+    <target name="/japicmp-all" description="report status of all public APIs">
+        <property name="japicmp.all" value="true"/>
+    </target>
+
+    <target name="/japicmp-changed" description="report all changed public APIs">
+        <property name="japicmp.changed" value="true"/>
+    </target>
+
+    <target name="japicmp" depends="init-japicmp" unless="skip.test">
+        <property name="japicmp.all" value="false"/>
+        <property name="japicmp.changed" value="false"/>
+        <condition property="japicmp.binary" value="true" else="false">
+            <not>
+                <or>
+                    <istrue value="${japicmp.all}"/>
+                    <istrue value="${japicmp.changed}"/>
+                </or>
+            </not>
+        </condition>
+        <japicmp:japicmp xmlns:japicmp="antlib:japicmp.ant"
+                         oldjar="${ivyref.name}"
+                         newjar="${artifacts.build.dir}/jars/${final.name}"
+                         oldclasspathref="ivyrefdeps.classpath"
+                         newclasspathref="lib.classpath"
+                         onlybinaryincompatible="${japicmp.binary}"
+                         onlymodified="${japicmp.changed}"
+                         htmloutputfile="${reports.dir}/japicmp.html"/>
+    </target>
+
     <target name="javadoc" depends="init" unless="skip.javadoc">
         <tstamp>
             <format pattern="2007-yyyy" property="years"/>
@@ -537,35 +607,6 @@
         </javadoc>
     </target>
 
-    <target name="sources" depends="default-version" description="Create source archive files">
-        <mkdir dir="${artifacts.build.dir}/sources/"/>
-        <jar destfile="${artifacts.build.dir}/sources/${final.name}">
-            <metainf dir="${basedir}" includes="LICENSE,NOTICE"/>
-            <manifest>
-                <attribute name="Specification-Title" value="Apache Ivy Sources"/>
-                <attribute name="Specification-Version" value="${build.version}"/>
-                <attribute name="Specification-Vendor" value="Apache Software Foundation"/>
-            </manifest>
-            <fileset dir="${src.dir}"/>
-        </jar>
-    </target>
-
-    <target name="fixcrlf">
-        <property name="eol.native.includes"
-            value="**/*.html,**/*.json,**/*.java,**/*.xml,**/*.txt,**/*.MF,**/*.properties,**/*.patterns,**/*.pom,**/*.xsl,**/*.css"/>
-        <property name="eol.native.excludes"
-            value="build/**,bin/**,lib/**"/>
-
-        <fileset id="eol.native.fileset"
-            dir="${basedir}"
-            includes="${eol.native.includes}"
-            excludes="${eol.native.excludes}"/>
-
-        <fixcrlf srcdir="${basedir}"
-            includes="${eol.native.includes}"
-            excludes="${eol.native.excludes}"/>
-    </target>
-
     <target name="init-checkstyle" depends="jar">
         <ivy:cachepath organisation="com.puppycrawl.tools" module="checkstyle" revision="6.19"
                        inline="true" conf="default" pathid="checkstyle.classpath" log="download-only"/>
@@ -595,7 +636,7 @@
     <target name="checkstyle" depends="checkstyle-internal"
             description="checks Ivy codebase according to ${checkstyle.src.dir}/checkstyle-config">
         <fail if="checkstyle.failed" unless="ignore.checkstyle"
-            message="Checkstyle has errors. See report in ${checkstyle.report.dir}"/>
+              message="Checkstyle has errors. See report in ${checkstyle.report.dir}"/>
     </target>
 
     <target name="checkstyle-report" depends="checkstyle-internal">
@@ -625,11 +666,10 @@
         <property name="findbugs.download.to"
                   value="${build.dir}/.downloads"
                   description="Where to store the download and 'install' Findbugs."/>
-        <available
-          property="findbugs.home"
-          value="${findbugs.download.to}/${findbugs.download.name}"
-          file="${findbugs.download.to}/${findbugs.download.name}/lib/findbugs.jar"
-          description="Check if Findbugs is already installed."/>
+        <available property="findbugs.home"
+                   value="${findbugs.download.to}/${findbugs.download.name}"
+                   file="${findbugs.download.to}/${findbugs.download.name}/lib/findbugs.jar"
+                   description="Check if Findbugs is already installed."/>
 
         <!-- Findbugs: Running Findbugs -->
         <property name="findbugs.reportdir"
@@ -647,7 +687,7 @@
 
         <mkdir dir="${findbugs.download.to}"/>
         <get src="${findbugs.download.url}" dest="${findbugs.download.to}/${findbugs.download.file}"
-            usetimestamp="true" skipexisting="true"/>
+             usetimestamp="true" skipexisting="true"/>
         <unzip src="${findbugs.download.to}/${findbugs.download.file}" dest="${findbugs.download.to}"/>
         <property name="findbugs.home" location="${findbugs.download.to}/${findbugs.download.name}"/>
     </target>
@@ -679,7 +719,7 @@
         </xslt>
     </target>
 
-    <target name="docs" depends="test-report,checkstyle-report,findbugs,ivy-report,javadoc"/>
+    <target name="docs" depends="test-report,checkstyle-report,findbugs,japicmp,ivy-report,javadoc"/>
 
     <!-- =================================================================
          IDE SPECIFIC
