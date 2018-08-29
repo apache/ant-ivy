@@ -30,7 +30,7 @@ public class JiraMacro extends InlineMacroProcessor {
     }
 
     @Override
-    protected String process(AbstractBlock parent, String target, Map<String, Object> attributes) {
+    public String process(AbstractBlock parent, String target, Map<String, Object> attributes) {
         Map<String, Object> options = new HashMap<String, Object>();
         options.put("type", ":link");
         options.put("target", "https://issues.apache.org/jira/browse/" + target);

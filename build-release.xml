@@ -170,7 +170,7 @@
     </target>
 
     <target name="init-asciidoctor-extensions" depends="init-ivy" unless="skip.doc">
-        <ivy:cachepath pathid="asciidoctorj.path" organisation="org.asciidoctor" module="asciidoctorj" revision="1.5.6" inline="true"/>
+        <ivy:cachepath pathid="asciidoctorj.path" organisation="org.asciidoctor" module="asciidoctorj" revision="1.5.7" inline="true"/>
         <mkdir dir="${build.dir}/asciidoc-extensions/classes"/>
         <javac srcdir="${doc.src.dir}/templates/extensions/src" destdir="${build.dir}/asciidoc-extensions/classes"
                debug="true" includeantruntime="no" classpathref="asciidoctorj.path"/>
@@ -184,7 +184,7 @@
     <target name="init-asciidoctor" depends="init-asciidoctor-extensions" unless="skip.doc">
         <mkdir dir="${build.dir}/asciidoc-lib/jars" />
         <mkdir dir="${build.dir}/asciidoc-lib/classes" />
-        <ivy:retrieve organisation="org.asciidoctor" module="asciidoctor-ant" revision="1.5.4" inline="true" pattern="${build.dir}/asciidoc-lib/jars/[artifact].[ext]" conf="default" />
+        <ivy:retrieve organisation="org.asciidoctor" module="asciidoctor-ant" revision="1.5.5" inline="true" pattern="${build.dir}/asciidoc-lib/jars/[artifact].[ext]" conf="default" />
         <unzip src="${build.dir}/asciidoc-lib/jars/asciidoctor-ant.jar" dest="${build.dir}/asciidoc-lib/classes" />
         <taskdef uri="antlib:org.asciidoctor.ant" resource="org/asciidoctor/ant/antlib.xml">
             <classpath>
