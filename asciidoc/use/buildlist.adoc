@@ -32,9 +32,9 @@ When the `ivy.xml` of the modules that you want to order contains link:../ivyfil
 
 (*__since 1.4__*) The `ivy.sorted.modules` property is set in Ant project at the end of the task with a comma separated list of ordered modules. This can be useful for debug or information purpose.
 
-[*__since 2.0__*]
+(*__since 2.0__*) The `root` and `leaf` attributes can be a delimited list of modules to use as roots. These modules, and all their dependencies will be included in the build list.
 
-The `root` and `leaf` attributes can be a delimited list of modules to use as roots. These modules, and all their dependencies will be included in the build list.
+(*__since 2.5__*) The root and leaf modules can also be specified as nested `root` and `leaf` elements. This way, not only the module name can be specified, but also the organisation, revision and branch of the root/leaf.
 
 By default, all the modules included in a circular dependency are grouped together so that any dependency of any module in the loop will appear before the modules in the loop. This guarantees that if there is a dependency path between a module A and a module B (but no dependency path from B to A), B will always appear before A even if A is included in a loop in the provided set of modules to sort.
 Note that a circular dependency can also trigger a failure depending on the value configured in the `circularDependencyStrategy` of your link:../settings/conf{outfilesuffix}#circularDependencyStrategy[settings]
@@ -74,6 +74,29 @@ This field is ignored when neither root nor leaf is filled.|No. Defaults to no `
 |restartFrom|(*__since 2.0__*) The name of the module which should be considered as the starting point in the buildlist. This allows for the build to be started at any point in the dependency chain.
 |No. Defaults to `*` meaning no restart point (all modules are used in the build list).
 |settingsRef|(*__since 2.0__*) A reference to Ivy settings that must be used by this task|No, `ivy.instance` is taken by default.
+|=======
+
+== Child elements
+
+[options="header",cols="15%,50%,35%"]
+|=======
+|Element|Description|Cardinality
+|root|(*__since 2.5__*) Declares a root module.
+
+This element takes the following attributes: +
+* `organisation`: the organisation of the root module (defaults to *) +
+* `module`: the name of the root module (defaults to *) +
+* `revision`: the revision of the root module (defaults to *) +
+* `branch`: the branch of the root module (default to *)
+* `file`: a specific ivy.xml file to use as root module|0..n
+|leaf|(*__since 2.5__*) Declares a leaf module.
+
+This element takes the following attributes: +
+* `organisation`: the organisation of the leaf module (defaults to *) +
+* `module`: the name of the leaf module (defaults to *) +
+* `revision`: the revision of the leaf module (defaults to *) +
+* `branch`: the branch of the leaf module (default to *)
+* `file`: a specific ivy.xml file to use as leaf module|0..n
 |=======
 
 == Parameters specified as nested elements
@@ -132,3 +155,27 @@ Builds a list of `build.xml` files sorted according to the `ivy.xml` files found
 ----
 
 Builds a list of `build.xml` files sorted according to the `ivy.xml` files found in an Ivy directory relative to those build files. Only `build.xml` files of modules which have dependencies (direct or transitive) on `mymodule` are put in the result list.
+
+'''
+
+[source,xml]
+----
+    <ivy:buildlist reference="build-path" ivyfilepath="ivy/ivy.xml">
+      <root organisation="myorg" module="myapp" />
+      <fileset dir="projects" includes="**/build.xml"/>
+    </ivy:buildlist>
+----
+
+Builds a list of `build.xml` files sorted according to the `ivy.xml` files found in an Ivy directory relative to those build files. Only `build.xml` files of modules which are dependencies of `myorg#myapp` (either direct or transitive) are put in the result list.
+
+'''
+
+[source,xml]
+----
+    <ivy:buildlist reference="build-path" ivyfilepath="ivy/ivy.xml">
+      <root file="/path/to/myapp-ivy.xml" />
+      <fileset dir="projects" includes="**/build.xml"/>
+    </ivy:buildlist>
+----
+
+Builds a list of `build.xml` files sorted according to the `ivy.xml` files found in an Ivy directory relative to those build files. Only `build.xml` files of modules which are dependencies defined in `/path/to/myapp-ivy.xml` (either direct or transitive) are put in the result list.

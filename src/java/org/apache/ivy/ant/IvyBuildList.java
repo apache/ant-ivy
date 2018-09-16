@@ -30,11 +30,14 @@ import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.apache.ivy.Ivy;
+import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.core.sort.SortOptions;
+import org.apache.ivy.plugins.matcher.MapMatcher;
+import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
 import org.apache.ivy.util.Message;
 import org.apache.tools.ant.BuildException;
@@ -62,6 +65,60 @@ public class IvyBuildList extends IvyTask {
         }
     }
 
+    public static final class BuildListModule {
+
+        private String organisation;
+
+        private String module;
+
+        private String revision;
+
+        private String branch;
+
+        private File file;
+
+        public String getOrganisation() {
+            return organisation;
+        }
+
+        public void setOrganisation(String organisation) {
+            this.organisation = organisation;
+        }
+
+        public String getModule() {
+            return module;
+        }
+
+        public void setModule(String module) {
+            this.module = module;
+        }
+
+        public String getRevision() {
+            return revision;
+        }
+
+        public void setRevision(String revision) {
+            this.revision = revision;
+        }
+
+        public String getBranch() {
+            return branch;
+        }
+
+        public void setBranch(String branch) {
+            this.branch = branch;
+        }
+
+        public File getFile() {
+            return file;
+        }
+
+        public void setFile(File file) {
+            this.file = file;
+        }
+
+    }
+
     public static final String DESCRIPTOR_REQUIRED = "required";
 
     private List<FileSet> buildFileSets = new ArrayList<>();
@@ -78,9 +135,13 @@ public class IvyBuildList extends IvyTask {
 
     private String root = "*";
 
+    private List<BuildListModule> roots = new ArrayList<>();
+
     private boolean excludeRoot = false;
 
     private String leaf = "*";
+
+    private List<BuildListModule> leafs = new ArrayList<>();
 
     private String delimiter = ",";
 
@@ -110,6 +171,12 @@ public class IvyBuildList extends IvyTask {
         this.root = root;
     }
 
+    public BuildListModule createRoot() {
+        BuildListModule root = new BuildListModule();
+        roots.add(root);
+        return root;
+    }
+
     public boolean isExcludeRoot() {
         return excludeRoot;
     }
@@ -124,6 +191,12 @@ public class IvyBuildList extends IvyTask {
 
     public void setLeaf(String leaf) {
         this.leaf = leaf;
+    }
+
+    public BuildListModule createLeaf() {
+        BuildListModule leaf = new BuildListModule();
+        leafs.add(leaf);
+        return leaf;
     }
 
     public boolean isExcludeLeaf() {
@@ -172,28 +245,9 @@ public class IvyBuildList extends IvyTask {
         List<File> noDescriptor = new ArrayList<>();
         Collection<ModuleDescriptor> mds = new ArrayList<>();
 
-        Set<String> rootModuleNames = new LinkedHashSet<>();
-        if (!"*".equals(root)) {
-            StringTokenizer st = new StringTokenizer(root, delimiter);
-            while (st.hasMoreTokens()) {
-                rootModuleNames.add(st.nextToken());
-            }
-        }
-
-        Set<String> leafModuleNames = new LinkedHashSet<>();
-        if (!"*".equals(leaf)) {
-            StringTokenizer st = new StringTokenizer(leaf, delimiter);
-            while (st.hasMoreTokens()) {
-                leafModuleNames.add(st.nextToken());
-            }
-        }
-
-        Set<String> restartFromModuleNames = new LinkedHashSet<>();
-        if (!"*".equals(restartFrom)) {
-            StringTokenizer st = new StringTokenizer(restartFrom, delimiter);
-            // Only accept one (first) module
-            restartFromModuleNames.add(st.nextToken());
-        }
+        Set<MapMatcher> rootModules = convert(roots, root, settings);
+        Set<MapMatcher> leafModules = convert(leafs, leaf, settings);
+        Set<MapMatcher> restartFromModules = convert(Collections.<BuildListModule>emptyList(), restartFrom, settings);
 
         for (FileSet fs : buildFileSets) {
             DirectoryScanner ds = fs.getDirectoryScanner(getProject());
@@ -225,19 +279,19 @@ public class IvyBuildList extends IvyTask {
             }
         }
 
-        List<ModuleDescriptor> leafModuleDescriptors = convertModuleNamesToModuleDescriptors(mds,
-            leafModuleNames, "leaf");
-        List<ModuleDescriptor> rootModuleDescriptors = convertModuleNamesToModuleDescriptors(mds,
-            rootModuleNames, "root");
-        List<ModuleDescriptor> restartFromModuleDescriptors = convertModuleNamesToModuleDescriptors(
-            mds, restartFromModuleNames, "restartFrom");
+        List<ModuleDescriptor> leafModuleDescriptors =
+                findModuleDescriptors(mds, leafModules, "leaf");
+        List<ModuleDescriptor> rootModuleDescriptors =
+                findModuleDescriptors(mds, rootModules, "root");
+        List<ModuleDescriptor> restartFromModuleDescriptors =
+                findModuleDescriptors(mds, restartFromModules, "restartFrom");
 
         if (!rootModuleDescriptors.isEmpty()) {
-            Message.info("Filtering modules based on roots " + rootModuleNames);
+            Message.info("Filtering modules based on roots [" + extractModuleNames(rootModules) + "]");
             mds = filterModulesFromRoot(mds, rootModuleDescriptors);
         }
         if (!leafModuleDescriptors.isEmpty()) {
-            Message.info("Filtering modules based on leafs " + leafModuleNames);
+            Message.info("Filtering modules based on leafs [" + extractModuleNames(leafModules) + "]");
             mds = filterModulesFromLeaf(mds, leafModuleDescriptors);
         }
 
@@ -260,6 +314,7 @@ public class IvyBuildList extends IvyTask {
         if (!restartFromModuleDescriptors.isEmpty()) {
             boolean foundRestartFrom = false;
             List<ModuleDescriptor> keptModules = new ArrayList<>();
+            // Only accept one (first) module
             ModuleDescriptor restartFromModuleDescriptor = restartFromModuleDescriptors.get(0);
             for (ModuleDescriptor md : sortedModules) {
                 if (md.equals(restartFromModuleDescriptor)) {
@@ -289,6 +344,54 @@ public class IvyBuildList extends IvyTask {
         getProject().setProperty("ivy.sorted.modules", order.toString());
     }
 
+    private Set<MapMatcher> convert(List<BuildListModule> modulesList, String modulesString, IvySettings settings) {
+        Set<MapMatcher> result = new LinkedHashSet<>();
+
+        for (BuildListModule module : modulesList) {
+            File ivyFile = module.getFile();
+            if (ivyFile == null) {
+                String org = module.getOrganisation();
+                String name = module.getModule();
+                String rev = module.getRevision();
+                String branch = module.getBranch();
+
+                Map<String, String> attributes = new HashMap<>();
+                attributes.put(IvyPatternHelper.ORGANISATION_KEY, org == null ? PatternMatcher.ANY_EXPRESSION : org);
+                attributes.put(IvyPatternHelper.MODULE_KEY, name == null ? PatternMatcher.ANY_EXPRESSION : name);
+                attributes.put(IvyPatternHelper.MODULE_KEY, rev == null ? PatternMatcher.ANY_EXPRESSION : rev);
+                attributes.put(IvyPatternHelper.MODULE_KEY, branch == null ? PatternMatcher.ANY_EXPRESSION : branch);
+
+                result.add(new MapMatcher(attributes, settings.getMatcher(PatternMatcher.EXACT)));
+            } else {
+                try {
+                    ModuleDescriptor md = ModuleDescriptorParserRegistry.getInstance()
+                            .parseDescriptor(settings, ivyFile.toURI().toURL(),
+                                    doValidate(settings));
+
+                    Map<String, String> attributes = new HashMap<>();
+                    attributes.putAll(md.getModuleRevisionId().getAttributes());
+                    attributes.put("resource", md.getResource().getName());
+
+                    result.add(new MapMatcher(attributes, settings.getMatcher(PatternMatcher.EXACT)));
+                } catch (Exception e) {
+                    throw new BuildException(e);
+                }
+            }
+        }
+
+        if (!"*".equals(modulesString)) {
+            StringTokenizer st = new StringTokenizer(modulesString, getDelimiter());
+            while (st.hasMoreTokens()) {
+                Map<String, String> attributes = new HashMap<>();
+                attributes.put(IvyPatternHelper.MODULE_KEY, st.nextToken());
+
+                result.add(new MapMatcher(attributes, settings.getMatcher(PatternMatcher.EXACT)));
+            }
+        }
+
+        return result;
+    }
+
     private void onMissingDescriptor(File buildFile, File ivyFile, List<File> noDescriptor) {
         switch (onMissingDescriptor) {
             case OnMissingDescriptor.FAIL:
@@ -312,36 +415,50 @@ public class IvyBuildList extends IvyTask {
         }
     }
 
-    private List<ModuleDescriptor> convertModuleNamesToModuleDescriptors(
-            Collection<ModuleDescriptor> mds, Set<String> moduleNames, String kind) {
+    private List<ModuleDescriptor> findModuleDescriptors(
+            Collection<ModuleDescriptor> mds, Set<MapMatcher> matchers, String kind) {
         List<ModuleDescriptor> result = new ArrayList<>();
-        Set<String> foundModuleNames = new HashSet<>();
+        Set<MapMatcher> missingMatchers = new HashSet<>(matchers);
 
         for (ModuleDescriptor md : mds) {
-            String name = md.getModuleRevisionId().getModuleId().getName();
-            if (moduleNames.contains(name)) {
-                foundModuleNames.add(name);
-                result.add(md);
+            Map<String, String> attributes = new HashMap<>();
+            attributes.putAll(md.getAttributes());
+            attributes.put("resource", md.getResource().getName());
+
+            for (MapMatcher matcher : matchers) {
+                if (matcher.matches(attributes)) {
+                    missingMatchers.remove(matcher);
+                    result.add(md);
+                }
             }
         }
 
-        if (foundModuleNames.size() < moduleNames.size()) {
-            Set<String> missingModules = new HashSet<>(moduleNames);
-            missingModules.removeAll(foundModuleNames);
-
-            StringBuilder missingNames = new StringBuilder();
-            String sep = "";
-            for (String name : missingModules) {
-                missingNames.append(sep);
-                missingNames.append(name);
-                sep = ", ";
-            }
-
+        if (!missingMatchers.isEmpty()) {
             throw new BuildException("unable to find " + kind + " module(s) "
-                    + missingNames.toString() + " in build fileset");
+                    + extractModuleNames(missingMatchers) + " in build fileset");
         }
 
         return result;
+    }
+
+    private String extractModuleNames(Set<MapMatcher> matchers) {
+        StringBuilder result = new StringBuilder();
+
+        String sep = "";
+        for (MapMatcher matcher : matchers) {
+            result.append(sep);
+
+            Map<String, String> attributes = matcher.getAttributes();
+            String organisation = attributes.get(IvyPatternHelper.ORGANISATION_KEY);
+            if (organisation != null && !PatternMatcher.ANY_EXPRESSION.equals(organisation)) {
+                result.append(organisation);
+                result.append('#');
+            }
+            result.append(attributes.get(IvyPatternHelper.MODULE_KEY));
+            sep = ", ";
+        }
+
+        return result.toString();
     }
 
     /**

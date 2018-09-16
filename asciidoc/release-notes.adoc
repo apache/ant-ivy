@@ -101,6 +101,7 @@ For details about the following changes, check our JIRA install at link:https://
 - NEW: Add ivy.maven.lookup.sources and ivy.maven.lookup.javadoc variables to control the lookup of the additional artifacts. Defaults to true, for backward compatibility (jira:IVY-1529[])
 - NEW: Add (conditional) support for SHA-256, SHA-512 and SHA-384 checksum algorithms (jira:IVY-1554[]) (Thanks to Jaikiran Pai)
 - NEW: The standalone Ivy jar can now be used to generate a pom file for the resolved module, using the `makepom` option (Thanks to link:https://github.com/aanno[Thomas Pasch])
+- NEW: The buildlist task can now have `root` and `leaf` subelements to specify the organisation (and other attributes) of the root and leaf modules (jira:/IVY-1242[]) and (jira:IVY-1293[])
 
 
 ////
