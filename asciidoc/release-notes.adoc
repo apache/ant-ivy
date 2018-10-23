@@ -86,6 +86,8 @@ For details about the following changes, check our JIRA install at link:https://
 - FIX: Respect exclude regardless of resolution order (jira:IVY-1486[]) (thanks to David Turner)
 - FIX: ModuleDescriptorMemoryCache didn't detect outdated entries when Ivy file was updated in the cache by another process
 - FIX: Store ArtifactOrigin's location as a URL
+- FIX: Retrieve task, with symlink enabled, would not create symlinks for artifacts in certain specific cases (jira:IVY-1594[])
+
 
 - IMPROVEMENT: Throw an IllegalStateException when retrieving the resolutionCacheRoot on the DefaultResolutionCacheManager if the basedir (or IvySettings) is not set (jira:IVY-1482[])
 - IMPROVEMENT: Optimization: limit the revision numbers scanned if revision prefix is specified (Thanks to Ernestas Vaiciukevi&ccaron;ius)
