@@ -77,8 +77,20 @@ public final class FileUtil {
      */
     public static boolean symlink(final File target, final File link, final boolean overwrite)
             throws IOException {
-        if (!prepareCopy(target, link, overwrite)) {
-            return false;
+        // prepare for symlink
+        if (target.isFile()) {
+            // it's a file that is being symlinked, so do the necessary preparation
+            // for the linking, similar to what we do with preparation for copying
+            if (!prepareCopy(target, link, overwrite)) {
+                return false;
+            }
+        } else {
+            // it's a directory being symlinked, make sure the "link" that is being
+            // created has the necessary parent directories in place before triggering
+            // symlink creation
+            if (link.getParentFile() != null) {
+                link.getParentFile().mkdirs();
+            }
         }
         Files.createSymbolicLink(link.toPath(), target.getAbsoluteFile().toPath());
         return true;

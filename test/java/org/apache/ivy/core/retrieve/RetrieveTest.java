@@ -27,6 +27,7 @@ import org.apache.ivy.core.event.retrieve.EndRetrieveEvent;
 import org.apache.ivy.core.event.retrieve.StartRetrieveArtifactEvent;
 import org.apache.ivy.core.event.retrieve.StartRetrieveEvent;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.ResolveReport;
@@ -252,6 +253,32 @@ public class RetrieveTest {
             getRetrieveOptions().setMakeSymlinks(true).setDestArtifactPattern(pattern));
         assertLinkOrExists(IvyPatternHelper.substitute(pattern, "org1", "mod1.2", "2.0", "mod1.2", "jar",
             "jar", "default"));
+    }
+
+    /**
+     * Tests that retrieve, when invoked with "symlink" enabled, creates the necessary symlink
+     * when the artifact being retrieved is a directory instead of a regular file
+     *
+     * @throws Exception
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1594">IVY-1594</a>
+     */
+    @Test
+    public void testRetrieveZipArtifactWithSymlinks() throws Exception {
+        // resolve (inline) with org1:mod1.1:3.0 as a dependency
+        final ResolveReport report = ivy.resolve(new ModuleRevisionId(new ModuleId("org1", "mod1.1"), "3.0"),
+                getResolveOptions(new String[]{"*"}), false);
+        assertNotNull("Resolution report is null", report);
+        final ModuleDescriptor md = report.getModuleDescriptor();
+        assertNotNull("Module descriptor is null", md);
+
+        final String retrievePattern = "build/test/retrieve/[module]/[conf]/[artifact]-[revision]";
+        ivy.retrieve(md.getModuleRevisionId(),
+                getRetrieveOptions().setMakeSymlinks(true).setDestArtifactPattern(retrievePattern));
+
+        final String expectedRetrieveLocation = IvyPatternHelper.substitute(retrievePattern, "org1", "mod1.1",
+                "3.0", "zipped-artifact", null, null, "default");
+        // make sure it's retrieved as a symlink (on systems that support symlink)
+        assertLinkOrExists(expectedRetrieveLocation);
     }
 
     /**
