@@ -16,7 +16,7 @@
   -->
 <ivy-module version="1.0">
     <info organisation="org1"
-          module="mod1.1"
+          module="mod1.7"
           revision="3.0"
     />
     <publications>
