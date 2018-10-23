@@ -1038,7 +1038,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         assertNotNull("organisation not found: org1", org);
         ModuleEntry[] mods = resolver.listModules(org);
         ResolverTestHelper.assertModuleEntries(resolver, org, new String[] {"mod1.1", "mod1.2",
-                "mod1.3", "mod1.4", "mod1.5", "mod1.6"}, mods);
+                "mod1.3", "mod1.4", "mod1.5", "mod1.6", "mod1.7"}, mods);
 
         ModuleEntry mod = ResolverTestHelper.getEntry(mods, "mod1.1");
         assertNotNull("module not found: mod1.1", mod);
