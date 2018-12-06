@@ -85,9 +85,17 @@ public final class FileUtil {
                 return false;
             }
         } else {
-            // it's a directory being symlinked, make sure the "link" that is being
-            // created has the necessary parent directories in place before triggering
-            // symlink creation
+            // it's a directory being symlinked
+
+            // see if the directory represented by the "link" exists and is already a symbolic
+            // link. If it is and if we are asked to overwrite then we *only* break the link
+            // in preparation of symlink creation, later in this method
+            if (Files.isSymbolicLink(link.toPath()) && overwrite) {
+                Message.verbose("Un-linking existing symbolic link " + link + " during symlink creation, since overwrite=true");
+                Files.delete(link.toPath());
+            }
+            // make sure the "link" that is being created has the necessary parent directories
+            // in place before triggering symlink creation
             if (link.getParentFile() != null) {
                 link.getParentFile().mkdirs();
             }
