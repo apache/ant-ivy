@@ -164,7 +164,7 @@ Subject: [VOTE] Ivy ${version} Release
 
 I have built a release candidate for Ivy ${version}
 
-The git tag of this release is: https://git-wip-us.apache.org/repos/asf?p=ant-ivy.git;a=tag;h=refs/tags/${version} with the sha1 ${githash-of-tag}
+The git tag of this release is: https://gitbox.apache.org/repos/asf?p=ant-ivy.git;a=tag;h=refs/tags/${version} with the sha1 ${githash-of-tag}
 
 The artifacts has been published to: https://dist.apache.org/repos/dist/dev/ant/ivy/${version} at revision ${svn-rev-of-the-check-in}
 

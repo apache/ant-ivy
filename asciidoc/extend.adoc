@@ -37,6 +37,6 @@ If you still don't find what you need, then you'll have to develop your own plug
 
 All Ivy plug-ins use the same code patterns as Ant specific tasks for parameters. This means that if you want to have a `myattribute` of type `String`, you just have to declare a method called `setMyattribute(String val)` on your plug-in. The same applies to child tags, you just have to follow Ant specifications.
 
-All pluggable code in Ivy is located in the link:https://git-wip-us.apache.org/repos/asf?p=ant-ivy.git;a=tree;f=src/java/org/apache/ivy/plugins[org.apache.ivy.plugins] package. In each package you will find an interface that you must implement to provide a new plugin. We usually also provide an abstract class easing the implementation and making your code more independent of interface changes. We heavily recommend using these abstract classes as a base class.
+All pluggable code in Ivy is located in the link:https://gitbox.apache.org/repos/asf?p=ant-ivy.git;a=tree;f=src/java/org/apache/ivy/plugins[org.apache.ivy.plugins] package. In each package you will find an interface that you must implement to provide a new plugin. We usually also provide an abstract class easing the implementation and making your code more independent of interface changes. We heavily recommend using these abstract classes as a base class.
 
 To understand how your implementation can be done, we suggest looking at existing implementations we provide, it's the best way to get started.

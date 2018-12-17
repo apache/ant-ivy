@@ -34,7 +34,7 @@ For the first tutorial you won't even have to install Ivy (assuming you have Ant
 
 If you have any trouble, check our link:https://ant.apache.org/ivy/faq.html[FAQ].
 
-OK, you've just seen how easy it is to take your first step with Ivy. Go ahead with the other tutorials, but before you do, make sure you have properly link:install{outfilesuffix}[installed] Ivy and downloaded the tutorials sources (included in all Ivy distributions, in the link:https://git-wip-us.apache.org/repos/asf?p=ant-ivy.git;a=tree;f=src/example[src/example] directory).
+OK, you've just seen how easy it is to take your first step with Ivy. Go ahead with the other tutorials, but before you do, make sure you have properly link:install{outfilesuffix}[installed] Ivy and downloaded the tutorials sources (included in all Ivy distributions, in the link:https://gitbox.apache.org/repos/asf?p=ant-ivy.git;a=tree;f=src/example[src/example] directory).
 
 == List of available tutorials
 

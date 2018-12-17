@@ -85,4 +85,4 @@ If you want to use Ivy only in your Ant build scripts, and have an internet conn
 </project>
 ----
 
-Then the only thing to do is to add the init-ivy target in the depends attribute of your targets using Ivy, and add the ivy namespace to your build script. See the self contained link:https://git-wip-us.apache.org/repos/asf?p=ant-ivy.git;a=blob;f=src/example/go-ivy/build.xml[go-ivy] example for details about this.
+Then the only thing to do is to add the init-ivy target in the depends attribute of your targets using Ivy, and add the ivy namespace to your build script. See the self contained link:https://gitbox.apache.org/repos/asf?p=ant-ivy.git;a=blob;f=src/example/go-ivy/build.xml[go-ivy] example for details about this.

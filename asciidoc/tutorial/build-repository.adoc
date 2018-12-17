@@ -52,7 +52,7 @@ Default target: basic
 
 
 
-This project is accessible in the link:https://git-wip-us.apache.org/repos/asf?p=ant-ivy.git;a=tree;f=src/example/build-a-ivy-repository[src/example/build-a-ivy-repository]
+This project is accessible in the link:https://gitbox.apache.org/repos/asf?p=ant-ivy.git;a=tree;f=src/example/build-a-ivy-repository[src/example/build-a-ivy-repository]
 
 Next steps: +
 link:../tutorial/build-repository/basic.html[Basic repository copy] +

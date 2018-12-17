@@ -45,7 +45,7 @@ If you use Ant *1.5.1* or superior, you have to define the tasks you use in your
   <taskdef name="ivy-publish" classname="org.apache.ivy.ant.IvyPublish"/>
 ----
 
-_Note_: the tasks listed above are non exhaustive. For a complete list of tasks with the corresponding classes, see the link:https://git-wip-us.apache.org/repos/asf?p=ant-ivy.git;a=blob;f=src/java/org/apache/ivy/ant/antlib.xml[antlib.xml] file in Git repository or the jar file you use.
+_Note_: the tasks listed above are non exhaustive. For a complete list of tasks with the corresponding classes, see the link:https://gitbox.apache.org/repos/asf?p=ant-ivy.git;a=blob;f=src/java/org/apache/ivy/ant/antlib.xml[antlib.xml] file in Git repository or the jar file you use.
 
 Then you can use the tasks, but check their name, following samples assume you use the Ivy namespace (ivy:xxx tasks), whereas with Ant 1.5 you cannot use namespace, and should therefore use ivy-xxx tasks if you have added the taskdefs as above.
 
@@ -107,7 +107,7 @@ ivy.buildlist.ivyfilepath = ivy.xml
 ivy.checksums=sha1,md5
 ----
 
-_For the latest version of these properties, you can check the link:https://git-wip-us.apache.org/repos/asf?p=ant-ivy.git;a=blob;f=src/java/org/apache/ivy/core/settings/ivy.properties[Git version]._
+_For the latest version of these properties, you can check the link:https://gitbox.apache.org/repos/asf?p=ant-ivy.git;a=blob;f=src/java/org/apache/ivy/core/settings/ivy.properties[Git version]._
 
 (*__since 2.0__*) After calling the first Ivy task, the property `ivy.version` will be available and contains the version of the used Ivy library.
 

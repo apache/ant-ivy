@@ -65,13 +65,13 @@ As you can see, we have here a pretty interesting set of modules with dependenci
 The sources for this tutorial can be found in `src/example/multi-project` in the Ivy distribution. In this directory, you will find the following files:
 
 
-* link:https://git-wip-us.apache.org/repos/asf?p=ant-ivy.git;a=blob;f=src/example/multi-project/build.xml[build.xml] +
+* link:https://gitbox.apache.org/repos/asf?p=ant-ivy.git;a=blob;f=src/example/multi-project/build.xml[build.xml] +
 This is a root build file which can be used to call targets on all modules, in the order of their dependencies (ensuring that a module is always built before any module depending on it, for instance)
 
 * common
 
-  ** link:https://git-wip-us.apache.org/repos/asf?p=ant-ivy.git;a=blob;f=src/example/multi-project/common/common.xml[common.xml] the common build file imported by all build.xml files for each project. This build defines the targets which can be used in all projects.
-  ** link:https://git-wip-us.apache.org/repos/asf?p=ant-ivy.git;a=blob;f=src/example/multi-project/common/build.properties[build.properties] some properties common to all projects
+  ** link:https://gitbox.apache.org/repos/asf?p=ant-ivy.git;a=blob;f=src/example/multi-project/common/common.xml[common.xml] the common build file imported by all build.xml files for each project. This build defines the targets which can be used in all projects.
+  ** link:https://gitbox.apache.org/repos/asf?p=ant-ivy.git;a=blob;f=src/example/multi-project/common/build.properties[build.properties] some properties common to all projects
 
 +
 

@@ -71,8 +71,8 @@
     </release>
     <repository>
       <GitRepository>
-        <location rdf:resource="https://git-wip-us.apache.org/repos/asf/ant-ivy.git"/>
-        <browse rdf:resource="https://git-wip-us.apache.org/repos/asf?p=ant-ivy.git"/>
+        <location rdf:resource="https://gitbox.apache.org/repos/asf/ant-ivy.git"/>
+        <browse rdf:resource="https://gitbox.apache.org/repos/asf?p=ant-ivy.git"/>
       </GitRepository>
     </repository>
   </Project>
