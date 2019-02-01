@@ -17,10 +17,21 @@
  */
 package org.apache.ivy.ant;
 
+import org.apache.ivy.util.CopyProgressListener;
 import org.apache.ivy.util.FileUtil;
+import org.apache.ivy.util.Message;
+import org.junit.Assert;
+import org.junit.Assume;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -32,6 +43,24 @@ import static org.junit.Assert.assertTrue;
  * @author Jaikiran Pai
  */
 public class FileUtilTest {
+
+    private static boolean symlinkCapable = false;
+
+    @BeforeClass
+    public static void beforeClass() {
+        try {
+            final Path tmpFile = Files.createTempFile(null, null);
+            tmpFile.toFile().deleteOnExit();
+            final Path symlink = Files.createSymbolicLink(Paths.get(Files.createTempDirectory(null).toString(),
+                    "symlink-test-file"), tmpFile);
+            symlinkCapable = true;
+            symlink.toFile().deleteOnExit();
+        } catch (IOException ioe) {
+            // ignore and move on
+            symlinkCapable = false;
+            Message.info("Current system isn't considered to have symlink capability due to ", ioe);
+        }
+    }
 
     /**
      * Tests that {@link FileUtil#normalize(String)} works as expected for some basic file paths
@@ -81,6 +110,45 @@ public class FileUtilTest {
             assertEquals("Unexpected normalization of path " + pathSeven, fileSystemRoot.getPath() + "helloworld", FileUtil.normalize(pathSeven).getPath());
 
         }
+    }
+
+    /**
+     * Tests that the call to {@link FileUtil#copy(File, File, CopyProgressListener)} doesn't corrupt
+     * the source file if the destination file resolves back to the source file being copied
+     *
+     * @throws Exception
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1602">IVY-1602</a> for more details
+     */
+    @Test
+    public void testCopyOfSameFile() throws Exception {
+        Assume.assumeTrue("Skipping test due to system not having symlink capability", symlinkCapable);
+        final Path srcDir = Files.createTempDirectory(null);
+        srcDir.toFile().deleteOnExit();
+        // create a src file
+        final Path srcFile = Paths.get(srcDir.toString(), "helloworld.txt");
+        srcFile.toFile().deleteOnExit();
+        final byte[] fileContent = "Hello world!!!".getBytes(StandardCharsets.UTF_8);
+        Files.write(srcFile, fileContent);
+
+        final Path destDir = Paths.get(Files.createTempDirectory(null).toString(), "symlink-dest");
+        destDir.toFile().deleteOnExit();
+        // now create a symlink to the dir containing the src file we intend to copy later
+        Files.createSymbolicLink(destDir, srcDir);
+        // at this point destDir is a symlink to the srcDir and the srcDir contains the srcFile.
+        // we now attempt to copy the srcFile to a destination which resolves back the same srcFile
+        final Path destFile = Paths.get(destDir.toString(), srcFile.getFileName().toString());
+        FileUtil.copy(srcFile.toFile(), destFile.toFile(), null, false);
+        // make sure the copy didn't corrupt the source file
+        Assert.assertTrue("Unexpected content in source file " + srcFile, Arrays.equals(fileContent, Files.readAllBytes(srcFile)));
+        // also check the dest file has the same content as source file after the copy operation
+        Assert.assertTrue("Unexpected content in dest file " + destFile, Arrays.equals(fileContent, Files.readAllBytes(destFile)));
+
+        // do the same tests now with overwrite = true
+        FileUtil.copy(srcFile.toFile(), destFile.toFile(), null, true);
+        // make sure the copy didn't corrupt the source file
+        Assert.assertTrue("Unexpected content in source file " + srcFile, Arrays.equals(fileContent, Files.readAllBytes(srcFile)));
+        // also check the dest file has the same content as source file after the copy operation
+        Assert.assertTrue("Unexpected content in dest file " + destFile, Arrays.equals(fileContent, Files.readAllBytes(destFile)));
     }
 
 }

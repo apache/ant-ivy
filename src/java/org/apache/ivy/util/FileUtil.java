@@ -34,6 +34,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -104,6 +105,16 @@ public final class FileUtil {
         return true;
     }
 
+    /**
+     * This is the same as calling {@link #copy(File, File, CopyProgressListener, boolean)} with
+     * {@code overwrite} param as {@code true}
+     *
+     * @param src  The source to copy
+     * @param dest The destination
+     * @param l    A {@link CopyProgressListener}. Can be null
+     * @return Returns true if the file was copied. Else returns false
+     * @throws IOException If any exception occurs during the copy operation
+     */
     public static boolean copy(File src, File dest, CopyProgressListener l) throws IOException {
         return copy(src, dest, l, false);
     }
@@ -163,6 +174,19 @@ public final class FileUtil {
             return deepCopy(src, dest, l, overwrite);
         }
         // else it is a file copy
+        // check if it's the same file (the src and the dest). if they are the same, skip the copy
+        try {
+            if (Files.isSameFile(src.toPath(), dest.toPath())) {
+                Message.verbose("Skipping copy of file " + src + " to " + dest + " since they are the same file");
+                // we consider the file as copied if overwrite is true
+                return overwrite;
+            }
+        } catch (NoSuchFileException nsfe) {
+            // ignore and move on and attempt the copy
+        } catch (IOException ioe) {
+            // log and move on and attempt the copy
+            Message.verbose("Could not determine if " + src + " and dest " + dest + " are the same file", ioe);
+        }
         copy(new FileInputStream(src), dest, l);
         long srcLen = src.length();
         long destLen = dest.length();
