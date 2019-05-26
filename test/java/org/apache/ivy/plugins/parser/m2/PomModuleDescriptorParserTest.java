@@ -6,7 +6,7 @@
  *  (the "License"); you may not use this file except in compliance with
  *  the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *      https://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -701,7 +701,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertNotNull(licenses);
         assertEquals(1, licenses.length);
         assertEquals("The Apache Software License, Version 2.0", licenses[0].getName());
-        assertEquals("http://www.apache.org/licenses/LICENSE-2.0.txt", licenses[0].getUrl());
+        assertEquals("https://www.apache.org/licenses/LICENSE-2.0.txt", licenses[0].getUrl());
     }
 
     /**
@@ -743,7 +743,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertNotNull("No licenses found in the module " + childModule, licenses);
         assertEquals("Unexpected number of licenses found in the module " + childModule, 1, licenses.length);
         assertEquals("Unexpected license name", "The Apache Software License, Version 2.0", licenses[0].getName());
-        assertEquals("Unexpected license URL", "http://www.apache.org/licenses/LICENSE-2.0.txt", licenses[0].getUrl());
+        assertEquals("Unexpected license URL", "https://www.apache.org/licenses/LICENSE-2.0.txt", licenses[0].getUrl());
     }
 
     @Test

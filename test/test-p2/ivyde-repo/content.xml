@@ -9,7 +9,7 @@
    "License"); you may not use this file except in compliance
    with the License.  You may obtain a copy of the License at
 
-     http://www.apache.org/licenses/LICENSE-2.0
+     https://www.apache.org/licenses/LICENSE-2.0
 
    Unless required by applicable law or agreed to in writing,
    software distributed under the License is distributed on an
@@ -64,7 +64,7 @@
         <property name='df_LT.featureName' value='Apache Ivy'/>
         <property name='df_LT.providerName' value='Apache Software Foundation'/>
         <property name='df_LT.description' value='Ivy bundle'/>
-        <property name='df_LT.license' value='Licensed to the Apache Software Foundation (ASF) under one&#xA;or more contributor license agreements.  See the NOTICE file&#xA;distributed with this work for additional information&#xA;regarding copyright ownership.  The ASF licenses this file&#xA;to you under the Apache License, Version 2.0 (the&#xA;&quot;License&quot;); you may not use this file except in compliance&#xA;with the License.  You may obtain a copy of the License at&#xA;&#xA;http://www.apache.org/licenses/LICENSE-2.0&#xA;&#xA;Unless required by applicable law or agreed to in writing,&#xA;software distributed under the License is distributed on an&#xA;&quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY&#xA;KIND, either express or implied.  See the License for the&#xA;specific language governing permissions and limitations&#xA;under the License.'/>
+        <property name='df_LT.license' value='Licensed to the Apache Software Foundation (ASF) under one&#xA;or more contributor license agreements.  See the NOTICE file&#xA;distributed with this work for additional information&#xA;regarding copyright ownership.  The ASF licenses this file&#xA;to you under the Apache License, Version 2.0 (the&#xA;&quot;License&quot;); you may not use this file except in compliance&#xA;with the License.  You may obtain a copy of the License at&#xA;&#xA;https://www.apache.org/licenses/LICENSE-2.0&#xA;&#xA;Unless required by applicable law or agreed to in writing,&#xA;software distributed under the License is distributed on an&#xA;&quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY&#xA;KIND, either express or implied.  See the License for the&#xA;specific language governing permissions and limitations&#xA;under the License.'/>
       </properties>
       <provides size='3'>
         <provided namespace='org.eclipse.equinox.p2.iu' name='org.apache.ivy.feature.feature.jar' version='2.2.0.final_20100923230623'/>
@@ -86,7 +86,7 @@
         </instructions>
       </touchpointData>
       <licenses size='1'>
-        <license uri='http://www.apache.org/licenses/LICENSE-2.0' url='http://www.apache.org/licenses/LICENSE-2.0'>
+        <license uri='https://www.apache.org/licenses/LICENSE-2.0' url='http://www.apache.org/licenses/LICENSE-2.0'>
           %license
         </license>
       </licenses>
@@ -102,7 +102,7 @@
         <property name='df_LT.featureName' value='Apache Ivy'/>
         <property name='df_LT.providerName' value='Apache Software Foundation'/>
         <property name='df_LT.description' value='Ivy bundle'/>
-        <property name='df_LT.license' value='Licensed to the Apache Software Foundation (ASF) under one&#xA;or more contributor license agreements.  See the NOTICE file&#xA;distributed with this work for additional information&#xA;regarding copyright ownership.  The ASF licenses this file&#xA;to you under the Apache License, Version 2.0 (the&#xA;&quot;License&quot;); you may not use this file except in compliance&#xA;with the License.  You may obtain a copy of the License at&#xA;&#xA;http://www.apache.org/licenses/LICENSE-2.0&#xA;&#xA;Unless required by applicable law or agreed to in writing,&#xA;software distributed under the License is distributed on an&#xA;&quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY&#xA;KIND, either express or implied.  See the License for the&#xA;specific language governing permissions and limitations&#xA;under the License.'/>
+        <property name='df_LT.license' value='Licensed to the Apache Software Foundation (ASF) under one&#xA;or more contributor license agreements.  See the NOTICE file&#xA;distributed with this work for additional information&#xA;regarding copyright ownership.  The ASF licenses this file&#xA;to you under the Apache License, Version 2.0 (the&#xA;&quot;License&quot;); you may not use this file except in compliance&#xA;with the License.  You may obtain a copy of the License at&#xA;&#xA;https://www.apache.org/licenses/LICENSE-2.0&#xA;&#xA;Unless required by applicable law or agreed to in writing,&#xA;software distributed under the License is distributed on an&#xA;&quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY&#xA;KIND, either express or implied.  See the License for the&#xA;specific language governing permissions and limitations&#xA;under the License.'/>
       </properties>
       <provides size='2'>
         <provided namespace='org.eclipse.equinox.p2.iu' name='org.apache.ivy.feature.feature.group' version='2.0.0.final_20090108225011'/>
@@ -119,7 +119,7 @@
       </requires>
       <touchpoint id='null' version='0.0.0'/>
       <licenses size='1'>
-        <license uri='http://www.apache.org/licenses/LICENSE-2.0' url='http://www.apache.org/licenses/LICENSE-2.0'>
+        <license uri='https://www.apache.org/licenses/LICENSE-2.0' url='http://www.apache.org/licenses/LICENSE-2.0'>
           %license
         </license>
       </licenses>
@@ -133,7 +133,7 @@
         <property name='df_LT.featureName' value='Apache IvyDE'/>
         <property name='df_LT.providerName' value='Apache Software Foundation'/>
         <property name='df_LT.description' value='IvyDE Eclipse plugin'/>
-        <property name='df_LT.license' value='Licensed to the Apache Software Foundation (ASF) under one&#xA;or more contributor license agreements.  See the NOTICE file&#xA;distributed with this work for additional information&#xA;regarding copyright ownership.  The ASF licenses this file&#xA;to you under the Apache License, Version 2.0 (the&#xA;&quot;License&quot;); you may not use this file except in compliance&#xA;with the License.  You may obtain a copy of the License at&#xA;&#xA;http://www.apache.org/licenses/LICENSE-2.0&#xA;&#xA;Unless required by applicable law or agreed to in writing,&#xA;software distributed under the License is distributed on an&#xA;&quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY&#xA;KIND, either express or implied.  See the License for the&#xA;specific language governing permissions and limitations&#xA;under the License.'/>
+        <property name='df_LT.license' value='Licensed to the Apache Software Foundation (ASF) under one&#xA;or more contributor license agreements.  See the NOTICE file&#xA;distributed with this work for additional information&#xA;regarding copyright ownership.  The ASF licenses this file&#xA;to you under the Apache License, Version 2.0 (the&#xA;&quot;License&quot;); you may not use this file except in compliance&#xA;with the License.  You may obtain a copy of the License at&#xA;&#xA;https://www.apache.org/licenses/LICENSE-2.0&#xA;&#xA;Unless required by applicable law or agreed to in writing,&#xA;software distributed under the License is distributed on an&#xA;&quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY&#xA;KIND, either express or implied.  See the License for the&#xA;specific language governing permissions and limitations&#xA;under the License.'/>
       </properties>
       <provides size='3'>
         <provided namespace='org.eclipse.equinox.p2.iu' name='org.apache.ivyde.feature.feature.jar' version='2.0.0.final-200907011148-RELEASE'/>
@@ -155,7 +155,7 @@
         </instructions>
       </touchpointData>
       <licenses size='1'>
-        <license uri='http://www.apache.org/licenses/LICENSE-2.0' url='http://www.apache.org/licenses/LICENSE-2.0'>
+        <license uri='https://www.apache.org/licenses/LICENSE-2.0' url='http://www.apache.org/licenses/LICENSE-2.0'>
           %license
         </license>
       </licenses>
@@ -200,7 +200,7 @@
         <property name='df_LT.featureName' value='Apache IvyDE'/>
         <property name='df_LT.providerName' value='Apache Software Foundation'/>
         <property name='df_LT.description' value='IvyDE Eclipse plugin'/>
-        <property name='df_LT.license' value='Licensed to the Apache Software Foundation (ASF) under one&#xA;or more contributor license agreements.  See the NOTICE file&#xA;distributed with this work for additional information&#xA;regarding copyright ownership.  The ASF licenses this file&#xA;to you under the Apache License, Version 2.0 (the&#xA;&quot;License&quot;); you may not use this file except in compliance&#xA;with the License.  You may obtain a copy of the License at&#xA;&#xA;http://www.apache.org/licenses/LICENSE-2.0&#xA;&#xA;Unless required by applicable law or agreed to in writing,&#xA;software distributed under the License is distributed on an&#xA;&quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY&#xA;KIND, either express or implied.  See the License for the&#xA;specific language governing permissions and limitations&#xA;under the License.'/>
+        <property name='df_LT.license' value='Licensed to the Apache Software Foundation (ASF) under one&#xA;or more contributor license agreements.  See the NOTICE file&#xA;distributed with this work for additional information&#xA;regarding copyright ownership.  The ASF licenses this file&#xA;to you under the Apache License, Version 2.0 (the&#xA;&quot;License&quot;); you may not use this file except in compliance&#xA;with the License.  You may obtain a copy of the License at&#xA;&#xA;https://www.apache.org/licenses/LICENSE-2.0&#xA;&#xA;Unless required by applicable law or agreed to in writing,&#xA;software distributed under the License is distributed on an&#xA;&quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY&#xA;KIND, either express or implied.  See the License for the&#xA;specific language governing permissions and limitations&#xA;under the License.'/>
       </properties>
       <provides size='3'>
         <provided namespace='org.eclipse.equinox.p2.iu' name='org.apache.ivyde.feature.feature.jar' version='2.1.0.201008101807-RELEASE'/>
@@ -222,7 +222,7 @@
         </instructions>
       </touchpointData>
       <licenses size='1'>
-        <license uri='http://www.apache.org/licenses/LICENSE-2.0' url='http://www.apache.org/licenses/LICENSE-2.0'>
+        <license uri='https://www.apache.org/licenses/LICENSE-2.0' url='http://www.apache.org/licenses/LICENSE-2.0'>
           %license
         </license>
       </licenses>
@@ -238,7 +238,7 @@
         <property name='df_LT.featureName' value='Apache IvyDE'/>
         <property name='df_LT.providerName' value='Apache Software Foundation'/>
         <property name='df_LT.description' value='IvyDE Eclipse plugin'/>
-        <property name='df_LT.license' value='Licensed to the Apache Software Foundation (ASF) under one&#xA;or more contributor license agreements.  See the NOTICE file&#xA;distributed with this work for additional information&#xA;regarding copyright ownership.  The ASF licenses this file&#xA;to you under the Apache License, Version 2.0 (the&#xA;&quot;License&quot;); you may not use this file except in compliance&#xA;with the License.  You may obtain a copy of the License at&#xA;&#xA;http://www.apache.org/licenses/LICENSE-2.0&#xA;&#xA;Unless required by applicable law or agreed to in writing,&#xA;software distributed under the License is distributed on an&#xA;&quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY&#xA;KIND, either express or implied.  See the License for the&#xA;specific language governing permissions and limitations&#xA;under the License.'/>
+        <property name='df_LT.license' value='Licensed to the Apache Software Foundation (ASF) under one&#xA;or more contributor license agreements.  See the NOTICE file&#xA;distributed with this work for additional information&#xA;regarding copyright ownership.  The ASF licenses this file&#xA;to you under the Apache License, Version 2.0 (the&#xA;&quot;License&quot;); you may not use this file except in compliance&#xA;with the License.  You may obtain a copy of the License at&#xA;&#xA;https://www.apache.org/licenses/LICENSE-2.0&#xA;&#xA;Unless required by applicable law or agreed to in writing,&#xA;software distributed under the License is distributed on an&#xA;&quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY&#xA;KIND, either express or implied.  See the License for the&#xA;specific language governing permissions and limitations&#xA;under the License.'/>
       </properties>
       <provides size='2'>
         <provided namespace='org.eclipse.equinox.p2.iu' name='org.apache.ivyde.feature.feature.group' version='2.0.0.final-200907011148-RELEASE'/>
@@ -270,7 +270,7 @@
       </requires>
       <touchpoint id='null' version='0.0.0'/>
       <licenses size='1'>
-        <license uri='http://www.apache.org/licenses/LICENSE-2.0' url='http://www.apache.org/licenses/LICENSE-2.0'>
+        <license uri='https://www.apache.org/licenses/LICENSE-2.0' url='http://www.apache.org/licenses/LICENSE-2.0'>
           %license
         </license>
       </licenses>
@@ -286,7 +286,7 @@
         <property name='df_LT.featureName' value='Apache Ivy'/>
         <property name='df_LT.providerName' value='Apache Software Foundation'/>
         <property name='df_LT.description' value='Ivy bundle'/>
-        <property name='df_LT.license' value='Licensed to the Apache Software Foundation (ASF) under one&#xA;or more contributor license agreements.  See the NOTICE file&#xA;distributed with this work for additional information&#xA;regarding copyright ownership.  The ASF licenses this file&#xA;to you under the Apache License, Version 2.0 (the&#xA;&quot;License&quot;); you may not use this file except in compliance&#xA;with the License.  You may obtain a copy of the License at&#xA;&#xA;http://www.apache.org/licenses/LICENSE-2.0&#xA;&#xA;Unless required by applicable law or agreed to in writing,&#xA;software distributed under the License is distributed on an&#xA;&quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY&#xA;KIND, either express or implied.  See the License for the&#xA;specific language governing permissions and limitations&#xA;under the License.'/>
+        <property name='df_LT.license' value='Licensed to the Apache Software Foundation (ASF) under one&#xA;or more contributor license agreements.  See the NOTICE file&#xA;distributed with this work for additional information&#xA;regarding copyright ownership.  The ASF licenses this file&#xA;to you under the Apache License, Version 2.0 (the&#xA;&quot;License&quot;); you may not use this file except in compliance&#xA;with the License.  You may obtain a copy of the License at&#xA;&#xA;https://www.apache.org/licenses/LICENSE-2.0&#xA;&#xA;Unless required by applicable law or agreed to in writing,&#xA;software distributed under the License is distributed on an&#xA;&quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY&#xA;KIND, either express or implied.  See the License for the&#xA;specific language governing permissions and limitations&#xA;under the License.'/>
       </properties>
       <provides size='2'>
         <provided namespace='org.eclipse.equinox.p2.iu' name='org.apache.ivy.feature.feature.group' version='2.2.0.final_20100923230623'/>
@@ -303,7 +303,7 @@
       </requires>
       <touchpoint id='null' version='0.0.0'/>
       <licenses size='1'>
-        <license uri='http://www.apache.org/licenses/LICENSE-2.0' url='http://www.apache.org/licenses/LICENSE-2.0'>
+        <license uri='https://www.apache.org/licenses/LICENSE-2.0' url='http://www.apache.org/licenses/LICENSE-2.0'>
           %license
         </license>
       </licenses>
@@ -317,7 +317,7 @@
         <property name='df_LT.featureName' value='Apache Ivy'/>
         <property name='df_LT.providerName' value='Apache Software Foundation'/>
         <property name='df_LT.description' value='Ivy bundle'/>
-        <property name='df_LT.license' value='Licensed to the Apache Software Foundation (ASF) under one&#xA;or more contributor license agreements.  See the NOTICE file&#xA;distributed with this work for additional information&#xA;regarding copyright ownership.  The ASF licenses this file&#xA;to you under the Apache License, Version 2.0 (the&#xA;&quot;License&quot;); you may not use this file except in compliance&#xA;with the License.  You may obtain a copy of the License at&#xA;&#xA;http://www.apache.org/licenses/LICENSE-2.0&#xA;&#xA;Unless required by applicable law or agreed to in writing,&#xA;software distributed under the License is distributed on an&#xA;&quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY&#xA;KIND, either express or implied.  See the License for the&#xA;specific language governing permissions and limitations&#xA;under the License.'/>
+        <property name='df_LT.license' value='Licensed to the Apache Software Foundation (ASF) under one&#xA;or more contributor license agreements.  See the NOTICE file&#xA;distributed with this work for additional information&#xA;regarding copyright ownership.  The ASF licenses this file&#xA;to you under the Apache License, Version 2.0 (the&#xA;&quot;License&quot;); you may not use this file except in compliance&#xA;with the License.  You may obtain a copy of the License at&#xA;&#xA;https://www.apache.org/licenses/LICENSE-2.0&#xA;&#xA;Unless required by applicable law or agreed to in writing,&#xA;software distributed under the License is distributed on an&#xA;&quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY&#xA;KIND, either express or implied.  See the License for the&#xA;specific language governing permissions and limitations&#xA;under the License.'/>
       </properties>
       <provides size='3'>
         <provided namespace='org.eclipse.equinox.p2.iu' name='org.apache.ivy.feature.feature.jar' version='2.1.0.final_20090925235825'/>
@@ -339,7 +339,7 @@
         </instructions>
       </touchpointData>
       <licenses size='1'>
-        <license uri='http://www.apache.org/licenses/LICENSE-2.0' url='http://www.apache.org/licenses/LICENSE-2.0'>
+        <license uri='https://www.apache.org/licenses/LICENSE-2.0' url='http://www.apache.org/licenses/LICENSE-2.0'>
           %license
         </license>
       </licenses>
@@ -633,7 +633,7 @@
         <property name='df_LT.featureName' value='Apache IvyDE'/>
         <property name='df_LT.providerName' value='Apache Software Foundation'/>
         <property name='df_LT.description' value='IvyDE Eclipse plugin'/>
-        <property name='df_LT.license' value='Licensed to the Apache Software Foundation (ASF) under one&#xA;or more contributor license agreements.  See the NOTICE file&#xA;distributed with this work for additional information&#xA;regarding copyright ownership.  The ASF licenses this file&#xA;to you under the Apache License, Version 2.0 (the&#xA;&quot;License&quot;); you may not use this file except in compliance&#xA;with the License.  You may obtain a copy of the License at&#xA;&#xA;http://www.apache.org/licenses/LICENSE-2.0&#xA;&#xA;Unless required by applicable law or agreed to in writing,&#xA;software distributed under the License is distributed on an&#xA;&quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY&#xA;KIND, either express or implied.  See the License for the&#xA;specific language governing permissions and limitations&#xA;under the License.'/>
+        <property name='df_LT.license' value='Licensed to the Apache Software Foundation (ASF) under one&#xA;or more contributor license agreements.  See the NOTICE file&#xA;distributed with this work for additional information&#xA;regarding copyright ownership.  The ASF licenses this file&#xA;to you under the Apache License, Version 2.0 (the&#xA;&quot;License&quot;); you may not use this file except in compliance&#xA;with the License.  You may obtain a copy of the License at&#xA;&#xA;https://www.apache.org/licenses/LICENSE-2.0&#xA;&#xA;Unless required by applicable law or agreed to in writing,&#xA;software distributed under the License is distributed on an&#xA;&quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY&#xA;KIND, either express or implied.  See the License for the&#xA;specific language governing permissions and limitations&#xA;under the License.'/>
       </properties>
       <provides size='2'>
         <provided namespace='org.eclipse.equinox.p2.iu' name='org.apache.ivyde.feature.feature.group' version='2.1.0.201008101807-RELEASE'/>
@@ -665,7 +665,7 @@
       </requires>
       <touchpoint id='null' version='0.0.0'/>
       <licenses size='1'>
-        <license uri='http://www.apache.org/licenses/LICENSE-2.0' url='http://www.apache.org/licenses/LICENSE-2.0'>
+        <license uri='https://www.apache.org/licenses/LICENSE-2.0' url='http://www.apache.org/licenses/LICENSE-2.0'>
           %license
         </license>
       </licenses>
@@ -788,7 +788,7 @@
         <property name='df_LT.featureName' value='Apache Ivy'/>
         <property name='df_LT.providerName' value='Apache Software Foundation'/>
         <property name='df_LT.description' value='Ivy bundle'/>
-        <property name='df_LT.license' value='Licensed to the Apache Software Foundation (ASF) under one&#xA;or more contributor license agreements.  See the NOTICE file&#xA;distributed with this work for additional information&#xA;regarding copyright ownership.  The ASF licenses this file&#xA;to you under the Apache License, Version 2.0 (the&#xA;&quot;License&quot;); you may not use this file except in compliance&#xA;with the License.  You may obtain a copy of the License at&#xA;&#xA;http://www.apache.org/licenses/LICENSE-2.0&#xA;&#xA;Unless required by applicable law or agreed to in writing,&#xA;software distributed under the License is distributed on an&#xA;&quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY&#xA;KIND, either express or implied.  See the License for the&#xA;specific language governing permissions and limitations&#xA;under the License.'/>
+        <property name='df_LT.license' value='Licensed to the Apache Software Foundation (ASF) under one&#xA;or more contributor license agreements.  See the NOTICE file&#xA;distributed with this work for additional information&#xA;regarding copyright ownership.  The ASF licenses this file&#xA;to you under the Apache License, Version 2.0 (the&#xA;&quot;License&quot;); you may not use this file except in compliance&#xA;with the License.  You may obtain a copy of the License at&#xA;&#xA;https://www.apache.org/licenses/LICENSE-2.0&#xA;&#xA;Unless required by applicable law or agreed to in writing,&#xA;software distributed under the License is distributed on an&#xA;&quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY&#xA;KIND, either express or implied.  See the License for the&#xA;specific language governing permissions and limitations&#xA;under the License.'/>
       </properties>
       <provides size='3'>
         <provided namespace='org.eclipse.equinox.p2.iu' name='org.apache.ivy.feature.feature.jar' version='2.0.0.final_20090108225011'/>
@@ -810,7 +810,7 @@
         </instructions>
       </touchpointData>
       <licenses size='1'>
-        <license uri='http://www.apache.org/licenses/LICENSE-2.0' url='http://www.apache.org/licenses/LICENSE-2.0'>
+        <license uri='https://www.apache.org/licenses/LICENSE-2.0' url='http://www.apache.org/licenses/LICENSE-2.0'>
           %license
         </license>
       </licenses>
@@ -913,7 +913,7 @@
         <property name='df_LT.featureName' value='Apache Ivy'/>
         <property name='df_LT.providerName' value='Apache Software Foundation'/>
         <property name='df_LT.description' value='Ivy bundle'/>
-        <property name='df_LT.license' value='Licensed to the Apache Software Foundation (ASF) under one&#xA;or more contributor license agreements.  See the NOTICE file&#xA;distributed with this work for additional information&#xA;regarding copyright ownership.  The ASF licenses this file&#xA;to you under the Apache License, Version 2.0 (the&#xA;&quot;License&quot;); you may not use this file except in compliance&#xA;with the License.  You may obtain a copy of the License at&#xA;&#xA;http://www.apache.org/licenses/LICENSE-2.0&#xA;&#xA;Unless required by applicable law or agreed to in writing,&#xA;software distributed under the License is distributed on an&#xA;&quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY&#xA;KIND, either express or implied.  See the License for the&#xA;specific language governing permissions and limitations&#xA;under the License.'/>
+        <property name='df_LT.license' value='Licensed to the Apache Software Foundation (ASF) under one&#xA;or more contributor license agreements.  See the NOTICE file&#xA;distributed with this work for additional information&#xA;regarding copyright ownership.  The ASF licenses this file&#xA;to you under the Apache License, Version 2.0 (the&#xA;&quot;License&quot;); you may not use this file except in compliance&#xA;with the License.  You may obtain a copy of the License at&#xA;&#xA;https://www.apache.org/licenses/LICENSE-2.0&#xA;&#xA;Unless required by applicable law or agreed to in writing,&#xA;software distributed under the License is distributed on an&#xA;&quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY&#xA;KIND, either express or implied.  See the License for the&#xA;specific language governing permissions and limitations&#xA;under the License.'/>
       </properties>
       <provides size='2'>
         <provided namespace='org.eclipse.equinox.p2.iu' name='org.apache.ivy.feature.feature.group' version='2.1.0.final_20090925235825'/>
@@ -930,7 +930,7 @@
       </requires>
       <touchpoint id='null' version='0.0.0'/>
       <licenses size='1'>
-        <license uri='http://www.apache.org/licenses/LICENSE-2.0' url='http://www.apache.org/licenses/LICENSE-2.0'>
+        <license uri='https://www.apache.org/licenses/LICENSE-2.0' url='http://www.apache.org/licenses/LICENSE-2.0'>
           %license
         </license>
       </licenses>

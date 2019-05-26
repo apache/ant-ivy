@@ -7,7 +7,7 @@
    "License"); you may not use this file except in compliance
    with the License.  You may obtain a copy of the License at
 
-     http://www.apache.org/licenses/LICENSE-2.0
+     https://www.apache.org/licenses/LICENSE-2.0
 
    Unless required by applicable law or agreed to in writing,
    software distributed under the License is distributed on an
@@ -22,7 +22,7 @@
     <size>130451</size>
     <documentation>http://oscar-osgi.sf.net/obr2/org.apache.felix.bundlerepository/</documentation>
     <source>http://oscar-osgi.sf.net/obr2/org.apache.felix.bundlerepository/org.apache.felix.bundlerepository-1.0.3-src.jar</source>
-    <license>http://www.apache.org/licenses/LICENSE-2.0.txt</license>
+    <license>https://www.apache.org/licenses/LICENSE-2.0.txt</license>
     <category id='org.apache.felix'/>
     <capability name='bundle'>
       <p n='manifestversion' v='2'/>
@@ -46,7 +46,7 @@
     <size>73643</size>
     <source>http://felix.apache.org/site/downloads.cgi</source>
     <documentation>http://www.apache.org/</documentation>
-    <license>http://www.apache.org/licenses/LICENSE-2.0.txt</license>
+    <license>https://www.apache.org/licenses/LICENSE-2.0.txt</license>
     <category id='org.apache.felix'/>
     <capability name='bundle'>
       <p n='manifestversion' v='2'/>
