@@ -73,7 +73,7 @@ import org.apache.ivy.util.Message;
 import org.apache.ivy.util.MessageLoggerEngine;
 
 /**
- * <a href="http://ant.apache.org/ivy/">Ivy</a> is a free java based dependency manager.
+ * <a href="https://ant.apache.org/ivy/">Ivy</a> is a free java based dependency manager.
  * <p>
  * This class is the main class of Ivy, which acts as a Facade to all services offered by Ivy:
  * </p>
@@ -192,7 +192,7 @@ public class Ivy {
      * @return the URL at which Ivy web site can be found
      */
     public static String getIvyHomeURL() {
-        return "http://ant.apache.org/ivy/";
+        return "https://ant.apache.org/ivy/";
     }
 
     public static Ivy newInstance() {

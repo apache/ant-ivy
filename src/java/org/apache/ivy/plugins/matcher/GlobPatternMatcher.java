@@ -32,11 +32,11 @@ import org.apache.oro.text.regex.Perl5Matcher;
  * </ul>
  * <p>
  * NOTE: this matcher is available only with
- * <a href="http://jakarta.apache.org/oro">Apache Jakarta ORO 2.0.8</a>
+ * <a href="https://jakarta.apache.org/oro">Apache Jakarta ORO 2.0.8</a>
  * in your classpath.
  * </p>
  *
- * @see <a href="http://jakarta.apache.org/oro/api/org/apache/oro/text/GlobCompiler.html">GlobCompiler</a>
+ * @see <a href="https://jakarta.apache.org/oro/api/org/apache/oro/text/GlobCompiler.html">GlobCompiler</a>
  */
 public/* @Immutable */final class GlobPatternMatcher extends AbstractPatternMatcher {
 

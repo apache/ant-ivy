@@ -29,7 +29,7 @@
     <resolvers>
         <chain name="default">
             <ibiblio name="public" m2compatible="true" />
-            <ibiblio name="snapshot" m2compatible="true" root="http://people.apache.org/repo/m2-snapshot-repository" />
+            <ibiblio name="snapshot" m2compatible="true" root="https://repository.apache.org/content/repositories/snapshots/" />
         </chain>
         <url name="nexus" m2compatible="true" signer="apache-sig">
           <artifact pattern="${upload.url}/[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]" />

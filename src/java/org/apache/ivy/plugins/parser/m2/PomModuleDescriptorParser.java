@@ -70,7 +70,7 @@ import static org.apache.ivy.plugins.parser.m2.PomModuleDescriptorBuilder.getPlu
  * <p>
  * The configurations used in the generated module descriptor mimics the behavior defined by Maven 2
  * scopes, as documented <a href=
- * "http://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html">here</a>.
+ * "https://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html">here</a>.
  * The PomModuleDescriptorParser use a PomDomReader to read the pom, and the
  * PomModuleDescriptorBuilder to write the ivy module descriptor using the info read by the
  * PomDomReader.

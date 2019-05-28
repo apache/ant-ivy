@@ -32,9 +32,9 @@
   <name>Apache Ivy</name>
   <url>${ivy.pom.url}</url>
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/ant/ivy/core/trunk/</connection>
+    <connection>scm:svn:https://svn.apache.org/repos/asf/ant/ivy/core/trunk/</connection>
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/ant/ivy/core/trunk</developerConnection>
-    <url>http://svn.apache.org/repos/asf/ant/ivy/core/trunk</url>
+    <url>https://svn.apache.org/repos/asf/ant/ivy/core/trunk</url>
   </scm>
   <mailingLists>
     <mailingList>
@@ -42,18 +42,18 @@
       <subscribe>dev-subscribe@ant.apache.org</subscribe>
       <unsubscribe>dev-unsubscribe@ant.apache.org</unsubscribe>
       <post>dev@ant.apache.org</post>
-      <archive>http://mail-archives.apache.org/mod_mbox/ant-dev</archive>
+      <archive>https://mail-archives.apache.org/mod_mbox/ant-dev</archive>
     </mailingList>
     <mailingList>
       <name>Ivy Users List</name>
       <subscribe>ivy-user-subscribe@ant.apache.org</subscribe>
       <unsubscribe>ivy-user-unsubscribe@ant.apache.org</unsubscribe>
       <post>ivy-user@ant.apache.org</post>
-      <archive>http://mail-archives.apache.org/mod_mbox/ant-ivy-user</archive>
+      <archive>https://mail-archives.apache.org/mod_mbox/ant-ivy-user</archive>
     </mailingList>
   </mailingLists>
   <issueManagement>
     <system>jira</system>
-    <url>http://issues.apache.org/jira/browse/IVY</url>
+    <url>https://issues.apache.org/jira/browse/IVY</url>
   </issueManagement>
 </project>

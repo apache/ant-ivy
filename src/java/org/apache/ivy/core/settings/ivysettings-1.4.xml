@@ -19,7 +19,8 @@
 <ivysettings>
     <settings defaultResolver="default"/>
     <resolvers>
-        <ivyrep name="public" ivyroot="http://ivyrep.jayasoft.org/"/>
+        <!-- TODO: This repo is no longer relevant and must be removed -->
+        <ivyrep name="public" ivyroot="https://ivyrep.jayasoft.org/"/>
     </resolvers>
     <include url="${ivy.default.settings.dir}/ivysettings-shared.xml"/>
     <include url="${ivy.default.settings.dir}/ivysettings-local.xml"/>

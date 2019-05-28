@@ -56,7 +56,6 @@ import org.xml.sax.helpers.DefaultHandler;
 public class IvyRepResolver extends URLResolver {
     public static final String DEFAULT_IVYPATTERN = "[organisation]/[module]/ivy-[revision].xml";
 
-    public static final String DEFAULT_IVYROOT = "http://ivyrep.jayasoft.org/";
 
     private String ivyroot = null;
 

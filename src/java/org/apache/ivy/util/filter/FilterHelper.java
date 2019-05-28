@@ -64,7 +64,7 @@ public final class FilterHelper {
      *
      * <p>
      * Comment: We could have used
-     * <a href="http://jakarta.apache.org/commons/collections/">Commons Collections</a> facility for
+     * <a href="https://jakarta.apache.org/commons/collections/">Commons Collections</a> facility for
      * this, if we accepted additional dependencies on third party jars.
      * </p>
      */
