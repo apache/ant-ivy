@@ -261,12 +261,13 @@ public class BasicURLHandler extends AbstractURLHandler implements TimeoutConstr
 
             // check content length only if content was not encoded
             if (srcConn.getContentEncoding() == null) {
-                int contentLength = srcConn.getContentLength();
-                if (contentLength != -1 && dest.length() != contentLength) {
+                final int contentLength = srcConn.getContentLength();
+                final long destFileSize = dest.length();
+                if (contentLength != -1 && destFileSize != contentLength) {
                     dest.delete();
                     throw new IOException(
-                            "Downloaded file size doesn't match expected Content Length for " + normalizedURL
-                                    + ". Please retry.");
+                            "Downloaded file size (" + destFileSize + ") doesn't match expected " +
+                                    "Content Length (" + contentLength + ") for " + normalizedURL + ". Please retry.");
                 }
             }
 
