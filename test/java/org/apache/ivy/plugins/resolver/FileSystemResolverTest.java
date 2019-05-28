@@ -238,7 +238,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("test", "allright", "1.0");
         ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid,
                 false), data);
-        assertNotNull(rmr);
+        assertNotNull("Resolver could not get dependency " + mrid, rmr);
         DownloadReport dr = resolver.download(rmr.getDescriptor().getAllArtifacts(),
             getDownloadOptions());
         assertEquals(4, dr.getArtifactsReports(DownloadStatus.SUCCESSFUL).length);
@@ -257,7 +257,7 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         resolver.setChecksums("md5");
         mrid = ModuleRevisionId.newInstance("test", "badartcs", "1.0");
         rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), data);
-        assertNotNull(rmr);
+        assertNotNull("Could not get dependency " + mrid, rmr);
         dr = resolver.download(new Artifact[] {new DefaultArtifact(mrid, rmr.getPublicationDate(),
                 mrid.getName(), "jar", "jar")}, getDownloadOptions());
         assertEquals(1, dr.getArtifactsReports(DownloadStatus.FAILED).length);
