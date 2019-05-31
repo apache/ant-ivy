@@ -28,7 +28,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.ivy.Ivy;
 import org.apache.ivy.core.cache.ArtifactOrigin;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.Configuration;
@@ -63,6 +62,12 @@ import static org.apache.ivy.util.StringUtils.isNullOrEmpty;
  * ModuleDescriptor and isolate the PomModuleDescriptorParser from it.
  */
 public class PomModuleDescriptorBuilder {
+
+    /**
+     * The namespace URI which is used to refer to Maven (pom) specific elements within a
+     * Ivy module descriptor file (ivy.xml)
+     */
+    private static final String IVY_XML_MAVEN_NAMESPACE_URI = "http://ant.apache.org/ivy/maven";
 
     private static final int DEPENDENCY_MANAGEMENT_KEY_PARTS_COUNT = 4;
 
@@ -199,7 +204,7 @@ public class PomModuleDescriptorBuilder {
             ivyModuleDescriptor.addConfiguration(m2conf);
         }
         ivyModuleDescriptor.setMappingOverride(true);
-        ivyModuleDescriptor.addExtraAttributeNamespace("m", Ivy.getIvyHomeURL() + "maven");
+        ivyModuleDescriptor.addExtraAttributeNamespace("m", IVY_XML_MAVEN_NAMESPACE_URI);
         parserSettings = ivySettings;
     }
 
