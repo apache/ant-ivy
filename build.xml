@@ -744,4 +744,4 @@
             description="creates a .classpath for Eclipse using Apache IvyDE plugin">
         <copy file="${basedir}/.classpath.ivyde" tofile="${basedir}/.classpath" overwrite="true"/>
     </target>
-</project>
+</project
