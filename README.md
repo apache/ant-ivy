@@ -1,4 +1,4 @@
-[Build Status](http://35.154.114.184:8080/buildStatus/icon?job=apache-ivy "http://35.154.114.184:8080/job/apache-ivy/")
+<a href='http://35.154.114.184:8080/job/apache-ivy/'><img src='http://35.154.114.184:8080/buildStatus/icon?job=apache-ivy'></a>
 
 ////
    Licensed to the Apache Software Foundation (ASF) under one
