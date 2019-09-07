@@ -87,6 +87,7 @@ For details about the following changes, check our JIRA install at link:https://
 - FIX: ModuleDescriptorMemoryCache didn't detect outdated entries when Ivy file was updated in the cache by another process
 - FIX: Store ArtifactOrigin's location as a URL
 - FIX: Retrieve task, with symlink enabled, would not create symlinks for artifacts in certain specific cases (jira:IVY-1594[])
+- FIX: Generated ivy.xml from pom with multiple dependencies with different classifier does not contain the main dependency (jira:IVY-1580[])
 
 
 - IMPROVEMENT: Throw an IllegalStateException when retrieving the resolutionCacheRoot on the DefaultResolutionCacheManager if the basedir (or IvySettings) is not set (jira:IVY-1482[])

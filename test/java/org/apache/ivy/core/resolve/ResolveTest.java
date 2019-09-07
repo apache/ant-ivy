@@ -6444,6 +6444,85 @@ public class ResolveTest {
         assertTrue("Missing artifact(s) with classifiers " + classifiers, classifiers.isEmpty());
     }
 
+
+    /**
+     * Tests the issue noted in IVY-1580.
+     * <pre>
+     *  org.apache:1580:1.0.0 depends on (Maven modules):
+     *      -> org.apache:1580-foo-api:1.2.3
+     *      -> org.apache:1580-foo-impl:1.2.3 which in turn depends on:
+     *          -> org.apache:1580-foo-api:1.2.3 (in compile scope)
+     *          -> org.apache:1580-foo-api:1.2.3 (type = test-jar, in test scope)
+     * </pre>
+     * It's expected that the resolution of org.apache:1580:1.0.0, correctly gets both the regular
+     * jar of org.apache:1580-foo-api as well as the test-jar of the same org.apache:1580-foo-api.
+     *
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1580">IVY-1580</a>
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testIvy1580() throws Exception {
+        final File ivyXML = new File("test/repositories/1/ivy-1580/ivy-1580.xml");
+        final ResolveReport resolveReport = ivy.resolve(ivyXML.toURI().toURL(),
+                new ResolveOptions().setConfs(new String[]{"*"}));
+        assertFalse("Resolution report has failures", resolveReport.hasError());
+        final String rootModuleConf = "default";
+        // get the "default" conf, resolution report for the org.apache:1580:1.0.0 module (represented by the
+        // ivy-1580.xml module descriptor)
+        final ConfigurationResolveReport confReport = resolveReport.getConfigurationReport(rootModuleConf);
+        assertNotNull(rootModuleConf + " conf resolution report for " +
+                resolveReport.getModuleDescriptor().getModuleRevisionId() + " is null", confReport);
+
+        final ModuleRevisionId apiDependencyId = ModuleRevisionId.newInstance("org.apache", "1580-foo-api", "1.2.3");
+        final IvyNode apiDepNode = confReport.getDependency(apiDependencyId);
+        assertNotNull("Dependency " + apiDependencyId + " not found in conf resolve report", apiDepNode);
+        final Artifact[] apiArtifacts = apiDepNode.getArtifacts(rootModuleConf);
+        assertNotNull("No artifacts available for dependency " + apiDependencyId, apiArtifacts);
+        assertEquals("Unexpected number of artifacts for dependency " + apiDependencyId, 2, apiArtifacts.length);
+        boolean foundTestJarType = false;
+        boolean foundJarType = false;
+        for (final Artifact apiArtifact : apiArtifacts) {
+            assertEquals("Unexpected artifact name", "1580-foo-api", apiArtifact.getName());
+            assertNotNull("Artifact type is null for " + apiArtifact, apiArtifact.getType());
+            ArtifactDownloadReport apiDownloadReport = null;
+            for (final ArtifactDownloadReport artifactDownloadReport : confReport.getAllArtifactsReports()) {
+                if (artifactDownloadReport.getArtifact().equals(apiArtifact)) {
+                    apiDownloadReport = artifactDownloadReport;
+                    break;
+                }
+            }
+            assertNotNull("No download report found for artifact " + apiArtifact, apiDownloadReport);
+            final File apiJar = apiDownloadReport.getLocalFile();
+            assertNotNull("artifact jar file is null for " + apiArtifact, apiJar);
+            switch (apiArtifact.getType()) {
+                case "test-jar" : {
+                    assertFalse("More than 1 test-jar artifact found", foundTestJarType);
+                    foundTestJarType = true;
+                    assertJarContains(apiJar, "api-test-file.txt");
+                    break;
+                }
+                case "jar" : {
+                    assertFalse("More than 1 jar artifact found", foundJarType);
+                    foundJarType = true;
+                    assertJarContains(apiJar, "api-file.txt");
+                    break;
+                }
+                default: {
+                    fail("unexpected artifact type " + apiArtifact.getType() + " for artifact " + apiArtifact);
+                }
+            }
+        }
+        assertTrue("No test-jar artifact found for dependency " + apiDependencyId, foundTestJarType);
+        assertTrue("No jar artifact found for dependency " + apiDependencyId, foundJarType);
+
+        // just do some basic check on the impl module as well
+        final ModuleRevisionId implDepId = ModuleRevisionId.newInstance("org.apache", "1580-foo-impl", "1.2.3");
+        final IvyNode implDepNode = confReport.getDependency(implDepId);
+        assertNotNull("Dependency " + implDepId + " not found in conf resolve report", implDepNode);
+
+    }
+
     private void assertJarContains(final File jar, final String jarEntryPath) throws IOException {
         try (final JarFile jarFile = new JarFile(jar)) {
             final JarEntry entry = jarFile.getJarEntry(jarEntryPath);

@@ -24,10 +24,15 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.ivy.core.module.descriptor.DefaultIncludeRule;
 import org.apache.ivy.core.module.descriptor.DependencyArtifactDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.IncludeRule;
 import org.apache.ivy.core.module.descriptor.WorkspaceModuleDescriptor;
+import org.apache.ivy.core.module.id.ArtifactId;
+import org.apache.ivy.core.module.id.ModuleId;
+import org.apache.ivy.plugins.matcher.ExactPatternMatcher;
+import org.apache.ivy.plugins.matcher.PatternMatcher;
 
 /**
  * Class collecting usage data for an IvyNode.
@@ -233,20 +238,40 @@ public class IvyNodeUsage {
         return dependencyArtifacts;
     }
 
-    protected Set<IncludeRule> getDependencyIncludesSet(String rootModuleConf) {
-        Collection<Depender> dependersInConf = dependers.get(rootModuleConf);
+    protected Set<IncludeRule> getDependencyIncludesSet(final String rootModuleConf) {
+        final Collection<Depender> dependersInConf = dependers.get(rootModuleConf);
         if (dependersInConf == null) {
             return null;
         }
-        Set<IncludeRule> dependencyIncludes = new HashSet<>();
-        for (Depender depender : dependersInConf) {
-            IncludeRule[] rules = depender.dd.getIncludeRules(depender.dependerConf);
-            if (rules == null || rules.length == 0) {
-                // no include rule in at least one depender -> we must include everything,
-                // and so return no include rule at all
-                return null;
+        final Set<IncludeRule> dependencyIncludes = new HashSet<>();
+        // true if the depedency descriptor of any of the depender *doesn't* have an explicit
+        // "<artifact>" or an "<include>". false otherwise
+        boolean atLeastOneDependerNeedsAllArtifacts = false;
+        // true if the dependency descriptor of any of the depender either has an explicit "<artifact>"
+        // or an "<include>". false otherwise
+        boolean atLeastOneDependerHasSpecificArtifactSelection = false;
+        for (final Depender depender : dependersInConf) {
+            final DependencyArtifactDescriptor dads[] = depender.dd.getDependencyArtifacts(depender.dd.getModuleConfigurations());
+            final boolean declaresArtifacts = dads != null && dads.length > 0;
+            final IncludeRule[] rules = depender.dd.getIncludeRules(depender.dependerConf);
+            final boolean hasIncludeRule = rules != null && rules.length > 0;
+            if (hasIncludeRule) {
+                dependencyIncludes.addAll(Arrays.asList(rules));
             }
-            dependencyIncludes.addAll(Arrays.asList(rules));
+            if (declaresArtifacts || hasIncludeRule) {
+                atLeastOneDependerHasSpecificArtifactSelection = true;
+            }
+            if (!hasIncludeRule && !declaresArtifacts) {
+                atLeastOneDependerNeedsAllArtifacts = true;
+            }
+        }
+        // so there's at least one depender D1 which has a specific artifact dependency and at the
+        // same time there's a depender D2 which doesn't have any explicit artifact/includes.
+        // so it is expected that an implicit "include all artifacts" is applied so that dependencies
+        // such as D2 get (all) the artifacts that are published by the dependency's module
+        if (atLeastOneDependerHasSpecificArtifactSelection && atLeastOneDependerNeedsAllArtifacts) {
+            // add a "include all artifacts" rule
+            dependencyIncludes.add(includeAllArtifacts());
         }
         return dependencyIncludes;
     }
@@ -312,5 +337,14 @@ public class IvyNodeUsage {
         }
         return false;
     }
+
+    private static IncludeRule includeAllArtifacts() {
+        final ArtifactId aid = new ArtifactId(
+                new ModuleId(PatternMatcher.ANY_EXPRESSION, PatternMatcher.ANY_EXPRESSION),
+                PatternMatcher.ANY_EXPRESSION, PatternMatcher.ANY_EXPRESSION,
+                PatternMatcher.ANY_EXPRESSION);
+        return new DefaultIncludeRule(aid, ExactPatternMatcher.INSTANCE, null);
+    }
+
 
 }
