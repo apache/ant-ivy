@@ -335,11 +335,12 @@ public class PomModuleDescriptorBuilder {
             if (dep.getClassifier() != null) {
                 extraAtt.put("m:classifier", dep.getClassifier());
             }
-            DefaultDependencyArtifactDescriptor depArtifact = new DefaultDependencyArtifactDescriptor(
+            final DefaultDependencyArtifactDescriptor depArtifact = new DefaultDependencyArtifactDescriptor(
                     dd, dd.getDependencyId().getName(), type, ext, null, extraAtt);
             // here we have to assume a type and ext for the artifact, so this is a limitation
             // compared to how m2 behave with classifiers
-            String optionalizedScope = dep.isOptional() ? "optional" : scope;
+            final String optionalizedScope = dep.isOptional() ? "optional" : scope;
+            depArtifact.addConfiguration(optionalizedScope);
             dd.addDependencyArtifact(optionalizedScope, depArtifact);
         }
 

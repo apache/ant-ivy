@@ -6523,6 +6523,72 @@ public class ResolveTest {
 
     }
 
+
+    /**
+     * Tests the issue noted in IVY-1586.
+     * <pre>
+     *  org.apache:1586:1.0.0 depends on (Maven modules):
+     *      -> org.apache:1580-foo-api:1.2.3
+     *      -> org.apache:1580-foo-impl:1.2.3 conf="default", which in turn depends on:
+     *          -> org.apache:1580-foo-api:1.2.3 (in compile scope)
+     *          -> org.apache:1580-foo-api:1.2.3 (type = test-jar, in test scope)
+     * </pre>
+     * It's expected that the resolution of org.apache:1586:1.0.0, gets the
+     * "jar" type of org.apache:1580-foo-api and not the test-jar of the same org.apache:1580-foo-api,
+     * since only the "default" conf is demanded via the org.apache:1580-foo-impl:1.2.3 dependency.
+     *
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1586">IVY-1586</a>
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testIvy1586() throws Exception {
+        // do it twice (once in fresh cache and once with the cache populated)
+        for (int i = 0; i < 2; i++) {
+            if (i == 0) {
+                ivy.getLoggerEngine().info("ResolveTest#testIvy1586 - Using a clean Ivy cache");
+            } else {
+                ivy.getLoggerEngine().info("ResolveTest#testIvy1586 - Using an already populated Ivy cache");
+            }
+            final File ivyXML = new File("test/repositories/1/ivy-1586/ivy-1586.xml");
+            final ResolveReport resolveReport = ivy.resolve(ivyXML.toURI().toURL(),
+                    new ResolveOptions().setConfs(new String[]{"*"}));
+            assertFalse("Resolution report has failures", resolveReport.hasError());
+            final String rootModuleConf = "default";
+            // get the "default" conf, resolution report for the org.apache:1586:1.0.0 module (represented by the
+            // ivy-1586.xml module descriptor)
+            final ConfigurationResolveReport confReport = resolveReport.getConfigurationReport(rootModuleConf);
+            assertNotNull(rootModuleConf + " conf resolution report for " +
+                    resolveReport.getModuleDescriptor().getModuleRevisionId() + " is null", confReport);
+
+            final ModuleRevisionId apiDependencyId = ModuleRevisionId.newInstance("org.apache", "1580-foo-api", "1.2.3");
+            final IvyNode apiDepNode = confReport.getDependency(apiDependencyId);
+            assertNotNull("Dependency " + apiDependencyId + " not found in conf resolve report", apiDepNode);
+            final Artifact[] apiArtifacts = apiDepNode.getArtifacts(rootModuleConf);
+            assertNotNull("No artifacts available for dependency " + apiDependencyId, apiArtifacts);
+            assertEquals("Unexpected number of artifacts for dependency " + apiDependencyId, 1, apiArtifacts.length);
+            final Artifact apiArtifact = apiArtifacts[0];
+            assertEquals("Unexpected artifact name", "1580-foo-api", apiArtifact.getName());
+            assertEquals("Unexpected type for artifact", "jar", apiArtifact.getType());
+            ArtifactDownloadReport apiDownloadReport = null;
+            for (final ArtifactDownloadReport artifactDownloadReport : confReport.getAllArtifactsReports()) {
+                if (artifactDownloadReport.getArtifact().equals(apiArtifact)) {
+                    apiDownloadReport = artifactDownloadReport;
+                    break;
+                }
+            }
+            assertNotNull("No download report found for artifact " + apiArtifact, apiDownloadReport);
+            final File apiJar = apiDownloadReport.getLocalFile();
+            assertNotNull("artifact jar file is null for " + apiArtifact, apiJar);
+            assertJarContains(apiJar, "api-file.txt");
+
+            // just do some basic check on the impl module as well
+            final ModuleRevisionId implDepId = ModuleRevisionId.newInstance("org.apache", "1580-foo-impl", "1.2.3");
+            final IvyNode implDepNode = confReport.getDependency(implDepId);
+            assertNotNull("Dependency " + implDepId + " not found in conf resolve report", implDepNode);
+        }
+    }
+
     private void assertJarContains(final File jar, final String jarEntryPath) throws IOException {
         try (final JarFile jarFile = new JarFile(jar)) {
             final JarEntry entry = jarFile.getJarEntry(jarEntryPath);

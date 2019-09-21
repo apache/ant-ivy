@@ -272,9 +272,11 @@ public final class XmlModuleDescriptorWriter {
                         XMLHelper.escape(depArtifact.getName()),
                         XMLHelper.escape(depArtifact.getType()),
                         XMLHelper.escape(depArtifact.getExt())));
-                String[] dadConfs = depArtifact.getConfigurations();
-                if (!Arrays.asList(dadConfs).equals(Arrays.asList(md.getConfigurationsNames()))) {
-                    out.print(listToPrefixedString(dadConfs, " conf=\""));
+                final String[] dadConfs = depArtifact.getConfigurations();
+                if (dadConfs != null && dadConfs.length > 0) {
+                    if (!Arrays.asList(dadConfs).equals(Arrays.asList(md.getConfigurationsNames()))) {
+                        out.print(listToPrefixedString(dadConfs, " conf=\""));
+                    }
                 }
                 printExtraAttributes(depArtifact, out, " ");
                 out.println("/>");
