@@ -14,3 +14,7 @@ which is open source software, available under
 the terms of a BSD style license.  
 The original software and related information is available
 at http://www.jcraft.com/jsch/.
+
+The Scp class is based on the SCPClient from the ganymed ssh
+library. Which has been distributed under the BSD style license
+included in the LICENSE file.
