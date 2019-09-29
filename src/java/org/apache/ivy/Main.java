@@ -300,7 +300,7 @@ public final class Main {
             resolveOptions.setRefresh(true);
         }
         ResolveReport report = ivy.resolve(ivyfile.toURI().toURL(), resolveOptions);
-        if (report.hasError() && !line.hasOption("noterminate")) {
+        if (report.hasError() && isCli) {
             System.exit(1);
         }
         ModuleDescriptor md = report.getModuleDescriptor();
