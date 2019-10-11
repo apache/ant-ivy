@@ -510,23 +510,39 @@ public class PomReader {
         @Override
         public String getScope() {
             String val = getFirstChildText(depElement, SCOPE);
-            return replaceProps(val);
+            return emptyIsNull(replaceProps(val));
         }
 
         public String getClassifier() {
             String val = getFirstChildText(depElement, CLASSIFIER);
-            return replaceProps(val);
+            return emptyIsNull(replaceProps(val));
         }
 
         public String getType() {
             String val = getFirstChildText(depElement, TYPE);
-            return replaceProps(val);
+            return emptyIsNull(replaceProps(val));
         }
 
         public boolean isOptional() {
             return Boolean.parseBoolean(getFirstChildText(depElement, OPTIONAL));
         }
 
+        /**
+         * We return null where certain elements within a pom don't have a value specified.
+         * For example, there are pom.xml out there which just use "<classifier/>" in the dependencies.
+         * (dependencies in org.seleniumhq.selenium:selenium-java:3.141.59 are one such example)
+         * We do this so that callers of such elements don't have to keep repeating checks for empty value.
+         * For us an empty value, for many of such elements, is really the same as that element not being specified
+         *
+         * @param val The value to check
+         * @return
+         */
+        private String emptyIsNull(final String val) {
+            if (val == null) {
+                return null;
+            }
+            return val.equals("") ? null : val;
+        }
     }
 
     public class PomProfileElement {

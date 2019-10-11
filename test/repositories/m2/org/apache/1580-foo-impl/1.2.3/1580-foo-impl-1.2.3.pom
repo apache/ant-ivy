@@ -31,6 +31,10 @@
             <groupId>org.apache</groupId>
             <artifactId>1580-foo-api</artifactId>
             <version>${project.version}</version>
+            <!-- Intentionally use a classifier without value.
+            This should behave same as not specifying any classifier.
+            See IVY-1586 for details -->
+            <classifier/>
         </dependency>
 
         <dependency>
