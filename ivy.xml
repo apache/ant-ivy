@@ -21,7 +21,7 @@
             xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
     <info organisation="org.apache.ivy"
            module="ivy"
-           status="integration">
+           status="release">
         <description homepage="http://ant.apache.org/ivy/">
         Apache Ivy is a tool for managing (recording, tracking, resolving and reporting) project dependencies.
         </description>
