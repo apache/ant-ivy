@@ -19,7 +19,7 @@
 
 = Ivy Release Announcement
 
-XXXX DATE XXXXXX - The Apache Ivy project is pleased to announce its 2.5.0 release.
+20th October 2019 - The Apache Ivy project is pleased to announce its 2.5.0 release.
 
 == What is Ivy?
 Apache Ivy is a tool for managing (recording, tracking, resolving and reporting) project dependencies, characterized by flexibility,
