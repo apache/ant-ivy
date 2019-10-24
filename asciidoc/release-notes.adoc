@@ -19,7 +19,7 @@
 
 = Ivy Release Announcement
 
-20th October 2019 - The Apache Ivy project is pleased to announce its 2.5.0 release.
+XXXX Date XXXX - The Apache Ivy project is pleased to announce its 2.5.1 release.
 
 == What is Ivy?
 Apache Ivy is a tool for managing (recording, tracking, resolving and reporting) project dependencies, characterized by flexibility,
@@ -34,77 +34,23 @@ More information about the project can be found on the website link:https://ant.
 
 == Key features in this release
 
-Key features of this 2.5.0 release are:
+Key features of this 2.5.1 release are:
 
-    * The minimum runtime Java version required is now Java 7
-    * Ivy now uses BouncyCastle OpenPGP API 1.59. Due to the non backward compatibility of that library, earlier versions are not supported.
-    * Ivy now uses HttpComponents HttpClient 4.5.x version with HTTP backed resolvers. Users are expected to have this version of the library (and its dependencies) in their runtime classpath if they want to use such resolvers. The previous (similarly named but not the same) commons-httpclient library is no longer used or supported. (jira:IVY-1563[])
+    *
 
 
 == List of Changes in this Release
 
 For details about the following changes, check our JIRA install at link:https://issues.apache.org/jira/browse/IVY[]
 
-*List of changes since Ivy 2.4.0:*
+*List of changes since Ivy 2.5.0:*
 
-- FIX: Local conflict manager didn't handle deeper conflicts in transitive dependencies (jira:IVY-1404[])
-- FIX: Made the Maven 'test' configuration public so we can use the test-jar as dependency (jira:IVY-1444[])
-- FIX: NullPointerException in dependencytree with no dependencies (jira:IVY-1539[])
-- FIX: checkIfChanged is not settable attribute for checkdepsupdate ant task (jira:IVY-1549[])
-- FIX: ArrayIndexOutOfBoundsException when using a p2 repository for dependencies (jira:IVY-1504[])
-- FIX: fixdeps remove transitive 'kept' dependencies
-- FIX: PomModuleDescriptorParser should parse licenses from parent POM (jira:IVY-1526[]) (Thanks to Jaikiran Pai)
-- FIX: dynamic revisions are not cached per resolver (jira:IVY-1430[]) (Thanks to Stephen Haberman)
-- FIX: Dependencies failed using branch attribute (and extra attributes) (jira:IVY-1141[]) (Thanks to Stephen Haberman)
-- FIX: useCacheOnly should allow lookup of changing dependencies in cache (jira:IVY-1515[]) (Thanks to Ilya)
-- FIX: Translation of POM to Ivy XML with * exclusion is removing main artifact (jira:IVY-1531[]) (Thanks to Jaikiran Pai)
-- FIX: Have makepom task take description from ivy-module > info > description element (jira:IVY-1520[])
-- FIX: Fix RetrieveEngine to take into account the correct extension while dealing with unpacked artifacts (jira:IVY-1478[]) (Thanks to Jaikiran Pai)
-- FIX: ParseException "Unsupported repository, resources names are not uris" for ivy.xml with parent on Windows (jira:IVY-1448[]) (Thanks to Riccardo Foschia and Jaikiran Pai)
-- FIX: Ivy 2.4.0 improperly handles modules with colon (:) in version (jira:IVY-1522[]) (Thanks to Jaikiran Pai)
-- FIX: Delay the processing of configured cache ttls, until the IvySettings object is usable (jira:IVY-1495[]) (Thanks to Jaikiran Pai)
-- FIX: Including optional ivysettings of type 'file' doesn't work when file doesn't exist (jira:IVY-1555[]) (Thanks to Jaikiran Pai)
-- FIX: Makepom ignores dependency classifiers (jira:IVY-1528[]) (Thanks to Jaikiran Pai)
-- FIX: Infinite loop in dependency tree (jira:IVY-1540[]) (Thanks to Jaikiran Pai)
-- FIX: HTTP issue: Basic authentication is stuck in 401 loop (jira:IVY-1336[])
-- FIX: command line: -types seems to not accept comma (jira:IVY-1355[])
-- FIX: Mixed use of symlinks leads to cache corruption (jira:IVY-1498[]) (Thanks to Stephen Haberman)
-- FIX: Some cached locations are stored incorrectly resulting in MalformedURLException (jira:IVY-1566[]) (Thanks to Aur&eacute;lien Pupier)
-- FIX: defaultconf/mapping attributes ignored when extended/included from parent file (jira:IVY-1315[] jira:IVY-1419[] jira:IVY-1420[] jira:IVY-1437[]) (Thanks to Willem Verstraeten)
-- FIX: ApacheURLLister skips versions with URL encoded characters (jira:IVY-1442[] jira:IVY-1573[])
-- FIX: Configuration lists are sensitive to whitespace; multiple split/merge methods (jira:IVY-309[] jira:IVY-1282[])
-- FIX: Warnings about illegal reflection access due to lack of methods to retrieve default authenticator in Java 5 to 8 (jira:IVY-1569[])
-- FIX: Cycle in parent POM ancestry yields StackOverflowError in PomModuleDescriptorParser (jira:IVY-1545[]) (Thanks to Brett Randall)
-- FIX: The method hasIvyListener in org.apache.ivy.core.event.EventManager always returned false
-- FIX: Allow conditionally activated properties through Maven profiles, to be referenced in the `pom.xml` (jira:IVY-1577[])
-- FIX: Fix Maven dependency resolution for dependencies with multiple different classifiers (jira:IVY-1576[])
-- FIX: Correct parent classloader when lauching resolved artifacts from CLI (jira:IVY-1483[]) (Thanks to Stephan Feder)
-- FIX: Make Main.run() public (usable with REPL) (jira:IVY-1321[] jira:IVY-1578[]) (Thanks to Greg Perry)
-- FIX: Make ivy.deps.changed work with extra attributes (jira:IVY-1104[]) (Thanks to Arseny Aprelev)
-- FIX: Implement dependency configuration negation (jira:IVY-982[] jira:IVY-1547[]) (Thanks to Arseny Aprelev)
-- FIX: Don't throw a CircularDependencyException when parsing an import scoped dependency in dependencyManagement section of a pom (jira:IVY-1588[])
-- FIX: Respect exclude regardless of resolution order (jira:IVY-1486[]) (thanks to David Turner)
-- FIX: ModuleDescriptorMemoryCache didn't detect outdated entries when Ivy file was updated in the cache by another process
-- FIX: Store ArtifactOrigin's location as a URL
-- FIX: Retrieve task, with symlink enabled, would not create symlinks for artifacts in certain specific cases (jira:IVY-1594[])
-- FIX: Generated ivy.xml from pom with multiple dependencies with different classifier does not contain the main dependency (jira:IVY-1580[])
+- FIX:
 
 
-- IMPROVEMENT: Throw an IllegalStateException when retrieving the resolutionCacheRoot on the DefaultResolutionCacheManager if the basedir (or IvySettings) is not set (jira:IVY-1482[])
-- IMPROVEMENT: Optimization: limit the revision numbers scanned if revision prefix is specified (Thanks to Ernestas Vaiciukevi&ccaron;ius)
-- IMPROVEMENT: Update BouncyCastle to 1.59 (jira:IVY-1521[]) (Thanks to Michal Srb)
-- IMPROVEMENT: `symlinkmass` option of retrieve task has been deprecated in this release and will no longer be supported since, starting this version of Ivy, Ivy uses Java standard API(s) for symlink management and as such doesn't spawn a process to execute symlink creation shell commands, like it used to do earlier. The `symlinkmass` option was previously there to launch just one single process instead of multiple processes for symlink creation. Now with the usage of the Java standard API(s), this option no longer is relevant.
-- IMPROVEMENT: Ivy command line now supports passing `overwriteMode` option to `retrieve` task (jira:IVY-1447[])
-- IMPROVEMENT: Support timestamped SNAPSHOT versions from Maven repository (jira:IVY-1153[] jira:IVY-1476[])
-- IMPROVEMENT: Update Commons VFS to 2.2
-- IMPROVEMENT: Ivy now supports activating of Maven profiles, in `pom.xml`, by `jdk`, `os`, `property` and `file` (jira:IVY-1558[] jira:IVY-1577[])
-- IMPROVEMENT: Better thread safety of the resolve process
+- IMPROVEMENT:
 
-- NEW: Lets SSH-based resolvers use an `~/.ssh/config` file to find username/hostname/keyfile options (Thanks to Colin Stanfill)
-- NEW: Add ivy.maven.lookup.sources and ivy.maven.lookup.javadoc variables to control the lookup of the additional artifacts. Defaults to true, for backward compatibility (jira:IVY-1529[])
-- NEW: Add (conditional) support for SHA-256, SHA-512 and SHA-384 checksum algorithms (jira:IVY-1554[]) (Thanks to Jaikiran Pai)
-- NEW: The standalone Ivy jar can now be used to generate a pom file for the resolved module, using the `makepom` option (Thanks to link:https://github.com/aanno[Thomas Pasch])
-- NEW: The buildlist task can now have `root` and `leaf` subelements to specify the organisation (and other attributes) of the root and leaf modules (jira:/IVY-1242[]) and (jira:IVY-1293[])
+- NEW:
 
 
 ////
