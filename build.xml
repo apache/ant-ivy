@@ -259,10 +259,6 @@
                 <exclude name="**/*.java"/>
             </fileset>
         </copy>
-
-        <!-- copy antlib for backward compatibility with fr.jayasoft.ivy package -->
-        <copy file="${ant.classes.build.dir}/org/apache/ivy/ant/antlib.xml"
-                todir="${ant.classes.build.dir}/fr/jayasoft/ivy/ant"/>
     </target>
 
     <target name="compile-optional" depends="compile-ant">

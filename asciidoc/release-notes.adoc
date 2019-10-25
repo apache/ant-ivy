@@ -45,8 +45,8 @@ For details about the following changes, check our JIRA install at link:https://
 
 *List of changes since Ivy 2.5.0:*
 
+- BREAKING: Removed old fr\jayasoft\ivy\ant\antlib.xml AntLib definition file (jira:IVY-1612)
 - FIX:
-
 
 - IMPROVEMENT:
 
@@ -74,6 +74,7 @@ Here is the list of people who have contributed source code and documentation up
 * Gintautas Grigelionis
 * Xavier Hanin
 * Nicolas Lalev&eacute;e
+* Jan Mat&egrave;rne 
 * Jaikiran Pai
 * Jon Schneider
 * Gilles Scokart
