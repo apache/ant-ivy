@@ -520,7 +520,7 @@
     </target>
 
     <target name="init-japicmp" depends="jar" unless="skip.test">
-        <ivy:cachepath organisation="com.github.siom79.japicmp" module="japicmp-ant-task" revision="0.13.0"
+        <ivy:cachepath organisation="com.github.siom79.japicmp" module="japicmp-ant-task" revision="0.14.1"
                        inline="true" conf="default" pathid="japicmp.classpath" log="download-only"/>
         <taskdef uri="antlib:japicmp.ant" resource="japicmp/ant/antlib.xml"
                  classpathref="japicmp.classpath"/>
@@ -595,7 +595,7 @@
     </target>
 
     <target name="init-checkstyle" depends="jar">
-        <ivy:cachepath organisation="com.puppycrawl.tools" module="checkstyle" revision="6.19"
+        <ivy:cachepath organisation="com.puppycrawl.tools" module="checkstyle" revision="8.0"
                        inline="true" conf="default" pathid="checkstyle.classpath" log="download-only"/>
         <taskdef uri="antlib:com.puppycrawl.tools.checkstyle.ant"
                  resource="com/puppycrawl/tools/checkstyle/ant/antlib.xml" classpathref="checkstyle.classpath"/>
@@ -637,26 +637,9 @@
     </target>
 
     <target name="init-findbugs" unless="findbugs.home">
-        <!-- Findbugs: Getting Findbugs requires unlimited strength crypto policy -->
-        <property name="findbugs.version"
-                  value="3.0.1"
+        <property name="spotbugs.version"
+                  value="3.1.12"
                   description="Version of Findbugs to use"/>
-        <property name="findbugs.download.name"
-                  value="findbugs-${findbugs.version}"
-                  description="Name of the download file without suffix. Also the internal root directory of the ZIP."/>
-        <property name="findbugs.download.file"
-                  value="${findbugs.download.name}.zip"
-                  description="The filename of the ZIP."/>
-        <property name="findbugs.download.url"
-                  value="https://downloads.sourceforge.net/project/findbugs/findbugs/${findbugs.version}/findbugs-${findbugs.version}.zip"
-                  description="The download adress at a mirror of Sourceforge."/>
-        <property name="findbugs.download.to"
-                  value="${build.dir}/.downloads"
-                  description="Where to store the download and 'install' Findbugs."/>
-        <available property="findbugs.home"
-                   value="${findbugs.download.to}/${findbugs.download.name}"
-                   file="${findbugs.download.to}/${findbugs.download.name}/lib/findbugs.jar"
-                   description="Check if Findbugs is already installed."/>
 
         <!-- Findbugs: Running Findbugs -->
         <property name="findbugs.reportdir"
@@ -671,37 +654,32 @@
         <property name="findbugs.jvmargs"
                   value="-Xms128m -Xmx512m"
                   description="JVMArgs for invoking Findbugs"/>
-
-        <mkdir dir="${findbugs.download.to}"/>
-        <get src="${findbugs.download.url}" dest="${findbugs.download.to}/${findbugs.download.file}"
-             usetimestamp="true" skipexisting="true"/>
-        <unzip src="${findbugs.download.to}/${findbugs.download.file}" dest="${findbugs.download.to}"/>
-        <property name="findbugs.home" location="${findbugs.download.to}/${findbugs.download.name}"/>
     </target>
 
-    <target name="findbugs" description="checks Ivy codebase with Findbugs" depends="init-findbugs,compile-core" xmlns:fb="http://findbugs.sourceforge.net/">
-        <!-- Load the Findbugs AntTasks -->
-        <path id="findbugs.real.classpath">
-            <fileset dir="${findbugs.home}/lib" includes="*.jar"/>
-        </path>
-        <taskdef uri="http://findbugs.sourceforge.net/" resource="edu/umd/cs/findbugs/anttask/tasks.properties" classpathref="findbugs.real.classpath"/>
+    <target name="findbugs" description="checks Ivy codebase with Spotbugs" depends="init-findbugs,compile-core"
+            xmlns:fb="http://findbugs.sourceforge.net/">
+        <ivy:cachepath organisation="com.github.spotbugs" module="spotbugs-ant" revision="${spotbugs.version}"
+                       inline="true" conf="default" pathid="spotbugs.classpath"/>
+        <!-- Load the SpotBugs AntTasks -->
+        <taskdef uri="http://findbugs.sourceforge.net/" resource="edu/umd/cs/findbugs/anttask/tasks.properties"
+                 classpathref="spotbugs.classpath"/>
 
-        <!-- Start Findbugs -->
+        <!-- Start SpotBugs -->
         <mkdir dir="${findbugs.reportdir}"/>
-        <fb:findbugs home="${findbugs.home}"
-                     classpathref="findbugs.real.classpath"
+        <fb:spotbugs classpathref="spotbugs.classpath"
                      output="xml:withMessages"
                      outputFile="${findbugs.reportdir}/${findbugs.raw}"
                      jvmargs="${findbugs.jvmargs}"
                      projectName="${ant.project.name} ${target.ivy.version}">
             <class location="${core.classes.build.dir}"/>
             <sourcePath path="${src.dir}"/>
-        </fb:findbugs>
+            <auxClasspath refid="lib.classpath"/>
+        </fb:spotbugs>
 
         <!-- Generate (human) readable output -->
         <xslt basedir="${findbugs.reportdir}" includes="${findbugs.raw}" destdir="${findbugs.reportdir}">
             <style>
-                <javaresource name="${findbugs.xsl}" classpathref="findbugs.real.classpath"/>
+                <javaresource name="${findbugs.xsl}" classpathref="spotbugs.classpath"/>
             </style>
         </xslt>
     </target>
