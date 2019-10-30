@@ -74,7 +74,7 @@ Here is the list of people who have contributed source code and documentation up
 * Gintautas Grigelionis
 * Xavier Hanin
 * Nicolas Lalev&eacute;e
-* Jan Mat&egrave;rne 
+* Jan Mat&egrave;rne
 * Jaikiran Pai
 * Jon Schneider
 * Gilles Scokart
