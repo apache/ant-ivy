@@ -428,7 +428,7 @@
     </target>
 
     <target name="init-jacoco" depends="jar" unless="skip.test">
-        <ivy:cachepath organisation="org.jacoco" module="org.jacoco.ant" revision="0.8.3"
+        <ivy:cachepath organisation="org.jacoco" module="org.jacoco.ant" revision="${jacoco.version}"
                        inline="true" conf="default" pathid="jacoco.classpath" log="download-only"/>
         <taskdef uri="antlib:org.jacoco.ant" resource="org/jacoco/ant/antlib.xml"
                  classpathref="jacoco.classpath"/>
