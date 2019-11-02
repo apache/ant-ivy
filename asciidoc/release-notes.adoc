@@ -19,7 +19,7 @@
 
 = Ivy Release Announcement
 
-XXXX Date XXXX - The Apache Ivy project is pleased to announce its 2.5.1 release.
+XXXX Date XXXX - The Apache Ivy project is pleased to announce its 2.6.0 release.
 
 == What is Ivy?
 Apache Ivy is a tool for managing (recording, tracking, resolving and reporting) project dependencies, characterized by flexibility,
@@ -34,7 +34,7 @@ More information about the project can be found on the website link:https://ant.
 
 == Key features in this release
 
-Key features of this 2.5.1 release are:
+Key features of this 2.6.0 release are:
 
     *
 
