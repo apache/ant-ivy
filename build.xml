@@ -23,12 +23,6 @@
     <property file="build.properties"/>
 
     <property name="final.name" value="ivy.jar"/>
-    <!-- Java 7 runs into TLS protocol issues when dealing with repositories
-    that no longer support older protocols -->
-    <condition property="java.sysprop.https.protocols" value="" else="TLSv1.2">
-        <javaversion atleast="1.8"/>
-    </condition>
-
 
     <target name="init-ivy-user-home" unless="ivy.use.local.home">
         <condition property="ivy.home" value="${env.IVY_HOME}">
@@ -466,9 +460,6 @@
                 <syspropertyset>
                     <propertyref prefix="http"/>
                 </syspropertyset>
-                <!-- We select specific HTTPS protocols, based on the Java version we are running
-                    on -->
-                <sysproperty key="https.protocols" value="${java.sysprop.https.protocols}"/>
 
                 <!-- Added this to test IVY-65 -->
                 <jvmarg value="-Duser.region=TR"/>
