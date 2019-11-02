@@ -54,7 +54,7 @@ If you want to use Ivy only in your Ant build scripts, and have an internet conn
 [source,xml]
 ----
 <project xmlns:ivy="antlib:org.apache.ivy.ant">
-    <property name="ivy.install.version" value="2.1.0-rc2"/>
+    <property name="ivy.install.version" value="2.5.0"/>
     <condition property="ivy.home" value="${env.IVY_HOME}">
       <isset property="env.IVY_HOME"/>
     </condition>

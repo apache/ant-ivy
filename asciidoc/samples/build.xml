@@ -38,7 +38,7 @@
 
     <!-- here is the version of Ivy we will use. change this property to try a newer
          version if you want -->
-    <property name="ivy.install.version" value="2.4.0"/>
+    <property name="ivy.install.version" value="2.5.0"/>
     <property name="ivy.jar.dir" value="${basedir}/ivy"/>
     <property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar"/>
 
