@@ -36,7 +36,7 @@ More information about the project can be found on the website link:https://ant.
 
 Key features of this 2.6.0 release are:
 
-    *
+    * Ivy now requires a minimum of Java 8 runtime.
 
 
 == List of Changes in this Release
