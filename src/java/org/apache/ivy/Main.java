@@ -24,6 +24,8 @@ import java.io.PrintWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -76,8 +78,8 @@ public final class Main {
         return new CommandLineParser()
                 .addCategory("settings options")
                 .addOption(
-                    new OptionBuilder("settings").arg("settingsfile")
-                            .description("use given file for settings").create())
+                    new OptionBuilder("settings").arg("settingsfile|url")
+                            .description("use given file or URL for settings").create())
                 .addOption(
                         new OptionBuilder("properties").arg("propertiesfile")
                             .description("use given file for properties not specified in settings").create())
@@ -515,15 +517,37 @@ public final class Main {
         if ("".equals(settingsPath)) {
             ivy.configureDefault();
         } else {
-            File conffile = new File(settingsPath);
-            if (!conffile.exists()) {
-                error("ivy configuration file not found: " + conffile);
-            } else if (conffile.isDirectory()) {
-                error("ivy configuration file is not a file: " + conffile);
+            final URI confUri = getSettingsURI(settingsPath);
+            if ("file".equals(confUri.getScheme())) {
+                File conffile = new File(confUri);
+                if (!conffile.exists()) {
+                    throw new IOException("ivy configuration file not found: " + conffile);
+                } else if (conffile.isDirectory()) {
+                    throw new IOException("ivy configuration file is not a file: " + conffile);
+                }
+                ivy.configure(conffile);
+            } else {
+                try {
+                    ivy.configure(confUri.toURL());
+                } catch (IOException ioe) {
+                    throw new IOException("ivy configuration failed to load from: " + settingsPath, ioe);
+                }
             }
-            ivy.configure(conffile);
         }
         return settings;
+    }
+
+    private static URI getSettingsURI(String settingsPath) {
+        URI settingsUri;
+        try {
+            settingsUri = new URI(settingsPath);
+            if (settingsUri.getScheme() == null) {
+                settingsUri = new File(settingsPath).toURI();
+            }
+        } catch (URISyntaxException badUriEx) {
+            return new File(settingsPath).toURI();
+        }
+        return settingsUri;
     }
 
     private static void initMessage(CommandLine line, Ivy ivy) {

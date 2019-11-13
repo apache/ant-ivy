@@ -29,6 +29,7 @@ import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -204,6 +205,18 @@ public class MainTest {
         // run the command
         run(args);
         assertTrue("pom file hasn't been generated at " + pomFilePath, new File(pomFilePath).isFile());
+    }
+
+    /**
+     * Tests that the ivy command can use a URL for the {@code -settings} option. See IVY-1615
+     */
+    @Test
+    public void testSettingsURL() throws Exception {
+        final URL settingsURL = new File("test/repositories/ivysettings.xml").toURI().toURL();
+        run(new String[] {"-settings", settingsURL.toString(), "-ivy",
+                "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml"});
+
+        assertTrue(new File("build/cache/org1/mod1.2/ivy-2.0.xml").exists());
     }
 
     private void run(String[] args) throws Exception {

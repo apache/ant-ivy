@@ -50,7 +50,7 @@ For details about the following changes, check our JIRA install at link:https://
 - FIX: ConcurrentModificationException in MessageLoggerHelper.sumupProblems (jira:IVY-1628[])
 
 
-- IMPROVEMENT:
+- IMPROVEMENT: Ivy command now accepts a URL for the -settings option (jira:IVY-1615[])
 
 - NEW:
 
@@ -219,3 +219,4 @@ Here is the list of people who have contributed source code and documentation up
 * Jaroslaw Wypychowski
 * Sven Zethelius
 * Aleksey Zhukov
+* Jason A. Guild
