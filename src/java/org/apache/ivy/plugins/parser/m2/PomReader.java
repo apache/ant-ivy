@@ -400,7 +400,7 @@ public class PomReader {
          */
         public String getVersion() {
             String val = getFirstChildText(depElement, VERSION);
-            return replaceProps(val);
+            return MavenVersionRangeParser.toIvy(replaceProps(val));
         }
 
         public String getScope() {

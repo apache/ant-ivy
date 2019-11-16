@@ -26,7 +26,8 @@ import java.util.StringTokenizer;
 /**
  * Parser that understands Maven version ranges of the form {@code (,1.0]} and such.
  * More details about such ranges in Maven, can be found
- * {@link https://cwiki.apache.org/confluence/display/MAVENOLD/Dependency+Mediation+and+Conflict+Resolution#DependencyMediationandConflictResolution-DependencyVersionRanges here}
+ * <a href="https://cwiki.apache.org/confluence/display/MAVENOLD/Dependency+Mediation+and+Conflict+Resolution#DependencyMediationandConflictResolution-DependencyVersionRanges">here</a>
+ * @see <a href="https://maven.apache.org/ref/3.6.0/maven-artifact/apidocs/org/apache/maven/artifact/versioning/VersionRange.html#createFromVersionSpec(java.lang.String)">Maven API reference</a>
  */
 class MavenVersionRangeParser {
 
@@ -79,6 +80,17 @@ class MavenVersionRangeParser {
         }
         final Range parsedRange = parse(range);
         return parsedRange != null && parsedRange.accepts(valToCompare);
+    }
+
+    /**
+     * @param range A Maven version range
+     * @return Converts the {@code range} to Ivy format if not null
+     * @see org.apache.ivy.plugins.version.VersionRangeMatcher
+     */
+    static String toIvy(final String range) {
+        // TODO Implement support for range lists? (introduced in Maven 3.5)
+        return (range == null || range.trim().isEmpty()) ? null : range.replace("(", "]")
+                .replace(")", "[").replace("],", "(,").replace(",[", ",)");
     }
 
     private static Range parse(final String rangeValue) {
