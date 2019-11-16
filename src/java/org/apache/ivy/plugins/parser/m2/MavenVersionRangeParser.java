@@ -88,9 +88,15 @@ class MavenVersionRangeParser {
      * @see org.apache.ivy.plugins.version.VersionRangeMatcher
      */
     static String toIvy(final String range) {
-        // TODO Implement support for range lists? (introduced in Maven 3.5)
-        return (range == null || range.trim().isEmpty()) ? null : range.replace("(", "]")
-                .replace(")", "[").replace("],", "(,").replace(",[", ",)");
+        if (range == null || range.trim().isEmpty()) {
+            return null;
+        }
+        if (range.matches(".*[\\]\\[()]\\s*,\\s*[\\]\\[()].*")) {
+            // TODO Implement support for range lists?
+            throw new IllegalArgumentException("Range lists are not supported by Ivy :" + range);
+        }
+        return range.replace("(", "]").replace(")", "[")
+                .replace("],", "(,").replace(",[", ",)");
     }
 
     private static Range parse(final String rangeValue) {
