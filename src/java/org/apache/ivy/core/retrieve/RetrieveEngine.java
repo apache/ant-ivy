@@ -411,7 +411,7 @@ public class RetrieveEngine {
                     ArtifactDownloadReport current = artifactsList.get(i);
                     if (winnerMD.equals(current.getArtifact().getModuleRevisionId())) {
                         throw new RuntimeException("Multiple artifacts of the module " + winnerMD
-                                + " are retrieved to the same file! Update the retrieve pattern "
+                                + " are retrieved to the same file! Update the retrieve pattern"
                                 + " to fix this error.");
                     }
                 }
