@@ -33,7 +33,7 @@ public class ArtifactoryListingTest {
         ApacheURLLister lister = new ApacheURLLister();
 
         List<URL> content = lister.listAll(new URL(
-                "http://repo.jfrog.org/artifactory/libs-releases-local/org/apache/wicket/wicket/"));
+                "https://repo.jfrog.org/artifactory/libs-releases-local/org/apache/wicket/wicket/"));
         assertNotNull(content);
         assertEquals(3, content.size());
     }
