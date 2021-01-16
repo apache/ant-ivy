@@ -439,8 +439,10 @@
 
         <!-- multiple runs into the same logfile let the later report generation fail -->
         <delete file="${jacoco.log}"/>
+        <property name="jacoco.coverage.enabled" value="true"/>
         <jacoco:coverage xmlns:jacoco="antlib:org.jacoco.ant" destfile="${jacoco.log}"
-                         exclclassloader="sun.reflect.DelegatingClassLoader:javassist.Loader">
+                         exclclassloader="sun.reflect.DelegatingClassLoader:javassist.Loader"
+                         enabled="${jacoco.coverage.enabled}">
             <junit
                 haltonfailure="off"
                 haltonerror="off"
