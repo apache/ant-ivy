@@ -34,7 +34,9 @@ import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.osgi.core.BundleInfo;
 import org.apache.ivy.osgi.updatesite.UpdateSiteResolver;
+import org.apache.tools.ant.taskdefs.condition.JavaVersion;
 import org.junit.After;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -215,6 +217,10 @@ public class P2DescriptorTest {
 
     @Test
     public void testResolvePacked() throws Exception {
+        final JavaVersion java14OrHigher = new JavaVersion();
+        java14OrHigher.setAtLeast("14");
+        Assume.assumeFalse("Pack200 tools and API have been removed since JDK 14", java14OrHigher.eval());
+
         settings.setDefaultResolver("p2-with-packed");
 
         ModuleRevisionId mrid = ModuleRevisionId.newInstance(BundleInfo.BUNDLE_TYPE, "org.junit",
