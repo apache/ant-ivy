@@ -115,7 +115,7 @@ the configuration name
 
 `[originalname]`::
 (*__since 1.4__*) +
-the original artifact name (including the extension)
+the original artifact name (not including the extension)
 
 The difference between type and extension is explained in the Ivy file documentation.
 
