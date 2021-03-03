@@ -19,6 +19,7 @@ package org.apache.ivy.util.url;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.auth.AuthSchemeProvider;
@@ -26,21 +27,25 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.NTCredentials;
 import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.AuthCache;
 import org.apache.http.client.config.AuthSchemes;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpHead;
 import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.config.Lookup;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.HttpClientConnectionManager;
 import org.apache.http.conn.routing.HttpRoutePlanner;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.FileEntity;
+import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.auth.BasicSchemeFactory;
 import org.apache.http.impl.auth.DigestSchemeFactory;
 import org.apache.http.impl.auth.NTLMSchemeFactory;
+import org.apache.http.impl.client.BasicAuthCache;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
@@ -186,7 +191,7 @@ public class HttpClientHandler extends AbstractURLHandler implements TimeoutCons
         final HttpPut put = new HttpPut(normalizeToString(dest));
         put.setConfig(requestConfig);
         put.setEntity(new FileEntity(src));
-        try (final CloseableHttpResponse response = this.httpClient.execute(put)) {
+        try (final CloseableHttpResponse response = this.httpClient.execute(put, getHttpClientContext(dest))) {
             validatePutStatusCode(dest, response.getStatusLine().getStatusCode(), response.getStatusLine().getReasonPhrase());
         }
     }
@@ -332,7 +337,7 @@ public class HttpClientHandler extends AbstractURLHandler implements TimeoutCons
         final HttpGet httpGet = new HttpGet(normalizeToString(url));
         httpGet.setConfig(requestConfig);
         httpGet.addHeader("Accept-Encoding", "gzip,deflate");
-        return this.httpClient.execute(httpGet);
+        return this.httpClient.execute(httpGet, getHttpClientContext(url));
     }
 
     private CloseableHttpResponse doHead(final URL url, final int connectionTimeout, final int readTimeout) throws IOException {
@@ -344,11 +349,32 @@ public class HttpClientHandler extends AbstractURLHandler implements TimeoutCons
                 .build();
         final HttpHead httpHead = new HttpHead(normalizeToString(url));
         httpHead.setConfig(requestConfig);
-        return this.httpClient.execute(httpHead);
+        return this.httpClient.execute(httpHead, getHttpClientContext(url));
     }
 
     private boolean hasCredentialsConfigured(final URL url) {
         return CredentialsStore.INSTANCE.hasCredentials(url.getHost());
+    }
+
+    private HttpClientContext getHttpClientContext(URL dest) {
+        if (!getPreemptiveAuth()) {
+            return null;
+        }
+
+        // Preemptive authentication, see
+        // https://hc.apache.org/httpcomponents-client-4.5.x/tutorial/html/authentication.html
+        // Without preemptive authentication, Ivy will first try non-authenticated, get a 4xx, retry
+        // authenticated and finally get a 2xx. This becomes an issue in an environment where Ivy is
+        // used a lot, as firewalls might see large amounts of 4xx as a brute-force attack and close
+        // the connections.
+
+        final BasicScheme basicAuth = new BasicScheme();
+        final HttpHost target = new HttpHost(dest.getHost(), dest.getPort(), dest.getProtocol());
+        final AuthCache authCache = new BasicAuthCache();
+        authCache.put(target, basicAuth);
+        final HttpClientContext localContext = HttpClientContext.create();
+        localContext.setAuthCache(authCache);
+        return localContext;
     }
 
     @Override

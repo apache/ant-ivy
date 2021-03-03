@@ -126,4 +126,12 @@ public interface TimeoutConstrainedURLHandler extends URLHandler {
      * @since 2.5
      */
     void upload(File src, URL dest, CopyProgressListener listener, TimeoutConstraint timeoutConstraint) throws IOException;
+
+    /**
+     * Sets the flag enabling or disabling preemptive authentication.
+     *
+     * @param preemptive The flag
+     * @since 2.5
+     */
+    void setPreemptiveAuth(boolean preemptive);
 }
