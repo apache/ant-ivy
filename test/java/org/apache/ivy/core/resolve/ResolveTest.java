@@ -6589,6 +6589,34 @@ public class ResolveTest {
         }
     }
 
+
+    /**
+     * Tests that when the internal metadata file containing the artifact origin location
+     * points to {@code file:} URI, then the location is correctly parsed.
+     * See IVY-1616
+     */
+    @Test
+    public void testCacheUseOrigin() throws Exception {
+        final Ivy current = new Ivy();
+        current.configure(new File("test/repositories/ivysettings-caches-use-origin.xml"));
+        // resolve and download an artifact and let the origin details be stored in the internal metadata files
+        // in ivy cache
+        ResolveReport report = current.resolve(ModuleRevisionId.newInstance("org.apache",
+                "test","1.0"),
+                getResolveOptions(new String[] {"*"}).setDownload(true), false);
+        assertNotNull("Resolve report is null", report);
+        assertFalse("Resolution has errors", report.hasError());
+        // now set the "useOrigin" on caches to true, so that the next resolution uses the artifact origin
+        // that was saved in previous resolution
+        current.getSettings().setDefaultUseOrigin(true);
+        // trigger the resolution again
+        report = current.resolve(ModuleRevisionId.newInstance("org.apache",
+                "test","1.0"),
+                getResolveOptions(new String[] {"*"}).setDownload(true), false);
+        assertNotNull("Resolve report is null", report);
+        assertFalse("Resolution has errors", report.hasError());
+    }
+
     private void assertJarContains(final File jar, final String jarEntryPath) throws IOException {
         try (final JarFile jarFile = new JarFile(jar)) {
             final JarEntry entry = jarFile.getJarEntry(jarEntryPath);

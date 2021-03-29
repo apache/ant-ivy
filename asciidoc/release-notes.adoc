@@ -48,6 +48,7 @@ For details about the following changes, check our JIRA install at link:https://
 - BREAKING: Removed old fr\jayasoft\ivy\ant\antlib.xml AntLib definition file (jira:IVY-1612[])
 - FIX: ResolveEngine resets dictator resolver to null in the global configuration (jira:IVY-1618[])
 - FIX: ConcurrentModificationException in MessageLoggerHelper.sumupProblems (jira:IVY-1628[])
+- FIX: useOrigin="true" fails with file-based ibiblio (jira:IVY-1616[])
 
 
 - IMPROVEMENT: Ivy command now accepts a URL for the -settings option (jira:IVY-1615[])
