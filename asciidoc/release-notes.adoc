@@ -46,7 +46,9 @@ For details about the following changes, check our JIRA install at link:https://
 *List of changes since Ivy 2.5.0:*
 
 - BREAKING: Removed old fr\jayasoft\ivy\ant\antlib.xml AntLib definition file (jira:IVY-1612[])
-- FIX:
+- FIX: ResolveEngine resets dictator resolver to null in the global configuration (jira:IVY-1618[])
+- FIX: ConcurrentModificationException in MessageLoggerHelper.sumupProblems (jira:IVY-1628[])
+
 
 - IMPROVEMENT:
 
