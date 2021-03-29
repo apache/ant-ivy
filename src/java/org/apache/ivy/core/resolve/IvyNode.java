@@ -165,7 +165,13 @@ public class IvyNode implements Comparable<IvyNode> {
         } else {
             markRootModuleConfLoaded(rootModuleConf);
             if (md == null) {
-                DependencyResolver resolver = data.getSettings().getResolver(getId());
+                ResolveEngine engine = IvyContext.getContext().getIvy().getResolveEngine();
+                // get the resolver configured on the engine and if none is configured then
+                // get the one configured in ivy settings
+                DependencyResolver resolver = engine.getDictatorResolver();
+                if (resolver == null) {
+                    resolver = data.getSettings().getResolver(getId());
+                }
                 if (resolver == null) {
                     Message.error("no resolver found for " + getModuleId()
                             + ": check your configuration");

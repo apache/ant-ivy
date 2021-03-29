@@ -126,7 +126,6 @@ public class ResolveEngine {
      */
     public void setDictatorResolver(DependencyResolver dictatorResolver) {
         this.dictatorResolver = dictatorResolver;
-        settings.setDictatorResolver(dictatorResolver);
     }
 
     public ResolveReport resolve(File ivySource) throws ParseException, IOException {

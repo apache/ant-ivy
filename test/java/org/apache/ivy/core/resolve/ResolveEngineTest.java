@@ -28,9 +28,11 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.ivy.core.report.DownloadStatus;
 import org.apache.ivy.core.report.ResolveReport;
+import org.apache.ivy.plugins.resolver.FileSystemResolver;
 import org.apache.ivy.util.CacheCleaner;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -85,6 +87,34 @@ public class ResolveEngineTest {
         testLocateThenDownload(engine,
             new DefaultArtifact(ModuleRevisionId.parse("org1#mod1.1;1.0"), new Date(), "mod1.1",
                     "jar", "jar"), new File("test/repositories/1/org1/mod1.1/jars/mod1.1-1.0.jar"));
+    }
+
+    /**
+     * Tests that setting the dictator resolver on the resolve engine doesn't change the
+     * dependency resolver set in the Ivy settings. See IVY-1618 for details.
+     */
+    @Test
+    public void testSetDictatorResolver() throws Exception {
+        final Ivy current = Ivy.newInstance();
+        current.configure(new File("test/repositories/ivysettings.xml"));
+        final FileSystemResolver settingsResolver = new FileSystemResolver();
+        settingsResolver.setName("resolver-1");
+        current.getSettings().setDictatorResolver(settingsResolver);
+
+        final ResolveEngine engine = new ResolveEngine(current.getSettings(), current.getEventManager(),
+                current.getSortEngine());
+        final FileSystemResolver engineResolver = new FileSystemResolver();
+        engineResolver.setName("resolver-2");
+        engine.setDictatorResolver(engineResolver);
+
+        Assert.assertNotNull("Resolver is null on engine", engine.getDictatorResolver());
+        Assert.assertSame("Unexpected resolver on engine", engineResolver, engine.getDictatorResolver());
+
+        final ModuleRevisionId dummy = ModuleRevisionId.newInstance("foo", "bar", "1.2.3");
+        Assert.assertNotNull("Resolver is null on Ivy settings", current.getSettings().getResolver(dummy));
+        Assert.assertSame("Unexpected resolver on Ivy settings", settingsResolver,
+                current.getSettings().getResolver(dummy));
+
     }
 
     private void testLocateThenDownload(ResolveEngine engine, Artifact artifact, File artifactFile) {
