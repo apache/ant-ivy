@@ -1,10 +1,12 @@
+<a href='http://35.154.114.184:8080/job/apache-ivy/'><img src='http://35.154.114.184:8080/buildStatus/icon?job=apache-ivy'></a>
+
 ////
    Licensed to the Apache Software Foundation (ASF) under one
    or more contributor license agreements.  See the NOTICE file
    distributed with this work for additional information
    regarding copyright ownership.  The ASF licenses this file
    to you under the Apache License, Version 2.0 (the
-   "License"); you may not use this file except in compliance
+   "License"); you may not use this file except in compliance and 
    with the License.  You may obtain a copy of the License at
 
      https://www.apache.org/licenses/LICENSE-2.0
@@ -102,4 +104,4 @@ in contributing, please visit https://ant.apache.org/ivy/get-involved.html.
 The Apache Ivy project uses JIRA for issue tracking.  Please report any 
 issues you find at https://issues.apache.org/jira/browse/IVY
 
-
+Text added by vichar Sharma.
