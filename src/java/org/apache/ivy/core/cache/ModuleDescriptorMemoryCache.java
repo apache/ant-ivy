@@ -76,23 +76,25 @@ class ModuleDescriptorMemoryCache {
             // cache is disbaled
             return null;
         }
-        CacheEntry entry = (CacheEntry) valueMap.get(ivyFile);
-        if (entry != null) {
-            if (entry.isStale(validated, ivySettings)) {
-                Message.debug("Entry is found in the ModuleDescriptorCache but entry should be "
-                        + "reevaluated : " + ivyFile);
-                valueMap.remove(ivyFile);
-                return null;
+        synchronized (valueMap) {
+            CacheEntry entry = (CacheEntry) valueMap.get(ivyFile);
+            if (entry != null) {
+                if (entry.isStale(validated, ivySettings)) {
+                    Message.debug("Entry is found in the ModuleDescriptorCache but entry should be "
+                            + "reevaluated : " + ivyFile);
+                    valueMap.remove(ivyFile);
+                    return null;
+                } else {
+                    // Move the entry at the end of the list
+                    valueMap.remove(ivyFile);
+                    valueMap.put(ivyFile, entry);
+                    Message.debug("Entry is found in the ModuleDescriptorCache : " + ivyFile);
+                    return entry.md;
+                }
             } else {
-                // Move the entry at the end of the list
-                valueMap.remove(ivyFile);
-                valueMap.put(ivyFile, entry);
-                Message.debug("Entry is found in the ModuleDescriptorCache : " + ivyFile);
-                return entry.md;
+                Message.debug("No entry is found in the ModuleDescriptorCache : " + ivyFile);
+                return null;
             }
-        } else {
-            Message.debug("No entry is found in the ModuleDescriptorCache : " + ivyFile);
-            return null;
         }
     }
 
@@ -102,13 +104,15 @@ class ModuleDescriptorMemoryCache {
             // cache is disabled
             return;
         }
-        if (valueMap.size() >= maxSize) {
-            Message.debug("ModuleDescriptorCache is full, remove one entry");
-            Iterator it = valueMap.values().iterator();
-            it.next();
-            it.remove();
+        synchronized (valueMap) {
+            if (valueMap.size() >= maxSize) {
+                Message.debug("ModuleDescriptorCache is full, remove one entry");
+                Iterator it = valueMap.values().iterator();
+                it.next();
+                it.remove();
+            }
+            valueMap.put(url, new CacheEntry(descriptor, validated, ivySettingsMonitor));
         }
-        valueMap.put(url, new CacheEntry(descriptor, validated, ivySettingsMonitor));
     }
 
     private static class CacheEntry {
