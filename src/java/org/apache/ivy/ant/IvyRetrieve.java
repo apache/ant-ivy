@@ -126,16 +126,23 @@ public class IvyRetrieve extends IvyPostResolveTask {
             }
 
             if (getSetId() != null) {
-                FileSet fileset = new FileSet();
+                FileSet fileset;
+
+                Collection<File> retrievedFiles = report.getRetrievedFiles();
+                if (retrievedFiles.isEmpty()) {
+                    fileset = new EmptyFileSet();
+                } else {
+                    fileset = new FileSet();
+                    fileset.setDir(report.getRetrieveRoot());
+
+                    for (File file : retrievedFiles) {
+                        PatternSet.NameEntry ne = fileset.createInclude();
+                        ne.setName(getPath(report.getRetrieveRoot(), file));
+                    }
+                }
+
                 fileset.setProject(getProject());
                 getProject().addReference(getSetId(), fileset);
-
-                fileset.setDir(report.getRetrieveRoot());
-
-                for (File file : report.getRetrievedFiles()) {
-                    PatternSet.NameEntry ne = fileset.createInclude();
-                    ne.setName(getPath(report.getRetrieveRoot(), file));
-                }
             }
         } catch (Exception ex) {
             throw new BuildException("impossible to ivy retrieve: " + ex, ex);

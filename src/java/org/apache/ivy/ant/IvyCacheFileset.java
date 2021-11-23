@@ -21,15 +21,11 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import org.apache.ivy.core.report.ArtifactDownloadReport;
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.DirectoryScanner;
-import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.PatternSet.NameEntry;
-import org.apache.tools.ant.types.Resource;
 
 /**
  * Creates an ant fileset consisting in all artifacts found during a resolve. Note that this task
@@ -193,50 +189,5 @@ public class IvyCacheFileset extends IvyCacheTask {
             file = file.getParentFile();
         }
         return r;
-    }
-
-    private static class EmptyFileSet extends FileSet {
-
-        private DirectoryScanner ds = new EmptyDirectoryScanner();
-
-        public Iterator<Resource> iterator() {
-            return new EmptyIterator<>();
-        }
-
-        public Object clone() {
-            return new EmptyFileSet();
-        }
-
-        public int size() {
-            return 0;
-        }
-
-        public DirectoryScanner getDirectoryScanner(Project project) {
-            return ds;
-        }
-    }
-
-    private static class EmptyIterator<T> implements Iterator<T> {
-
-        public boolean hasNext() {
-            return false;
-        }
-
-        public T next() {
-            throw new NoSuchElementException("EmptyFileSet Iterator");
-        }
-
-        public void remove() {
-            throw new IllegalStateException("EmptyFileSet Iterator");
-        }
-
-    }
-
-    private static class EmptyDirectoryScanner extends DirectoryScanner {
-
-        public String[] getIncludedFiles() {
-            return new String[0];
-        }
-
     }
 }

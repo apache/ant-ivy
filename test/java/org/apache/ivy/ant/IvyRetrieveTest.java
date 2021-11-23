@@ -22,17 +22,20 @@ import java.io.IOException;
 
 import org.apache.ivy.TestHelper;
 import org.apache.ivy.core.IvyPatternHelper;
+import org.apache.ivy.plugins.matcher.GlobPatternMatcher;
 import org.apache.ivy.util.CacheCleaner;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 
+import org.apache.tools.ant.types.FileSet;
+import org.apache.tools.ant.types.Mapper;
+import org.apache.tools.ant.types.Resource;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class IvyRetrieveTest {
     private static final String IVY_RETRIEVE_PATTERN = "build/test/lib/[organisation]/[module]/ivy-[revision].xml";
@@ -75,6 +78,37 @@ public class IvyRetrieveTest {
         retrieve.execute();
         assertTrue(new File(IvyPatternHelper.substitute(RETRIEVE_PATTERN, "org1", "mod1.2", "2.0",
             "mod1.2", "jar", "jar")).exists());
+    }
+
+    @Test
+    public void testRetrieveFileSetToNonEmptyDirectory() throws IOException {
+        new File("build/test/lib").mkdirs();
+        new File("build/test/lib/foo.txt").createNewFile(); // make sure the retrieve dir is not empty
+
+        project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-simple.xml");
+
+        retrieve.setSetId("testId");
+        retrieve.execute();
+
+        FileSet fileSet = project.getReference("testId");
+        assertNotNull(fileSet);
+        assertEquals(1, fileSet.size());
+    }
+
+    @Test
+    public void testRetrieveEmptyFileSetToNonEmptyDirectory() throws IOException {
+        new File("build/test/lib").mkdirs();
+        new File("build/test/lib/foo.txt").createNewFile(); // make sure the retrieve dir is not empty
+
+        project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-simple.xml");
+
+        retrieve.setType("foo"); // make sure we don't retrieve anything
+        retrieve.setSetId("testId");
+        retrieve.execute();
+
+        FileSet fileSet = project.getReference("testId");
+        assertNotNull(fileSet);
+        assertEquals(0, fileSet.size());
     }
 
     @Test
