@@ -131,8 +131,10 @@ public class IvyRetrieve extends IvyPostResolveTask {
                 Collection<File> retrievedFiles = report.getRetrievedFiles();
                 if (retrievedFiles.isEmpty()) {
                     fileset = new EmptyFileSet();
+                    fileset.setProject(getProject());
                 } else {
                     fileset = new FileSet();
+                    fileset.setProject(getProject());
                     fileset.setDir(report.getRetrieveRoot());
 
                     for (File file : retrievedFiles) {
@@ -141,7 +143,6 @@ public class IvyRetrieve extends IvyPostResolveTask {
                     }
                 }
 
-                fileset.setProject(getProject());
                 getProject().addReference(getSetId(), fileset);
             }
         } catch (Exception ex) {
