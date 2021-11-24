@@ -79,22 +79,27 @@ public class IvyRetrieveTest {
     }
 
     @Test
-    public void testRetrieveFileSetToNonEmptyDirectory() throws IOException {
+    public void testRetrieveToNonEmptyDirectory() throws IOException {
         new File("build/test/lib").mkdirs();
         new File("build/test/lib/foo.txt").createNewFile(); // make sure the retrieve dir is not empty
 
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-simple.xml");
 
-        retrieve.setSetId("testId");
+        retrieve.setSetId("setId");
+        retrieve.setPathId("pathId");
         retrieve.execute();
 
-        FileSet fileSet = project.getReference("testId");
+        FileSet fileSet = project.getReference("setId");
         assertNotNull(fileSet);
         assertEquals(1, fileSet.size());
+
+        Path path = project.getReference("pathId");
+        assertNotNull(path);
+        assertEquals(1, path.size());
     }
 
     @Test
-    public void testRetrieveEmptyFileSetToNonEmptyDirectory() throws IOException {
+    public void testEmptyRetrieveToNonEmptyDirectory() throws IOException {
         new File("build/test/lib").mkdirs();
         new File("build/test/lib/foo.txt").createNewFile(); // make sure the retrieve dir is not empty
 
