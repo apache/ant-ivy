@@ -49,7 +49,7 @@ For details about the following changes, check our JIRA install at link:https://
 - FIX: ResolveEngine resets dictator resolver to null in the global configuration (jira:IVY-1618[])
 - FIX: ConcurrentModificationException in MessageLoggerHelper.sumupProblems (jira:IVY-1628[])
 - FIX: useOrigin="true" fails with file-based ibiblio (jira:IVY-1616[])
-
+- FIX: ivy:retrieve Ant task didn't create an empty fileset when no files were retrieved to a non-empty directory (jira:IVY-1631[])
 
 - IMPROVEMENT: Ivy command now accepts a URL for the -settings option (jira:IVY-1615[])
 
