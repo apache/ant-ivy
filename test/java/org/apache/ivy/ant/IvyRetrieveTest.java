@@ -22,15 +22,13 @@ import java.io.IOException;
 
 import org.apache.ivy.TestHelper;
 import org.apache.ivy.core.IvyPatternHelper;
-import org.apache.ivy.plugins.matcher.GlobPatternMatcher;
 import org.apache.ivy.util.CacheCleaner;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 
 import org.apache.tools.ant.types.FileSet;
-import org.apache.tools.ant.types.Mapper;
-import org.apache.tools.ant.types.Resource;
+import org.apache.tools.ant.types.Path;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -103,12 +101,17 @@ public class IvyRetrieveTest {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-simple.xml");
 
         retrieve.setType("foo"); // make sure we don't retrieve anything
-        retrieve.setSetId("testId");
+        retrieve.setSetId("setId");
+        retrieve.setPathId("pathId");
         retrieve.execute();
 
-        FileSet fileSet = project.getReference("testId");
+        FileSet fileSet = project.getReference("setId");
         assertNotNull(fileSet);
         assertEquals(0, fileSet.size());
+
+        Path path = project.getReference("pathId");
+        assertNotNull(path);
+        assertEquals(0, path.size());
     }
 
     @Test
