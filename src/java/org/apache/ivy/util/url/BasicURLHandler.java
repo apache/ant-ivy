@@ -41,6 +41,8 @@ public class BasicURLHandler extends AbstractURLHandler implements TimeoutConstr
 
     private static final int BUFFER_SIZE = 64 * 1024;
 
+    private static final String ACCEPT_HEADER_VALUE = "*/*";
+
     private static final class HttpStatus {
         static final int SC_OK = 200;
 
@@ -96,6 +98,7 @@ public class BasicURLHandler extends AbstractURLHandler implements TimeoutConstr
             con.setConnectTimeout(connectionTimeout);
             con.setReadTimeout(readTimeout);
             con.setRequestProperty("User-Agent", getUserAgent());
+            con.setRequestProperty("Accept", ACCEPT_HEADER_VALUE);
             if (con instanceof HttpURLConnection) {
                 HttpURLConnection httpCon = (HttpURLConnection) con;
                 if (getRequestMethod() == TimeoutConstrainedURLHandler.REQUEST_METHOD_HEAD) {
@@ -199,6 +202,7 @@ public class BasicURLHandler extends AbstractURLHandler implements TimeoutConstr
             conn.setConnectTimeout(connectionTimeout);
             conn.setReadTimeout(readTimeout);
             conn.setRequestProperty("User-Agent", getUserAgent());
+            conn.setRequestProperty("Accept", ACCEPT_HEADER_VALUE);
             conn.setRequestProperty("Accept-Encoding", "gzip,deflate");
             if (conn instanceof HttpURLConnection) {
                 HttpURLConnection httpCon = (HttpURLConnection) conn;
@@ -245,6 +249,7 @@ public class BasicURLHandler extends AbstractURLHandler implements TimeoutConstr
             srcConn.setConnectTimeout(connectionTimeout);
             srcConn.setReadTimeout(readTimeout);
             srcConn.setRequestProperty("User-Agent", getUserAgent());
+            srcConn.setRequestProperty("Accept", ACCEPT_HEADER_VALUE);
             srcConn.setRequestProperty("Accept-Encoding", "gzip,deflate");
             if (srcConn instanceof HttpURLConnection) {
                 HttpURLConnection httpCon = (HttpURLConnection) srcConn;
