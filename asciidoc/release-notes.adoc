@@ -222,3 +222,4 @@ Here is the list of people who have contributed source code and documentation up
 * Sven Zethelius
 * Aleksey Zhukov
 * Jason A. Guild
+* Berno Langer
