@@ -49,7 +49,6 @@
         <dependency org="oro" name="oro" rev="${oro.version}" conf="default,oro"/>
         <dependency org="org.apache.commons" name="commons-vfs2" rev="${commons-vfs2.version}" conf="default,vfs"/>
         <dependency org="com.jcraft" name="jsch" rev="${jsch.version}" conf="default,sftp"/>
-        <dependency org="com.jcraft" name="jsch.agentproxy" rev="${jsch.agentproxy.version}" conf="default,sftp"/>
         <dependency org="com.jcraft" name="jsch.agentproxy.connector-factory" rev="${jsch.agentproxy.version}" conf="default,sftp"/>
         <dependency org="com.jcraft" name="jsch.agentproxy.jsch" rev="${jsch.agentproxy.version}" conf="default,sftp"/>
         <dependency org="org.bouncycastle" name="bcpg-jdk15on" rev="${bouncycastle.version}" conf="default"/>
