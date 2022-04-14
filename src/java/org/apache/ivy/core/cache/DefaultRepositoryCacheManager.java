@@ -110,7 +110,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
 
     private String ivyPattern;
 
-    private String dataFilePattern = DEFAULT_DATA_FILE_PATTERN;
+    private String dataFilePattern;
 
     private String artifactPattern;
 
@@ -223,6 +223,16 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
     }
 
     public String getDataFilePattern() {
+        
+         if (dataFilePattern == null) {
+            if (settings != null) {
+                dataFilePattern = settings.getVariable("ivy.cache.ivydata.pattern");
+            }
+            if (dataFilePattern == null) {
+                dataFilePattern = DEFAULT_DATA_FILE_PATTERN;
+            }
+        }
+        
         return dataFilePattern;
     }
 
