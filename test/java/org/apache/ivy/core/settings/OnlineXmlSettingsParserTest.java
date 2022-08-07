@@ -42,7 +42,7 @@ public class OnlineXmlSettingsParserTest {
         configureURLHandler();
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
-        parser.parse(new URL("http://ant.apache.org/ivy/test/ivysettings-include-http-url.xml"));
+        parser.parse(new URL("https://ant.apache.org/ivy/test/ivysettings-include-http-url.xml"));
 
         DependencyResolver resolver = settings.getResolver("ivyrep");
         assertNotNull(resolver);
@@ -56,7 +56,7 @@ public class OnlineXmlSettingsParserTest {
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
         parser.parse(new URL(
-                "http://ant.apache.org/ivy/test/ivysettings-include-http-relative-url.xml"));
+                "https://ant.apache.org/ivy/test/ivysettings-include-http-relative-url.xml"));
 
         DependencyResolver resolver = settings.getResolver("ivyrep");
         assertNotNull(resolver);
@@ -70,7 +70,7 @@ public class OnlineXmlSettingsParserTest {
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
         parser.parse(new URL(
-                "http://ant.apache.org/ivy/test/ivysettings-include-http-relative-file.xml"));
+                "https://ant.apache.org/ivy/test/ivysettings-include-http-relative-file.xml"));
 
         DependencyResolver resolver = settings.getResolver("ivyrep");
         assertNotNull(resolver);
@@ -86,7 +86,7 @@ public class OnlineXmlSettingsParserTest {
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
         parser.parse(new URL(
-                "http://ant.apache.org/ivy/test/ivysettings-include-http-absolute-file.xml"));
+                "https://ant.apache.org/ivy/test/ivysettings-include-http-absolute-file.xml"));
 
         DependencyResolver inc = settings.getResolver("includeworks");
         assertNotNull(inc);
