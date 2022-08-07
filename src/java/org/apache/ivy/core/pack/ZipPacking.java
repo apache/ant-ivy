@@ -52,8 +52,15 @@ public class ZipPacking extends ArchivePacking {
         try (ZipInputStream zip = new ZipInputStream(packed)) {
             ZipEntry entry = null;
             while (((entry = zip.getNextEntry()) != null)) {
-                File f = new File(dest, entry.getName());
-                Message.verbose("\t\texpanding " + entry.getName() + " to " + f);
+                String entryName = entry.getName();
+                File f = FileUtil.resolveFile(dest, entryName);
+                if (!FileUtil.isLeadingPath(dest, f, true)) {
+                    Message.verbose("\t\tskipping " + entryName + " as its target "
+                                    + f.getCanonicalPath()
+                                    + " is outside of " + dest.getCanonicalPath() + ".");
+                    continue;
+                }
+                Message.verbose("\t\texpanding " + entryName + " to " + f);
 
                 // create intermediary directories - sometimes zip don't add them
                 File dirF = f.getParentFile();

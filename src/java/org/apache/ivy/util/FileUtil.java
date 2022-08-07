@@ -611,6 +611,68 @@ public final class FileUtil {
     }
 
     /**
+     * Learn whether one path "leads" another.
+     *
+     * <p>This method uses {@link #normalize} under the covers and
+     * does not resolve symbolic links.</p>
+     *
+     * <p>If either path tries to go beyond the file system root
+     * (i.e. it contains more ".." segments than can be travelled up)
+     * the method will return false.</p>
+     *
+     * @param leading The leading path, must not be null, must be absolute.
+     * @param path The path to check, must not be null, must be absolute.
+     * @return true if path starts with leading; false otherwise.
+     * @since Ant 1.7
+     */
+    public static boolean isLeadingPath(File leading, File path) {
+        String l = normalize(leading.getAbsolutePath()).getAbsolutePath();
+        String p = normalize(path.getAbsolutePath()).getAbsolutePath();
+        if (l.equals(p)) {
+            return true;
+        }
+        // ensure that l ends with a /
+        // so we never think /foo was a parent directory of /foobar
+        if (!l.endsWith(File.separator)) {
+            l += File.separator;
+        }
+        // ensure "/foo/"  is not considered a parent of "/foo/../../bar"
+        String up = File.separator + ".." + File.separator;
+        if (l.contains(up) || p.contains(up) || (p + File.separator).contains(up)) {
+            return false;
+        }
+        return p.startsWith(l);
+    }
+
+    /**
+     * Learn whether one path "leads" another.
+     *
+     * @param leading The leading path, must not be null, must be absolute.
+     * @param path The path to check, must not be null, must be absolute.
+     * @param resolveSymlinks whether symbolic links shall be resolved
+     * prior to comparing the paths.
+     * @return true if path starts with leading; false otherwise.
+     * @since Ant 1.9.13
+     * @throws IOException if resolveSymlinks is true and invoking
+     * getCanonicaPath on either argument throws an exception
+     */
+    public static boolean isLeadingPath(File leading, File path, boolean resolveSymlinks)
+        throws IOException {
+        if (!resolveSymlinks) {
+            return isLeadingPath(leading, path);
+        }
+        final File l = leading.getCanonicalFile();
+        File p = path.getCanonicalFile();
+        do {
+            if (l.equals(p)) {
+                return true;
+            }
+            p = p.getParentFile();
+        } while (p != null);
+        return false;
+    }
+
+    /**
      * Get the length of the file, or the sum of the children lengths if it is a directory
      *
      * @param file File
