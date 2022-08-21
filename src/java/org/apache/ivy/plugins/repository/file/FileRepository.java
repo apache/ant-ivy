@@ -49,13 +49,15 @@ public class FileRepository extends AbstractRepository {
     }
 
     public void get(String source, File destination) throws IOException {
+        File s = getFile(source);
         fireTransferInitiated(getResource(source), TransferEvent.REQUEST_GET);
-        copy(getFile(source), destination, true);
+        copy(s, destination, true);
     }
 
     public void put(File source, String destination, boolean overwrite) throws IOException {
+        File d = getFile(destination);
         fireTransferInitiated(getResource(destination), TransferEvent.REQUEST_PUT);
-        copy(source, getFile(destination), overwrite);
+        copy(source, d, overwrite);
     }
 
     public void move(File src, File dest) throws IOException {
@@ -112,7 +114,11 @@ public class FileRepository extends AbstractRepository {
         if (baseDir == null) {
             return Checks.checkAbsolute(source, "source");
         }
-        return FileUtil.resolveFile(baseDir, source);
+        File file = FileUtil.resolveFile(baseDir, source);
+        if (!FileUtil.isLeadingPath(baseDir, file)) {
+            throw new IllegalArgumentException(source + " outside of repository root");
+        }
+        return file;
     }
 
     public boolean isLocal() {

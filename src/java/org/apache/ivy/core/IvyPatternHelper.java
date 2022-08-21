@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -135,7 +136,7 @@ public final class IvyPatternHelper {
                 if (token.indexOf(':') > 0) {
                     token = token.substring(token.indexOf(':') + 1);
                 }
-                tokens.put(token, entry.getValue());
+                tokens.put(token, new Validated(token, entry.getValue()));
             }
         }
         if (extraArtifactAttributes != null) {
@@ -144,19 +145,19 @@ public final class IvyPatternHelper {
                 if (token.indexOf(':') > 0) {
                     token = token.substring(token.indexOf(':') + 1);
                 }
-                tokens.put(token, entry.getValue());
+                tokens.put(token, new Validated(token, entry.getValue()));
             }
         }
-        tokens.put(ORGANISATION_KEY, org == null ? "" : org);
-        tokens.put(ORGANISATION_KEY2, org == null ? "" : org);
+        tokens.put(ORGANISATION_KEY, org == null ? "" : new Validated(ORGANISATION_KEY, org));
+        tokens.put(ORGANISATION_KEY2, org == null ? "" : new Validated(ORGANISATION_KEY2, org));
         tokens.put(ORGANISATION_PATH_KEY, org == null ? "" : org.replace('.', '/'));
-        tokens.put(MODULE_KEY, module == null ? "" : module);
-        tokens.put(BRANCH_KEY, branch == null ? "" : branch);
-        tokens.put(REVISION_KEY, revision == null ? "" : revision);
-        tokens.put(ARTIFACT_KEY, artifact == null ? module : artifact);
-        tokens.put(TYPE_KEY, type == null ? "jar" : type);
-        tokens.put(EXT_KEY, ext == null ? "jar" : ext);
-        tokens.put(CONF_KEY, conf == null ? "default" : conf);
+        tokens.put(MODULE_KEY, module == null ? "" : new Validated(MODULE_KEY, module));
+        tokens.put(BRANCH_KEY, branch == null ? "" : new Validated(BRANCH_KEY, branch));
+        tokens.put(REVISION_KEY, revision == null ? "" : new Validated(REVISION_KEY, revision));
+        tokens.put(ARTIFACT_KEY, new Validated(ARTIFACT_KEY, artifact == null ? module : artifact));
+        tokens.put(TYPE_KEY, type == null ? "jar" : new Validated(TYPE_KEY, type));
+        tokens.put(EXT_KEY, ext == null ? "jar" : new Validated(EXT_KEY, ext));
+        tokens.put(CONF_KEY, conf == null ? "default" : new Validated(CONF_KEY, conf));
         if (origin == null) {
             tokens.put(ORIGINAL_ARTIFACTNAME_KEY, new OriginalArtifactNameValue(org, module,
                     branch, revision, artifact, type, ext, extraModuleAttributes,
@@ -328,7 +329,9 @@ public final class IvyPatternHelper {
                     + pattern);
         }
 
-        return buffer.toString();
+        String afterTokenSubstitution = buffer.toString();
+        checkAgainstPathTraversal(pattern, afterTokenSubstitution);
+        return afterTokenSubstitution;
     }
 
     public static String substituteVariable(String pattern, String variable, String value) {
@@ -518,4 +521,49 @@ public final class IvyPatternHelper {
         }
         return pattern.substring(startIndex + 1, endIndex);
     }
+
+    /**
+     * This class returns a captured value after validating it doesn't
+     * contain any path traversal sequence.
+     *
+     * <p>{@code toString}</p> will be invoked when the value is
+     * actually used as a token inside of a pattern passed to {@link
+     * #substituteTokens}.</p>
+     */
+    private static class Validated {
+        private final String tokenName, tokenValue;
+
+        private Validated(String tokenName, String tokenValue) {
+            this.tokenName = tokenName;
+            this.tokenValue = tokenValue;
+        }
+
+        @Override
+        public String toString() {
+            if (tokenValue != null && !tokenValue.isEmpty()) {
+                StringTokenizer tok = new StringTokenizer(tokenValue.replace("\\", "/"), "/");
+                while (tok.hasMoreTokens()) {
+                    if ("..".equals(tok.nextToken())) {
+                        throw new IllegalArgumentException("\'" + tokenName + "\' value " + tokenValue + " contains an illegal path sequence");
+                    }
+                }
+            }
+            return tokenValue;
+        }
+    }
+
+    private static void checkAgainstPathTraversal(String pattern, String afterTokenSubstitution) {
+        String root = getTokenRoot(pattern);
+        int rootLen = root.length(); // it is OK to have a token root containing .. sequences
+        if (root.endsWith("/") || root.endsWith("\\")) {
+            --rootLen;
+        }
+        String patternedPartWithNormalizedSlashes =
+            afterTokenSubstitution.substring(rootLen).replace("\\", "/");
+        if (patternedPartWithNormalizedSlashes.endsWith("/..")
+            || patternedPartWithNormalizedSlashes.indexOf("/../") >= 0) {
+            throw new IllegalArgumentException("path after token expansion contains an illegal sequence");
+        }
+    }
+
 }
