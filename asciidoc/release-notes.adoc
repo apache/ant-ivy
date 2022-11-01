@@ -19,7 +19,7 @@
 
 = Ivy Release Announcement
 
-XXXX Date XXXX - The Apache Ivy project is pleased to announce its 2.5.1 release.
+4th November 2022 - The Apache Ivy project is pleased to announce its 2.5.1 release.
 
 == What is Ivy?
 Apache Ivy is a tool for managing (recording, tracking, resolving and reporting) project dependencies, characterized by flexibility,
@@ -37,6 +37,7 @@ More information about the project can be found on the website link:https://ant.
 Key features of this 2.5.1 release are:
 
     * Ivy now requires a minimum of Java 8 runtime.
+    * Fixes two Security Vulnerabilities, see link:https://ant.apache.org/ivy/security.html[the scurity page] for details.
 
 
 == List of Changes in this Release
@@ -53,6 +54,8 @@ For details about the following changes, check our JIRA install at link:https://
 - FIX: ivy:retrieve Ant task relied on the default HTTP header "Accept" which caused problems with servers that interpret it strictly (e.g. AWS CodeArtifact) (jira:IVY-1632[])
 
 - IMPROVEMENT: Ivy command now accepts a URL for the -settings option (jira:IVY-1615[])
+- FIX: CVE-2022-37865 allow create/overwrite any file on the system (see link:https://ant.apache.org/ivy/security.html[])
+- FIX: CVE-2022-37866 Path traversal in patterns (see link:https://ant.apache.org/ivy/security.html[])
 
 
 ////
