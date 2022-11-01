@@ -73,6 +73,7 @@ public class UpdateSiteLoaderTest {
         }
     }
 
+    @Ignore // download site seems to have changed
     @Test
     public void testM2Eclipse() throws IOException, ParseException, SAXException,
             URISyntaxException {
