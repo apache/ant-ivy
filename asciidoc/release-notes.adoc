@@ -19,7 +19,7 @@
 
 = Ivy Release Announcement
 
-XXXX Date XXXX - The Apache Ivy project is pleased to announce its 2.6.0 release.
+XXXX Date XXXX - The Apache Ivy project is pleased to announce its 2.5.1 release.
 
 == What is Ivy?
 Apache Ivy is a tool for managing (recording, tracking, resolving and reporting) project dependencies, characterized by flexibility,
@@ -34,7 +34,7 @@ More information about the project can be found on the website link:https://ant.
 
 == Key features in this release
 
-Key features of this 2.6.0 release are:
+Key features of this 2.5.1 release are:
 
     * Ivy now requires a minimum of Java 8 runtime.
 
@@ -53,8 +53,6 @@ For details about the following changes, check our JIRA install at link:https://
 - FIX: ivy:retrieve Ant task relied on the default HTTP header "Accept" which caused problems with servers that interpret it strictly (e.g. AWS CodeArtifact) (jira:IVY-1632[])
 
 - IMPROVEMENT: Ivy command now accepts a URL for the -settings option (jira:IVY-1615[])
-
-- NEW:
 
 
 ////
@@ -82,6 +80,7 @@ Here is the list of people who have contributed source code and documentation up
 * Jaikiran Pai
 * Jon Schneider
 * Gilles Scokart
+* Stefan Bodewig
 
 *Contributors:*
 
