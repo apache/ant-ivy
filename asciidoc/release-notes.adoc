@@ -19,7 +19,7 @@
 
 = Ivy Release Announcement
 
-4th November 2022 - The Apache Ivy project is pleased to announce its 2.5.1 release.
+XXXX Date XXXX - The Apache Ivy project is pleased to announce its 2.6.0 release.
 
 == What is Ivy?
 Apache Ivy is a tool for managing (recording, tracking, resolving and reporting) project dependencies, characterized by flexibility,
@@ -34,29 +34,14 @@ More information about the project can be found on the website link:https://ant.
 
 == Key features in this release
 
-Key features of this 2.5.1 release are:
-
-    * Ivy now requires a minimum of Java 8 runtime.
-    * Fixes two Security Vulnerabilities, see link:https://ant.apache.org/ivy/security.html[the scurity page] for details.
+Key features of this 2.6.0 release are:
 
 
 == List of Changes in this Release
 
 For details about the following changes, check our JIRA install at link:https://issues.apache.org/jira/browse/IVY[]
 
-*List of changes since Ivy 2.5.0:*
-
-- BREAKING: Removed old fr\jayasoft\ivy\ant\antlib.xml AntLib definition file (jira:IVY-1612[])
-- FIX: ResolveEngine resets dictator resolver to null in the global configuration (jira:IVY-1618[])
-- FIX: ConcurrentModificationException in MessageLoggerHelper.sumupProblems (jira:IVY-1628[])
-- FIX: useOrigin="true" fails with file-based ibiblio (jira:IVY-1616[])
-- FIX: ivy:retrieve Ant task didn't create an empty fileset when no files were retrieved to a non-empty directory (jira:IVY-1631[])
-- FIX: ivy:retrieve Ant task relied on the default HTTP header "Accept" which caused problems with servers that interpret it strictly (e.g. AWS CodeArtifact) (jira:IVY-1632[])
-
-- IMPROVEMENT: Ivy command now accepts a URL for the -settings option (jira:IVY-1615[])
-- FIX: CVE-2022-37865 allow create/overwrite any file on the system (see link:https://ant.apache.org/ivy/security.html[])
-- FIX: CVE-2022-37866 Path traversal in patterns (see link:https://ant.apache.org/ivy/security.html[])
-
+*List of changes since Ivy 2.5.1:*
 
 ////
  Samples :
