@@ -32,8 +32,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.parsers.SAXParserFactory;
-
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.cache.RepositoryCacheManager;
 import org.apache.ivy.core.module.status.StatusManager;
@@ -46,6 +44,7 @@ import org.apache.ivy.util.Checks;
 import org.apache.ivy.util.Configurator;
 import org.apache.ivy.util.FileResolver;
 import org.apache.ivy.util.Message;
+import org.apache.ivy.util.XMLHelper;
 import org.apache.ivy.util.url.CredentialsStore;
 import org.apache.ivy.util.url.TimeoutConstrainedURLHandler;
 import org.apache.ivy.util.url.URLHandlerRegistry;
@@ -151,10 +150,8 @@ public class XmlSettingsParser extends DefaultHandler {
     @SuppressWarnings("deprecation")
     private void doParse(URL settingsUrl) throws IOException, ParseException {
         this.settings = settingsUrl;
-        try (InputStream stream = URLHandlerRegistry.getDefault().openStream(settingsUrl)) {
-            InputSource inSrc = new InputSource(stream);
-            inSrc.setSystemId(settingsUrl.toExternalForm());
-            SAXParserFactory.newInstance().newSAXParser().parse(settingsUrl.toExternalForm(), this);
+        try {
+            XMLHelper.parse(settingsUrl, null, this);
             ivy.validate();
         } catch (IOException e) {
             throw e;

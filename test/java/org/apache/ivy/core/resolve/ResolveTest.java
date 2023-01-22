@@ -51,6 +51,7 @@ import org.apache.ivy.plugins.resolver.FileSystemResolver;
 import org.apache.ivy.util.CacheCleaner;
 import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.MockMessageLogger;
+import org.apache.ivy.util.XMLHelper;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -74,6 +75,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -309,6 +311,43 @@ public class ResolveTest {
 
     @Test
     public void testResolveWithXmlEntities() {
+        testResolveWithXmlEntities(null, 0);
+        testResolveWithXmlEntities("prohibit", 0);
+        testResolveWithXmlEntities("ignore", 0);
+        testResolveWithXmlEntities("local-only", 2);
+        testResolveWithXmlEntities("LOCAL_ONLY", 2);
+        testResolveWithXmlEntities("all", 2);
+    }
+
+    private void testResolveWithXmlEntities(String externalResourcesSystemProperty,
+            int expectedNumberOfDependencies) {
+        Ivy ivy = new Ivy();
+        Throwable th = null;
+        Properties p = System.getProperties();
+        try {
+            System.setProperties(new Properties());
+            System.setProperty(XMLHelper.ALLOW_DOCTYPE_PROCESSING, "true");
+            if (externalResourcesSystemProperty != null) {
+                System.setProperty(XMLHelper.EXTERNAL_RESOURCES, externalResourcesSystemProperty);
+            }
+            ivy.configure(new File("test/repositories/xml-entities/ivysettings.xml"));
+            ResolveReport report = ivy.resolve(new File("test/repositories/xml-entities/ivy.xml"),
+                getResolveOptions(new String[] {"*"}));
+            assertNotNull(report);
+            assertFalse(report.hasError());
+            assertNotNull(report.getDependencies());
+            assertEquals("number of dependencies while setting " + externalResourcesSystemProperty,
+                expectedNumberOfDependencies, report.getDependencies().size());
+        } catch (Throwable e) {
+            th = e;
+        } finally {
+            System.setProperties(p);
+        }
+        assertNull(th);
+    }
+
+    @Test
+    public void testResolveWithXmlEntitiesButNoSystemProperty() {
         Ivy ivy = new Ivy();
         Throwable th = null;
         try {
@@ -320,7 +359,7 @@ public class ResolveTest {
         } catch (Throwable e) {
             th = e;
         }
-        assertNull(th);
+        assertNotNull(th);
     }
 
     @Test

@@ -28,8 +28,6 @@ import java.util.Set;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerFactoryConfigurationError;
-import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
@@ -43,6 +41,7 @@ import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.retrieve.RetrieveOptions;
+import org.apache.ivy.util.XMLHelper;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.xml.sax.SAXException;
@@ -170,10 +169,8 @@ public class IvyArtifactReport extends IvyPostResolveTask {
     }
 
     private TransformerHandler createTransformerHandler(FileOutputStream fileOutputStream)
-            throws TransformerFactoryConfigurationError, TransformerConfigurationException {
-        SAXTransformerFactory transformerFact = (SAXTransformerFactory) SAXTransformerFactory
-                .newInstance();
-        TransformerHandler saxHandler = transformerFact.newTransformerHandler();
+            throws TransformerConfigurationException {
+        TransformerHandler saxHandler = XMLHelper.getTransformerHandler();
         saxHandler.getTransformer().setOutputProperty(OutputKeys.ENCODING, "UTF-8");
         saxHandler.getTransformer().setOutputProperty(OutputKeys.INDENT, "yes");
         saxHandler.setResult(new StreamResult(fileOutputStream));

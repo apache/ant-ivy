@@ -22,9 +22,7 @@ import java.text.ParseException;
 import java.util.Set;
 
 import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
@@ -45,6 +43,7 @@ import org.apache.ivy.osgi.repo.ManifestAndLocation;
 import org.apache.ivy.osgi.util.Version;
 import org.apache.ivy.osgi.util.VersionRange;
 import org.apache.ivy.util.Message;
+import org.apache.ivy.util.XMLHelper;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
@@ -53,12 +52,10 @@ public class OBRXMLWriter {
 
     public static ContentHandler newHandler(OutputStream out, String encoding, boolean indent)
             throws TransformerConfigurationException {
-        SAXTransformerFactory tf = (SAXTransformerFactory) SAXTransformerFactory.newInstance();
-        TransformerHandler hd = tf.newTransformerHandler();
-        Transformer serializer = tf.newTransformer();
+        TransformerHandler hd = XMLHelper.getTransformerHandler();
+        hd.getTransformer().setOutputProperty(OutputKeys.ENCODING, encoding);
+        hd.getTransformer().setOutputProperty(OutputKeys.INDENT, indent ? "yes" : "no");
         StreamResult stream = new StreamResult(out);
-        serializer.setOutputProperty(OutputKeys.ENCODING, encoding);
-        serializer.setOutputProperty(OutputKeys.INDENT, indent ? "yes" : "no");
         hd.setResult(stream);
         return hd;
     }
