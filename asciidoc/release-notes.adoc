@@ -19,7 +19,7 @@
 
 = Ivy Release Announcement
 
-XXXX Date XXXX - The Apache Ivy project is pleased to announce its 2.6.0 release.
+XXXX Date XXXX - The Apache Ivy project is pleased to announce its 2.5.2 release.
 
 == What is Ivy?
 Apache Ivy is a tool for managing (recording, tracking, resolving and reporting) project dependencies, characterized by flexibility,
@@ -34,8 +34,9 @@ More information about the project can be found on the website link:https://ant.
 
 == Key features in this release
 
-Key features of this 2.6.0 release are:
+Key features of this 2.5.2 release are:
 
+- FIX: ivy:retrieve could fail because of a `NullPointerException` (jira:IVY-1641[])
 
 == List of Changes in this Release
 
@@ -50,6 +51,8 @@ For details about the following changes, check our JIRA install at link:https://
 - FIX: bla bla bla (jira:IVY-1234[]) (Thanks to Jane Doe)
 - DOCUMENTATION: bla bla bla (jira:IVY-1234[]) (Thanks to Jane Doe)
 ////
+
+- FIX: ivy:retrieve could fail because of a `NullPointerException` (jira:IVY-1641[])
 
 == Committers and Contributors
 
