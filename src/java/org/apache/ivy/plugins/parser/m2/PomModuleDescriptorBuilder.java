@@ -305,6 +305,8 @@ public class PomModuleDescriptorBuilder {
         // the same dependency mrid could appear twice in the module descriptor,
         // so we check if we already have created a dependency descriptor for the dependency mrid
         final DependencyDescriptor existing = this.ivyModuleDescriptor.depDescriptors.get(moduleRevId);
+        final String[] existingConfigurations = existing == null ? new String[0]
+            : existing.getModuleConfigurations();
         final DefaultDependencyDescriptor dd = (existing != null && existing instanceof DefaultDependencyDescriptor)
                 ? (DefaultDependencyDescriptor) existing
                 : new PomDependencyDescriptor(dep, ivyModuleDescriptor, moduleRevId, !excludeAllTransitiveDeps);
@@ -314,7 +316,14 @@ public class PomModuleDescriptorBuilder {
         ConfMapper mapping = MAVEN2_CONF_MAPPING.get(scope);
         mapping.addMappingConfs(dd, dep.isOptional());
         Map<String, String> extraAtt = new HashMap<>();
-        if (dep.getClassifier() != null || dep.getType() != null && !"jar".equals(dep.getType())) {
+        final String optionalizedScope = dep.isOptional() ? "optional" : scope;
+        if (isNonDefaultArtifact(dep)) {
+            if (existing != null && existing.getAllDependencyArtifacts().length == 0) {
+                String moduleConfiguration = existingConfigurations.length == 1
+                    ? existingConfigurations[0] : optionalizedScope;
+                // previously added dependency has been the "default artifact"
+                dd.addDependencyArtifact(moduleConfiguration, createDefaultArtifact(dd));
+            }
             String type = "jar";
             if (dep.getType() != null) {
                 type = dep.getType();
@@ -339,9 +348,11 @@ public class PomModuleDescriptorBuilder {
                     dd, dd.getDependencyId().getName(), type, ext, null, extraAtt);
             // here we have to assume a type and ext for the artifact, so this is a limitation
             // compared to how m2 behave with classifiers
-            final String optionalizedScope = dep.isOptional() ? "optional" : scope;
             depArtifact.addConfiguration(optionalizedScope);
             dd.addDependencyArtifact(optionalizedScope, depArtifact);
+        } else if (existing != null) {
+            // this is the "default" artifact and some non-default artifact has already been added
+            dd.addDependencyArtifact(optionalizedScope, createDefaultArtifact(dd));
         }
 
         for (ModuleId excludedModule : excluded) {
@@ -360,6 +371,15 @@ public class PomModuleDescriptorBuilder {
         if (existing != dd) {
             ivyModuleDescriptor.addDependency(dd);
         }
+    }
+
+    private boolean isNonDefaultArtifact(PomDependencyData dep) {
+        return dep.getClassifier() != null || dep.getType() != null && !"jar".equals(dep.getType());
+    }
+
+    private DefaultDependencyArtifactDescriptor createDefaultArtifact(DefaultDependencyDescriptor dd) {
+        return new DefaultDependencyArtifactDescriptor(dd, dd.getDependencyId().getName(),
+            "jar", "jar", null, null);
     }
 
     private static boolean shouldExcludeAllTransitiveDeps(final List<ModuleId> exclusions) {

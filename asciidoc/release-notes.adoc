@@ -36,7 +36,8 @@ More information about the project can be found on the website link:https://ant.
 
 Key features of this 2.5.2 release are:
 
-- FIX: ivy:retrieve could fail because of a `NullPointerException` (jira:IVY-1641[])
+- FIX: reading POMs may loose dependencies when multiple Maven
+  dependencies only differ in `classifier` (jira:IVY-1642[])
 
 == List of Changes in this Release
 
@@ -53,6 +54,8 @@ For details about the following changes, check our JIRA install at link:https://
 ////
 
 - FIX: ivy:retrieve could fail because of a `NullPointerException` (jira:IVY-1641[])
+- FIX: reading POMs may loose dependencies when multiple Maven
+  dependencies only differ in `classifier` (jira:IVY-1642[])
 
 == Committers and Contributors
 

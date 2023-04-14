@@ -49,6 +49,7 @@ import org.apache.ivy.core.module.descriptor.IncludeRule;
 import org.apache.ivy.core.module.descriptor.MDArtifact;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ArtifactId;
+import org.apache.ivy.core.module.id.ArtifactRevisionId;
 import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.resolve.IvyNodeCallers.Caller;
@@ -873,11 +874,16 @@ public class IvyNode implements Comparable<IvyNode> {
 
         // now exclude artifacts that aren't accepted by any caller
         Iterator<Artifact> iter = artifacts.iterator();
+        Set<ArtifactRevisionId> artifactRevisionsSeen = new HashSet<ArtifactRevisionId>();
         while (iter.hasNext()) {
             Artifact artifact = iter.next();
             boolean excluded = callers.doesCallersExclude(rootModuleConf, artifact);
             if (excluded) {
                 Message.debug(this + " in " + rootModuleConf + ": excluding " + artifact);
+                iter.remove();
+            }
+            if (!artifactRevisionsSeen.add(artifact.getId())) {
+                Message.debug(this + " in " + rootModuleConf + ": skipping duplicate " + artifact);
                 iter.remove();
             }
         }
