@@ -19,7 +19,7 @@
 
 = Ivy Release Announcement
 
-XXXX Date XXXX - The Apache Ivy project is pleased to announce its 2.5.2 release.
+August 20 2023 - The Apache Ivy project is pleased to announce its 2.5.2 release.
 
 == What is Ivy?
 Apache Ivy is a tool for managing (recording, tracking, resolving and reporting) project dependencies, characterized by flexibility,
@@ -38,6 +38,7 @@ Key features of this 2.5.2 release are:
 
 - FIX: reading POMs may loose dependencies when multiple Maven
   dependencies only differ in `classifier` (jira:IVY-1642[])
+- Fixes a Security Vulnerability, see link:https://ant.apache.org/ivy/security.html[the scurity page] for details.
 
 == List of Changes in this Release
 
@@ -57,6 +58,7 @@ For details about the following changes, check our JIRA install at link:https://
 - FIX: reading POMs may loose dependencies when multiple Maven
   dependencies only differ in `classifier` (jira:IVY-1642[])
 - IMPROVEMENT: Upgrade Apache HttpClient to 4.5.13 (jira:IVY-1644[])
+- FIX: CVE-2022-46751: Apache Ivy Is Vulnerable to XML External Entity Injections
 
 == Committers and Contributors
 
