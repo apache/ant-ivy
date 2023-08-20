@@ -19,7 +19,7 @@
 
 = Ivy Release Announcement
 
-August 20 2023 - The Apache Ivy project is pleased to announce its 2.5.2 release.
+XXXX Date XXXX - The Apache Ivy project is pleased to announce its 2.6.0 release.
 
 == What is Ivy?
 Apache Ivy is a tool for managing (recording, tracking, resolving and reporting) project dependencies, characterized by flexibility,
@@ -34,17 +34,13 @@ More information about the project can be found on the website link:https://ant.
 
 == Key features in this release
 
-Key features of this 2.5.2 release are:
-
-- FIX: reading POMs may loose dependencies when multiple Maven
-  dependencies only differ in `classifier` (jira:IVY-1642[])
-- Fixes a Security Vulnerability, see link:https://ant.apache.org/ivy/security.html[the scurity page] for details.
+Key features of this 2.6.0 release are:
 
 == List of Changes in this Release
 
 For details about the following changes, check our JIRA install at link:https://issues.apache.org/jira/browse/IVY[]
 
-*List of changes since Ivy 2.5.1:*
+*List of changes since Ivy 2.5.2:*
 
 ////
  Samples :
@@ -53,12 +49,6 @@ For details about the following changes, check our JIRA install at link:https://
 - FIX: bla bla bla (jira:IVY-1234[]) (Thanks to Jane Doe)
 - DOCUMENTATION: bla bla bla (jira:IVY-1234[]) (Thanks to Jane Doe)
 ////
-
-- FIX: ivy:retrieve could fail because of a `NullPointerException` (jira:IVY-1641[])
-- FIX: reading POMs may loose dependencies when multiple Maven
-  dependencies only differ in `classifier` (jira:IVY-1642[])
-- IMPROVEMENT: Upgrade Apache HttpClient to 4.5.13 (jira:IVY-1644[])
-- FIX: CVE-2022-46751: Apache Ivy Is Vulnerable to XML External Entity Injections
 
 == Committers and Contributors
 
