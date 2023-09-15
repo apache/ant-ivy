@@ -88,9 +88,11 @@ public abstract class XMLHelper {
             }
         }
         final XMLReader reader = parser.getXMLReader();
-        reader.setFeature(XML_NAMESPACE_PREFIXES, true);
-        reader.setProperty(XML_ACCESS_EXTERNAL_SCHEMA, externalResources.getAllowedProtocols());
-        reader.setProperty(XML_ACCESS_EXTERNAL_DTD, externalResources.getAllowedProtocols());
+        trySetFeature(reader, XML_NAMESPACE_PREFIXES, true);
+        trySetProperty(reader, XML_ACCESS_EXTERNAL_SCHEMA,
+                       externalResources.getAllowedProtocols());
+        trySetProperty(reader, XML_ACCESS_EXTERNAL_DTD,
+                       externalResources.getAllowedProtocols());
         return parser;
     }
 
@@ -425,11 +427,29 @@ public abstract class XMLHelper {
         }
     }
 
+    private static boolean isFeatureSupported(final XMLReader reader, final String feature) {
+        try {
+            reader.getFeature(feature);
+            return true;
+        } catch (SAXException e) {
+            return false;
+        }
+    }
+
     private static boolean isAttributeSupported(final TransformerFactory factory, final String attribute) {
         try {
             factory.getAttribute(attribute);
             return true;
         } catch (IllegalArgumentException e) {
+            return false;
+        }
+    }
+
+    private static boolean isPropertySupported(final XMLReader reader, final String property) {
+        try {
+            reader.getProperty(property);
+            return true;
+        } catch (SAXException e) {
             return false;
         }
     }
@@ -472,6 +492,21 @@ public abstract class XMLHelper {
         }
     }
 
+    private static boolean trySetFeature(final XMLReader reader,
+                                         final String feature, final boolean val) {
+        if (!isFeatureSupported(reader, feature)) {
+            return false;
+        }
+        try {
+            reader.setFeature(feature, val);
+            return true;
+        } catch (SAXException e) {
+            // log and continue
+            Message.warn("Failed to set feature " + feature + " on XMLReader", e);
+            return false;
+        }
+    }
+
     private static boolean trySetAttribute(final TransformerFactory factory,
                                          final String attribute, final String val) {
         if (!isAttributeSupported(factory, attribute)) {
@@ -483,6 +518,21 @@ public abstract class XMLHelper {
         } catch (IllegalArgumentException e) {
             // log and continue
             Message.warn("Failed to set attribute " + attribute + " on TransformerFactory", e);
+            return false;
+        }
+    }
+
+    private static boolean trySetProperty(final XMLReader reader,
+                                          final String property, final Object val) {
+        if (!isPropertySupported(reader, property)) {
+            return false;
+        }
+        try {
+            reader.setProperty(property, val);
+            return true;
+        } catch (SAXException e) {
+            // log and continue
+            Message.warn("Failed to set property " + property + " on XMLReader", e);
             return false;
         }
     }
