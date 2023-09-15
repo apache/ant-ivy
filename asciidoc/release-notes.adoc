@@ -43,6 +43,7 @@ For details about the following changes, check our JIRA install at link:https://
 *List of changes since Ivy 2.5.2:*
 
 - FIX: trying to set safe XML features causes SAXExceptions when used with certain XML parsers (jira:IVY-1647[])
+- FIX: some unit tests failed on Java 8 (jira:IVY-1648[]) (Thanks to Adrien Piquerez)
 
 ////
  Samples :
