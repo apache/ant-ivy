@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.scijava</groupId>
+		<artifactId>pom-scijava</artifactId>
+		<version>36.0.0</version>
+		<relativePath />
+	</parent>
+
+	<groupId>org.janelia.saalfeldlab</groupId>
+	<artifactId>n5-imglib2</artifactId>
+	<version>7.0.0</version>
+
+	<name>N5 ImgLib2 Bindings</name>
+	<description>Open N5 datasets as ImgLib2 RandomAccessibles, and write ImgLib2 RandomAccessibles as/ into N5 datasets.</description>
+	<url>https://github.com/saalfeldlab/n5-imglib2</url>
+	<inceptionYear>2017</inceptionYear>
+	<organization>
+		<name>Saalfeld Lab</name>
+		<url>http://saalfeldlab.janelia.org/</url>
+	</organization>
+	<licenses>
+		<license>
+			<name>Simplified BSD License</name>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<id>hanslovsky</id>
+			<name>Philipp Hanslovsky</name>
+			<url>http://imagej.net/User:Hanslovsky</url>
+			<roles>
+				<role>founder</role>
+				<role>lead</role>
+				<role>developer</role>
+				<role>debugger</role>
+				<role>reviewer</role>
+				<role>support</role>
+				<role>maintainer</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>axtimwalde</id>
+			<name>Stephan Saalfeld</name>
+			<url>http://imagej.net/User:Saalfeld</url>
+			<roles>
+				<role>founder</role>
+				<role>lead</role>
+				<role>developer</role>
+				<role>debugger</role>
+				<role>reviewer</role>
+				<role>support</role>
+				<role>maintainer</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>bogovicj</id>
+			<name>John Bogovic</name>
+			<url>http://imagej.net/User:Bogovic</url>
+			<roles>
+				<role>lead</role>
+				<role>developer</role>
+				<role>debugger</role>
+				<role>reviewer</role>
+				<role>support</role>
+				<role>maintainer</role>
+			</roles>
+		</developer>
+		<developer>
+			<name>Caleb Hulbert</name>
+			<roles>
+				<role>lead</role>
+				<role>developer</role>
+				<role>debugger</role>
+				<role>reviewer</role>
+				<role>support</role>
+				<role>maintainer</role>
+			</roles>
+		</developer>
+	</developers>
+	<contributors>
+		<contributor>
+			<name>John Bogovic</name>
+			<url>https://imagej.net/User:Bogovic</url>
+			<properties>
+				<id>bogovicj</id>
+			</properties>
+		</contributor>
+		<contributor>
+			<name>Philipp Hanslovsky</name>
+			<properties>
+				<id>hanslovsky</id>
+			</properties>
+		</contributor>
+		<contributor>
+			<name>Stephan Saalfeld</name>
+			<properties>
+				<id>axtimwalde</id>
+			</properties>
+		</contributor>
+		<contributor>
+			<name>Caleb Hulbert</name>
+		</contributor>
+        <contributor>
+			<name>Tobias Pietzsch</name>
+			<properties>
+				<id>tpietzsch</id>
+			</properties>
+		</contributor>
+	</contributors>
+
+	<mailingLists>
+		<mailingList>
+			<name>Image.sc Forum</name>
+			<archive>https://forum.image.sc/tag/n5</archive>
+		</mailingList>
+	</mailingLists>
+
+	<scm>
+		<connection>scm:git:git://github.com/saalfeldlab/n5-imglib2</connection>
+		<developerConnection>scm:git:git@github.com:saalfeldlab/n5-imglib2</developerConnection>
+		<tag>n5-imglib2-7.0.0</tag>
+		<url>https://github.com/saalfeldlab/n5-imglib2</url>
+	</scm>
+	<issueManagement>
+		<system>GitHub</system>
+		<url>https://github.com/saalfedlab/n5-imglib2/issues</url>
+	</issueManagement>
+	<ciManagement>
+		<system>GitHub Actions</system>
+		<url>https://github.com/saalfeldlab/n5-imglib2/actions</url>
+	</ciManagement>
+
+	<properties>
+		<package-name>org.janelia.saalfeldlab.n5.imglib2</package-name>
+
+		<license.licenseName>bsd_2</license.licenseName>
+		<license.projectName>N5 Cache Loader</license.projectName>
+		<license.organizationName>Saalfeld Lab</license.organizationName>
+		<license.copyrightOwners>Philipp Hanslovsky, Stephan Saalfeld</license.copyrightOwners>
+
+		<!-- NB: Deploy releases to the SciJava Maven repository. -->
+		<releaseProfiles>sign,deploy-to-scijava</releaseProfiles>
+
+		<n5.version>3.0.0</n5.version>
+
+		<bigdataviewer-core-test.version>10.4.6</bigdataviewer-core-test.version>
+		<bigdataviewer-vistools-test.version>1.0.0-beta-32</bigdataviewer-vistools-test.version>
+		<alphanumeric-comparator.version>1.4.1</alphanumeric-comparator.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.janelia.saalfeldlab</groupId>
+			<artifactId>n5</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.janelia.saalfeldlab</groupId>
+			<artifactId>n5</artifactId>
+			<version>${n5.version}</version>
+			<classifier>tests</classifier>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>net.imglib2</groupId>
+			<artifactId>imglib2-label-multisets</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.imglib2</groupId>
+			<artifactId>imglib2</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.imglib2</groupId>
+			<artifactId>imglib2-cache</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.imglib2</groupId>
+			<artifactId>imglib2-realtransform</artifactId>
+		</dependency>
+
+		<!-- Test dependencies -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>sc.fiji</groupId>
+			<artifactId>bigdataviewer-core</artifactId>
+			<version>${bigdataviewer-core-test.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>sc.fiji</groupId>
+			<artifactId>bigdataviewer-vistools</artifactId>
+			<version>${bigdataviewer-vistools-test.version}</version>
+			<scope>test</scope>
+		</dependency>
+				<dependency>
+			<groupId>se.sawano.java</groupId>
+			<artifactId>alphanumeric-comparator</artifactId>
+			<version>${alphanumeric-comparator.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.thisptr</groupId>
+			<artifactId>jackson-jq</artifactId>
+			<version>1.0.0-preview.20191208</version>
+		</dependency>
+	</dependencies>
+
+	<repositories>
+		<repository>
+			<id>scijava.public</id>
+			<url>https://maven.scijava.org/content/groups/public</url>
+		</repository>
+	</repositories>
+</project>

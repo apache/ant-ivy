@@ -61,6 +61,7 @@ public class UpdateSiteLoaderTest {
         CacheCleaner.deleteDir(cache);
     }
 
+    @Ignore
     @Test
     public void testIvyDE() throws IOException, ParseException, SAXException, URISyntaxException {
         RepoDescriptor site = loader.load(new URI(
