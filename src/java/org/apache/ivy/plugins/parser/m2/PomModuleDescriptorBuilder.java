@@ -69,7 +69,7 @@ public class PomModuleDescriptorBuilder {
      */
     private static final String IVY_XML_MAVEN_NAMESPACE_URI = "http://ant.apache.org/ivy/maven";
 
-    private static final int DEPENDENCY_MANAGEMENT_KEY_PARTS_COUNT = 4;
+    private static final int DEPENDENCY_MANAGEMENT_KEY_PARTS_COUNT = 5;
 
     public static final Configuration[] MAVEN2_CONFIGURATIONS = new Configuration[] {
             new Configuration("default", PUBLIC,
@@ -299,7 +299,7 @@ public class PomModuleDescriptorBuilder {
         List<ModuleId> excluded = dep.getExcludedModules();
         if (excluded.isEmpty()) {
             excluded = getDependencyMgtExclusions(ivyModuleDescriptor, dep.getGroupId(),
-                    dep.getArtifactId());
+                    dep.getArtifactId(), dep.getClassifier());
         }
         final boolean excludeAllTransitiveDeps = shouldExcludeAllTransitiveDeps(excluded);
         // the same dependency mrid could appear twice in the module descriptor,
@@ -414,16 +414,17 @@ public class PomModuleDescriptorBuilder {
     public void addDependencyMgt(PomDependencyMgt dep) {
         ivyModuleDescriptor.addDependencyManagement(dep);
 
-        String key = getDependencyMgtExtraInfoKeyForVersion(dep.getGroupId(), dep.getArtifactId());
+        String key = getDependencyMgtExtraInfoKeyForVersion(dep.getGroupId(), dep.getArtifactId(),
+            dep.getClassifier());
         overwriteExtraInfoIfExists(key, dep.getVersion());
         if (dep.getScope() != null) {
             String scopeKey = getDependencyMgtExtraInfoKeyForScope(dep.getGroupId(),
-                dep.getArtifactId());
+                dep.getArtifactId(), dep.getClassifier());
             overwriteExtraInfoIfExists(scopeKey, dep.getScope());
         }
         if (!dep.getExcludedModules().isEmpty()) {
             String exclusionPrefix = getDependencyMgtExtraInfoPrefixForExclusion(dep.getGroupId(),
-                dep.getArtifactId());
+                dep.getArtifactId(), dep.getClassifier());
             int index = 0;
             for (ModuleId excludedModule : dep.getExcludedModules()) {
                 overwriteExtraInfoIfExists(
@@ -502,27 +503,35 @@ public class PomModuleDescriptorBuilder {
             return null;
         }
 
+        public String getClassifier() {
+            return "defaultclassifier";
+        }
+
         public List<ModuleId> getExcludedModules() {
             return Collections.emptyList(); // probably not used?
         }
     }
 
     private String getDefaultVersion(PomDependencyData dep) {
-        ModuleId moduleId = ModuleId.newInstance(dep.getGroupId(), dep.getArtifactId());
+        ClassifiedModuleId moduleId = ClassifiedModuleId.newInstance(dep.getGroupId(),
+            dep.getArtifactId(), dep.getClassifier());
         if (ivyModuleDescriptor.getDependencyManagementMap().containsKey(moduleId)) {
             return ivyModuleDescriptor.getDependencyManagementMap().get(moduleId).getVersion();
         }
-        String key = getDependencyMgtExtraInfoKeyForVersion(dep.getGroupId(), dep.getArtifactId());
+        String key = getDependencyMgtExtraInfoKeyForVersion(dep.getGroupId(), dep.getArtifactId(),
+            dep.getClassifier());
         return ivyModuleDescriptor.getExtraInfoContentByTagName(key);
     }
 
     private String getDefaultScope(PomDependencyData dep) {
         String result;
-        ModuleId moduleId = ModuleId.newInstance(dep.getGroupId(), dep.getArtifactId());
+        ClassifiedModuleId moduleId = ClassifiedModuleId.newInstance(dep.getGroupId(),
+            dep.getArtifactId(), dep.getClassifier());
         if (ivyModuleDescriptor.getDependencyManagementMap().containsKey(moduleId)) {
             result = ivyModuleDescriptor.getDependencyManagementMap().get(moduleId).getScope();
         } else {
-            String key = getDependencyMgtExtraInfoKeyForScope(dep.getGroupId(), dep.getArtifactId());
+            String key = getDependencyMgtExtraInfoKeyForScope(dep.getGroupId(), dep.getArtifactId(),
+                dep.getClassifier());
             result = ivyModuleDescriptor.getExtraInfoContentByTagName(key);
         }
         if (result == null || !MAVEN2_CONF_MAPPING.containsKey(result)) {
@@ -531,14 +540,17 @@ public class PomModuleDescriptorBuilder {
         return result;
     }
 
-    private static String getDependencyMgtExtraInfoKeyForVersion(String groupId, String artifactId) {
+    private static String getDependencyMgtExtraInfoKeyForVersion(String groupId, String artifactId,
+            String classifierId) {
         return DEPENDENCY_MANAGEMENT + EXTRA_INFO_DELIMITER + groupId + EXTRA_INFO_DELIMITER
-                + artifactId + EXTRA_INFO_DELIMITER + "version";
+                + artifactId + EXTRA_INFO_DELIMITER + classifierId + EXTRA_INFO_DELIMITER
+                + "version";
     }
 
-    private static String getDependencyMgtExtraInfoKeyForScope(String groupId, String artifactId) {
+    private static String getDependencyMgtExtraInfoKeyForScope(String groupId, String artifactId,
+            String classifierId) {
         return DEPENDENCY_MANAGEMENT + EXTRA_INFO_DELIMITER + groupId + EXTRA_INFO_DELIMITER
-                + artifactId + EXTRA_INFO_DELIMITER + "scope";
+                + artifactId + EXTRA_INFO_DELIMITER + classifierId + EXTRA_INFO_DELIMITER + "scope";
     }
 
     private static String getPropertyExtraInfoKey(String propertyName) {
@@ -546,21 +558,24 @@ public class PomModuleDescriptorBuilder {
     }
 
     private static String getDependencyMgtExtraInfoPrefixForExclusion(String groupId,
-            String artifactId) {
+            String artifactId, String classifierId) {
         return DEPENDENCY_MANAGEMENT + EXTRA_INFO_DELIMITER + groupId + EXTRA_INFO_DELIMITER
-                + artifactId + EXTRA_INFO_DELIMITER + "exclusion_";
+                + artifactId + EXTRA_INFO_DELIMITER + classifierId + EXTRA_INFO_DELIMITER
+                + "exclusion_";
     }
 
     private static List<ModuleId> getDependencyMgtExclusions(ModuleDescriptor descriptor,
-            String groupId, String artifactId) {
+            String groupId, String artifactId, String classifierId) {
         if (descriptor instanceof PomModuleDescriptor) {
             PomDependencyMgt dependencyMgt = ((PomModuleDescriptor) descriptor)
-                    .getDependencyManagementMap().get(ModuleId.newInstance(groupId, artifactId));
+                    .getDependencyManagementMap()
+                    .get(ClassifiedModuleId.newInstance(groupId, artifactId, classifierId));
             if (dependencyMgt != null) {
                 return dependencyMgt.getExcludedModules();
             }
         }
-        String exclusionPrefix = getDependencyMgtExtraInfoPrefixForExclusion(groupId, artifactId);
+        String exclusionPrefix = getDependencyMgtExtraInfoPrefixForExclusion(groupId, artifactId,
+            classifierId);
         List<ModuleId> exclusionIds = new LinkedList<>();
         for (ExtraInfoHolder extraInfoHolder : descriptor.getExtraInfos()) {
             String key = extraInfoHolder.getName();
@@ -578,10 +593,10 @@ public class PomModuleDescriptorBuilder {
         return exclusionIds;
     }
 
-    public static Map<ModuleId, String> getDependencyManagementMap(ModuleDescriptor md) {
-        Map<ModuleId, String> ret = new LinkedHashMap<>();
+    public static Map<ClassifiedModuleId, String> getDependencyManagementMap(ModuleDescriptor md) {
+        Map<ClassifiedModuleId, String> ret = new LinkedHashMap<>();
         if (md instanceof PomModuleDescriptor) {
-            for (Map.Entry<ModuleId, PomDependencyMgt> e : ((PomModuleDescriptor) md)
+            for (Map.Entry<ClassifiedModuleId, PomDependencyMgt> e : ((PomModuleDescriptor) md)
                     .getDependencyManagementMap().entrySet()) {
                 PomDependencyMgt dependencyMgt = e.getValue();
                 ret.put(e.getKey(), dependencyMgt.getVersion());
@@ -595,7 +610,7 @@ public class PomModuleDescriptorBuilder {
                         Message.warn("what seem to be a dependency management extra info "
                                 + "doesn't match expected pattern: " + key);
                     } else {
-                        ret.put(ModuleId.newInstance(parts[1], parts[2]),
+                        ret.put(ClassifiedModuleId.newInstance(parts[1], parts[2], parts[3]),
                             extraInfoHolder.getContent());
                     }
                 }
@@ -619,16 +634,17 @@ public class PomModuleDescriptorBuilder {
                                 + "doesn't match expected pattern: " + key);
                     } else {
                         String versionKey = DEPENDENCY_MANAGEMENT + EXTRA_INFO_DELIMITER + parts[1]
-                                + EXTRA_INFO_DELIMITER + parts[2] + EXTRA_INFO_DELIMITER
-                                + "version";
+                                + EXTRA_INFO_DELIMITER + parts[2] + EXTRA_INFO_DELIMITER + parts[3]
+                                + EXTRA_INFO_DELIMITER + "version";
                         String scopeKey = DEPENDENCY_MANAGEMENT + EXTRA_INFO_DELIMITER + parts[1]
-                                + EXTRA_INFO_DELIMITER + parts[2] + EXTRA_INFO_DELIMITER + "scope";
+                                + EXTRA_INFO_DELIMITER + parts[2] + EXTRA_INFO_DELIMITER + parts[3]
+                                + EXTRA_INFO_DELIMITER + "scope";
 
                         String version = md.getExtraInfoContentByTagName(versionKey);
                         String scope = md.getExtraInfoContentByTagName(scopeKey);
 
                         List<ModuleId> exclusions = getDependencyMgtExclusions(md, parts[1],
-                            parts[2]);
+                            parts[2], parts[3]);
                         result.add(new DefaultPomDependencyMgt(parts[1], parts[2], version, scope,
                                 exclusions));
                     }
@@ -754,7 +770,8 @@ public class PomModuleDescriptorBuilder {
     }
 
     public static class PomModuleDescriptor extends DefaultModuleDescriptor {
-        private final Map<ModuleId, PomDependencyMgt> dependencyManagementMap = new LinkedHashMap<>();
+        private final Map<ClassifiedModuleId, PomDependencyMgt> dependencyManagementMap = new LinkedHashMap<>();
+
         // dependency descriptor keyed by its dependency revision id
         private final Map<ModuleRevisionId, DependencyDescriptor> depDescriptors = new HashMap<>();
 
@@ -763,12 +780,11 @@ public class PomModuleDescriptorBuilder {
         }
 
         public void addDependencyManagement(PomDependencyMgt dependencyMgt) {
-            dependencyManagementMap.put(
-                ModuleId.newInstance(dependencyMgt.getGroupId(), dependencyMgt.getArtifactId()),
-                dependencyMgt);
+            dependencyManagementMap.put(ClassifiedModuleId.newInstance(dependencyMgt.getGroupId(),
+                dependencyMgt.getArtifactId(), dependencyMgt.getClassifier()), dependencyMgt);
         }
 
-        public Map<ModuleId, PomDependencyMgt> getDependencyManagementMap() {
+        public Map<ClassifiedModuleId, PomDependencyMgt> getDependencyManagementMap() {
             return dependencyManagementMap;
         }
 

@@ -15,7 +15,7 @@
    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
    KIND, either express or implied.  See the License for the
    specific language governing permissions and limitations
-   under the License.    
+   under the License.
 -->
 <ivy-module version="2.0" xmlns:m="http://ant.apache.org/ivy/maven">
 	<info organisation="org.apache"
@@ -25,12 +25,12 @@
 		publication="20140429153143"
 	>
 		<description homepage="http://ivy.jayasoft.org/" />
-		<m:properties__commons.collections.version>1.0.5</m:properties__commons.collections.version>
 		<m:properties__commons.logging.version>1.0.4</m:properties__commons.logging.version>
-		<m:dependency.management__commons-logging__commons-logging__version>1.0.4</m:dependency.management__commons-logging__commons-logging__version>
-		<m:dependency.management__commons-collections__commons-collections__version>1.0.5</m:dependency.management__commons-collections__commons-collections__version>
-		<m:dependency.management__commons-collections__commons-collections__exclusion_0>javax.mail__mail</m:dependency.management__commons-collections__commons-collections__exclusion_0>
-		<m:dependency.management__commons-collections__commons-collections__exclusion_1>javax.jms__jms</m:dependency.management__commons-collections__commons-collections__exclusion_1>
+		<m:properties__commons.collections.version>1.0.5</m:properties__commons.collections.version>
+		<m:dependency.management__commons-logging__commons-logging__defaultclassifier__version>1.0.4</m:dependency.management__commons-logging__commons-logging__defaultclassifier__version>
+		<m:dependency.management__commons-collections__commons-collections__defaultclassifier__version>1.0.5</m:dependency.management__commons-collections__commons-collections__defaultclassifier__version>
+		<m:dependency.management__commons-collections__commons-collections__defaultclassifier__exclusion_0>javax.mail__mail</m:dependency.management__commons-collections__commons-collections__defaultclassifier__exclusion_0>
+		<m:dependency.management__commons-collections__commons-collections__defaultclassifier__exclusion_1>javax.jms__jms</m:dependency.management__commons-collections__commons-collections__defaultclassifier__exclusion_1>
 	</info>
 	<configurations>
 		<conf name="default" visibility="public" description="runtime dependencies and master artifact can be used with this conf" extends="runtime,master"/>

@@ -409,6 +409,14 @@ public class PomReader {
             return replaceProps(val);
         }
 
+        public String getClassifier() {
+            String val = getFirstChildText(depElement, CLASSIFIER);
+            if (val == null) {
+                val = "defaultclassifier";
+            }
+            return replaceProps(val);
+        }
+
         public List<ModuleId> getExcludedModules() {
             Element exclusionsElement = getFirstChildElement(depElement, EXCLUSIONS);
             if (exclusionsElement == null) {
@@ -490,6 +498,11 @@ public class PomReader {
         public String getScope() {
             return null; // not used
         }
+
+        public String getClassifier() {
+            return "defaultclassifier";
+        }
+
 
         public List<ModuleId> getExcludedModules() {
             return Collections.emptyList(); // probably not used?
