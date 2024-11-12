@@ -30,6 +30,8 @@ public class DefaultPomDependencyMgt implements PomDependencyMgt {
 
     private String scope;
 
+    private String classifier;
+
     private List<ModuleId> excludedModules;
 
     public DefaultPomDependencyMgt(String groupId, String artifactId, String version, String scope,
@@ -39,6 +41,17 @@ public class DefaultPomDependencyMgt implements PomDependencyMgt {
         this.version = version;
         this.scope = scope;
         this.excludedModules = excludedModules;
+        this.classifier = "defaultclassifier";
+    }
+
+    public DefaultPomDependencyMgt(String groupId, String artifactId, String version, String scope,
+            String classifier, List<ModuleId> excludedModules) {
+        this.groupId = groupId;
+        this.artifactId = artifactId;
+        this.version = version;
+        this.scope = scope;
+        this.excludedModules = excludedModules;
+        this.classifier = classifier;
     }
 
     public String getScope() {
@@ -55,6 +68,10 @@ public class DefaultPomDependencyMgt implements PomDependencyMgt {
 
     public String getVersion() {
         return version;
+    }
+
+    public String getClassifier() {
+        return classifier;
     }
 
     public List<ModuleId> getExcludedModules() {
