@@ -4894,8 +4894,14 @@ public class ResolveTest {
         assertTrue(getResolvedIvyFileInCache(mrid).exists());
 
         // dependencies
-        assertTrue(getIvyFileInCache(
-            ModuleRevisionId.newInstance("org.apache", "test-classified", "2.0")).exists());
+        File depIvyFileInCache = getIvyFileInCache(
+            ModuleRevisionId.newInstance("org.apache", "test-classified", "2.0"));
+        assertTrue(depIvyFileInCache.exists());
+
+        // validate the cached Ivy file (IVY-1649)
+        XmlModuleDescriptorParser.getInstance().parseDescriptor(ivy.getSettings(),
+                                                                depIvyFileInCache.toURI().toURL(),
+                                                                true);
 
         Map<String, String> cmap = new HashMap<>();
         cmap.put("classifier", "asl");

@@ -44,6 +44,8 @@ import org.apache.ivy.util.extendable.ExtendableItem;
 public interface DependencyDescriptor extends ExtendableItem, InheritableItem {
     ModuleId getDependencyId();
 
+    ModuleDescriptor getModuleDescriptor();
+
     /**
      * Used to indicate that this revision must be used in case of conflicts, independently of
      * conflicts manager. This only works for direct dependencies, and not transitive ones.

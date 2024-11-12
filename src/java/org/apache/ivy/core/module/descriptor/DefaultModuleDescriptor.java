@@ -111,7 +111,7 @@ public class DefaultModuleDescriptor implements ModuleDescriptor {
             for (DependencyArtifactDescriptor artifact : artifacts) {
                 moduleDescriptor.addArtifact(DEFAULT_CONFIGURATION,
                     new MDArtifact(moduleDescriptor, artifact.getName(), artifact.getType(),
-                            artifact.getExt(), artifact.getUrl(), artifact.getExtraAttributes()));
+                            artifact.getExt(), artifact.getUrl(), artifact.getQualifiedExtraAttributes()));
             }
         } else {
             moduleDescriptor.addArtifact(DEFAULT_CONFIGURATION,
