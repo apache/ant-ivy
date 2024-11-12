@@ -45,6 +45,16 @@ public interface DependencyDescriptor extends ExtendableItem, InheritableItem {
     ModuleId getDependencyId();
 
     /**
+     * Returns the {@link ModuleDescriptor} declaring this dependency descriptor.
+     * Returns null if this dependency descriptor is not declared in a {@link ModuleDescriptor}.
+     *
+     * @return the {@link ModuleDescriptor} of this dependency descriptor
+     */
+    default ModuleDescriptor getModuleDescriptor() {
+        return null;
+    }
+
+    /**
      * Used to indicate that this revision must be used in case of conflicts, independently of
      * conflicts manager. This only works for direct dependencies, and not transitive ones.
      *
