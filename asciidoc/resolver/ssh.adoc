@@ -59,8 +59,8 @@ This resolver shares the link:../settings/resolvers{outfilesuffix}#common[common
 [options="header"]
 |=======
 |Element|Description|Cardinality
-|ivy|defines a pattern for Ivy files, using the pattern attribute|0..n
-|artifact|defines a pattern for artifacts, using the pattern attribute|1..n
+|ivy|Defines a link:../concept{outfilesuffix}#patterns[pattern] for Ivy files, using the pattern attribute.|0..n
+|artifact|Defines a link:../concept{outfilesuffix}#patterns[pattern] for artifacts, using the pattern attribute.|1..n
 |=======
 
 

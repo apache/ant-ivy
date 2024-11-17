@@ -117,6 +117,10 @@ the configuration name
 (*__since 1.4__*) +
 the original artifact name (not including the extension)
 
+`[classifier]`::
+(*__since 1.4__*) +
+the artifact classifier for Maven dependencies
+
 The difference between type and extension is explained in the Ivy file documentation.
 
 (*__since 1.2__*) `[organization]` can be used instead of `[organisation]`.
