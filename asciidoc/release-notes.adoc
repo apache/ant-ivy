@@ -45,6 +45,7 @@ For details about the following changes, check our JIRA install at link:https://
 - FIX: trying to set safe XML features causes SAXExceptions when used with certain XML parsers (jira:IVY-1647[])
 - FIX: some unit tests failed on Java 8 (jira:IVY-1648[]) (Thanks to Adrien Piquerez)
 - FIX: cached Ivy files were not valid in some scenarios (jira:IVY-1649[], jira:IVY-1650[]) (Thanks to Moritz Baumann)
+- DOCUMENTATION: improved to the documentation regarding the use of patterns in the resolvers and retrieve task (jira:IVY-1651[]) (Thanks to Lewis John McGibbney)
 
 ////
  Samples :
@@ -119,6 +120,7 @@ Here is the list of people who have contributed source code and documentation up
 * Mitch Gitman
 * Evgeny Goldin
 * Scott Goldstein
+* Jason A. Guild
 * Stephen Haberman
 * Aaron Hachez
 * Ben Hale
@@ -141,6 +143,7 @@ Here is the list of people who have contributed source code and documentation up
 * Heschi Kreinick
 * Sebastian Krueger
 * Thomas Kurpick
+* Berno Langer
 * Costin Leau
 * Ilya Leoshkevich
 * Tat Leung
@@ -151,6 +154,7 @@ Here is the list of people who have contributed source code and documentation up
 * Sakari Maaranen
 * Jan Materne
 * Markus M. May
+* Lewis John McGibbney
 * Abel Muino
 * J. Lewis Muir
 * Stephen Nesbitt
@@ -212,5 +216,3 @@ Here is the list of people who have contributed source code and documentation up
 * Jaroslaw Wypychowski
 * Sven Zethelius
 * Aleksey Zhukov
-* Jason A. Guild
-* Berno Langer
