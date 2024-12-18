@@ -87,7 +87,7 @@ This element takes the following attributes: +
 * `organisation`: the organisation of the root module (defaults to *) +
 * `module`: the name of the root module (defaults to *) +
 * `revision`: the revision of the root module (defaults to *) +
-* `branch`: the branch of the root module (default to *)
+* `branch`: the branch of the root module (default to *) +
 * `file`: a specific ivy.xml file to use as root module|0..n
 |leaf|(*__since 2.5__*) Declares a leaf module.
 
@@ -95,7 +95,7 @@ This element takes the following attributes: +
 * `organisation`: the organisation of the leaf module (defaults to *) +
 * `module`: the name of the leaf module (defaults to *) +
 * `revision`: the revision of the leaf module (defaults to *) +
-* `branch`: the branch of the leaf module (default to *)
+* `branch`: the branch of the leaf module (default to *) +
 * `file`: a specific ivy.xml file to use as leaf module|0..n
 |=======
 
