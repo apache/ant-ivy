@@ -36,7 +36,7 @@
 				</filesystem>
 			</dual>
 			<ibiblio name="m2" m2compatible="true" useMavenMetadata="true" 
-			         root="file:${ivy.settings.dir}/m2" />
+			         root="${ivy.settings.dir.url}/m2" />
 		</chain>
 		<filesystem name="install">
 			<ivy pattern="${ivy.basedir}/build/test/install/[organisation]/[module]/[artifact]-[revision].[ext]"/>
