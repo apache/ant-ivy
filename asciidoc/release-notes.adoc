@@ -19,7 +19,7 @@
 
 = Ivy Release Announcement
 
-XXXX Date XXXX - The Apache Ivy project is pleased to announce its 2.5.3 release.
+December 21 2024 - The Apache Ivy project is pleased to announce its 2.5.3 release.
 
 == What is Ivy?
 Apache Ivy is a tool for managing (recording, tracking, resolving and reporting) project dependencies, characterized by flexibility,
@@ -34,7 +34,7 @@ More information about the project can be found on the website link:https://ant.
 
 == Key features in this release
 
-Key features of this 2.5.3 release are:
+This 2.5.3 release is a bugfix release, no new features have been added.
 
 == List of Changes in this Release
 

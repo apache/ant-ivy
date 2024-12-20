@@ -493,8 +493,10 @@
         <rat:report xmlns:rat="antlib:org.apache.rat.anttasks" reportFile="${rat.report.dir}/rat-report.txt">
             <fileset dir="${basedir}">
                 <exclude name=".classpath"/>
+                <exclude name="*.iml"/>
                 <exclude name="ReleaseInstructions"/>
                 <exclude name=".ivy2/**/*"/>
+                <exclude name=".idea/**/*"/>
                 <exclude name="build/**/*"/>
                 <exclude name="bin/**/*"/>
                 <exclude name="**/*.md5"/>

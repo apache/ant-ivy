@@ -22,7 +22,7 @@
 	<caches defaultCacheDir="${cache.dir}"/>
 	<resolvers>
 		<chain name="test">
-			<ibiblio name="m2-local" m2compatible="true" useMavenMetadata="true" root="file:${ivy.settings.dir}/m2" />
+			<ibiblio name="m2-local" m2compatible="true" useMavenMetadata="true" root="${ivy.settings.dir.url}/m2" />
 		</chain>
 	</resolvers>
 </ivysettings>

@@ -17,6 +17,6 @@
    under the License.    
 -->
 <ivysettings>
-	<include url="file:${ivy.settings.dir}/ivysettings-props.xml"/>
-	<include url="file:${ivy.settings.dir}/ivysettings-test.xml"/>
+	<include url="${ivy.settings.dir.url}/ivysettings-props.xml"/>
+	<include url="${ivy.settings.dir.url}/ivysettings-test.xml"/>
 </ivysettings>
