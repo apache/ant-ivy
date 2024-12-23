@@ -36,6 +36,11 @@
     <category rdf:resource="http://projects.apache.org/category/build-management" />
     <release>
       <Version>
+        <name>Apache Ivy 2.5.3</name>
+        <created>2023-12-23</created>
+        <revision>2.5.3</revision>
+      </Version>
+      <Version>
         <name>Apache Ivy 2.5.2</name>
         <created>2023-08-20</created>
         <revision>2.5.2</revision>
