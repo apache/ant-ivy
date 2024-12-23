@@ -19,7 +19,7 @@
 
 = Ivy Release Announcement
 
-December 21 2024 - The Apache Ivy project is pleased to announce its 2.5.3 release.
+December 23 2024 - The Apache Ivy project is pleased to announce its 2.5.3 release.
 
 == What is Ivy?
 Apache Ivy is a tool for managing (recording, tracking, resolving and reporting) project dependencies, characterized by flexibility,
