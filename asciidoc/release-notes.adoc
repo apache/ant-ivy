@@ -19,7 +19,7 @@
 
 = Ivy Release Announcement
 
-December 23 2024 - The Apache Ivy project is pleased to announce its 2.5.3 release.
+XXXX Date XXXX - The Apache Ivy project is pleased to announce its 2.6.0 release.
 
 == What is Ivy?
 Apache Ivy is a tool for managing (recording, tracking, resolving and reporting) project dependencies, characterized by flexibility,
@@ -34,18 +34,13 @@ More information about the project can be found on the website link:https://ant.
 
 == Key features in this release
 
-This 2.5.3 release is a bugfix release, no new features have been added.
+Key features of this 2.5.2 release are:
 
 == List of Changes in this Release
 
 For details about the following changes, check our JIRA install at link:https://issues.apache.org/jira/browse/IVY[]
 
-*List of changes since Ivy 2.5.2:*
-
-- FIX: trying to set safe XML features causes SAXExceptions when used with certain XML parsers (jira:IVY-1647[])
-- FIX: some unit tests failed on Java 8 (jira:IVY-1648[]) (Thanks to Adrien Piquerez)
-- FIX: cached Ivy files were not valid in some scenarios (jira:IVY-1649[], jira:IVY-1650[]) (Thanks to Moritz Baumann)
-- DOCUMENTATION: improved to the documentation regarding the use of patterns in the resolvers and retrieve task (jira:IVY-1651[]) (Thanks to Lewis John McGibbney)
+*List of changes since Ivy 2.6.0:*
 
 ////
  Samples :
