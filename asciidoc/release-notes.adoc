@@ -34,7 +34,7 @@ More information about the project can be found on the website link:https://ant.
 
 == Key features in this release
 
-Key features of this 2.5.2 release are:
+Key features of this 2.6.0 release are:
 
 == List of Changes in this Release
 
