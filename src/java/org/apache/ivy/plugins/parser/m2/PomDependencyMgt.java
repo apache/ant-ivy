@@ -31,5 +31,9 @@ public interface PomDependencyMgt {
 
     String getScope();
 
+    default String getClassifier() {
+        return "defaultclassifier";
+    }
+
     List<ModuleId> getExcludedModules();
 }
