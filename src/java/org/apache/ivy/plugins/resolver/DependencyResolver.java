@@ -20,7 +20,9 @@ package org.apache.ivy.plugins.resolver;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.ivy.core.cache.ArtifactOrigin;
 import org.apache.ivy.core.cache.RepositoryCacheManager;
@@ -188,6 +190,17 @@ public interface DependencyResolver {
      *            the token which have values
      * @return the list of token values, must not be <code>null</code>
      */
+    default Set<Map<String, String>> listTokenValues(Set<String> tokens, Map<String, Object> criteria) {
+        Set<Map<String, String>> tokenValueSet = new HashSet<>();
+        for (Map<String, String> tokenValue :
+                listTokenValues(tokens.toArray(new String[tokens.size()]), criteria)) {
+            tokenValueSet.add(tokenValue);
+        }
+        return tokenValueSet;
+    }
+
+    // http://www.tothenew.com/blog/why-is-generic-array-creation-not-allowed-in-java/
+    @Deprecated
     Map<String, String>[] listTokenValues(String[] tokens, Map<String, Object> criteria);
 
     OrganisationEntry[] listOrganisations();
