@@ -50,6 +50,8 @@ For details about the following changes, check our JIRA install at link:https://
 - DOCUMENTATION: bla bla bla (jira:IVY-1234[]) (Thanks to Jane Doe)
 ////
 
+- FIX: improved Maven dependencyManagement matching for dependencies with a non-default type or classifier (IVY-1654) (Thanks to Mark Kittisopikul)
+
 == Committers and Contributors
 
 Here is the list of people who have contributed source code and documentation up to this release. Many thanks to all of them, and also to the whole IvyDE community contributing ideas and feedback, and promoting the use of Apache Ivy !
@@ -134,6 +136,7 @@ Here is the list of people who have contributed source code and documentation up
 * Matthias Kilian
 * Alexey Kiselev
 * Gregory Kisling
+* Mark Kittisopikul
 * Stepan Koltsov
 * Heschi Kreinick
 * Sebastian Krueger

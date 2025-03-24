@@ -351,8 +351,8 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
             // add dependency management info from imported module
             for (PomDependencyMgt importedDepMgt : getDependencyManagements(importDescr)) {
                 mdBuilder.addDependencyMgt(new DefaultPomDependencyMgt(importedDepMgt.getGroupId(),
-                        importedDepMgt.getArtifactId(), importedDepMgt.getVersion(),
-                        importedDepMgt.getScope(), importedDepMgt.getExcludedModules()));
+                        importedDepMgt.getArtifactId(), importedDepMgt.getType(), importedDepMgt.getClassifier(),
+                        importedDepMgt.getVersion(), importedDepMgt.getScope(), importedDepMgt.getExcludedModules()));
             }
         } else {
             mdBuilder.addDependencyMgt(dep);

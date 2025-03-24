@@ -874,6 +874,44 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
     }
 
     @Test
+    public void testDependencyManagementWithClassifier() throws ParseException, IOException {
+        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(settings,
+                                                                                      getClass().getResource("test-dependencyMgt-with-classifier.pom"), false);
+        assertNotNull(md);
+        assertEquals(ModuleRevisionId.newInstance("org.apache", "test-depMgt", "1.1"),
+                     md.getModuleRevisionId());
+
+        DependencyDescriptor[] dds = md.getDependencies();
+        assertNotNull(dds);
+        assertEquals(1, dds.length);
+        assertEquals(ModuleRevisionId.newInstance("commons-logging", "commons-logging", "1.0.4"),
+                     dds[0].getDependencyRevisionId());
+        assertEquals(1, dds[0].getAllDependencyArtifacts().length);
+        assertEquals("jar", dds[0].getAllDependencyArtifacts()[0].getExt());
+        assertEquals("jar", dds[0].getAllDependencyArtifacts()[0].getType());
+        Map<String, String> extraAtt = Collections.singletonMap("classifier", "asl");
+        assertEquals(extraAtt, dds[0].getAllDependencyArtifacts()[0].getExtraAttributes());
+    }
+
+    @Test
+    public void testDependencyManagementWithType() throws ParseException, IOException {
+        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(settings,
+                                                                                      getClass().getResource("test-dependencyMgt-with-type.pom"), false);
+        assertNotNull(md);
+        assertEquals(ModuleRevisionId.newInstance("org.apache", "test-depMgt", "1.1"),
+                     md.getModuleRevisionId());
+
+        DependencyDescriptor[] dds = md.getDependencies();
+        assertNotNull(dds);
+        assertEquals(1, dds.length);
+        assertEquals(ModuleRevisionId.newInstance("commons-logging", "commons-logging", "1.0.4"),
+                     dds[0].getDependencyRevisionId());
+        assertEquals(1, dds[0].getAllDependencyArtifacts().length);
+        assertEquals("dll", dds[0].getAllDependencyArtifacts()[0].getExt());
+        assertEquals("dll", dds[0].getAllDependencyArtifacts()[0].getType());
+    }
+
+    @Test
     public void testParentDependencyMgt() throws ParseException, IOException {
         settings.setDictatorResolver(new MockResolver() {
             public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data)

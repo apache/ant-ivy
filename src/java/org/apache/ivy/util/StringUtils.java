@@ -244,4 +244,9 @@ public final class StringUtils {
         }
         return sb.toString();
     }
+
+    public static String defaultIfEmpty(String value, String defaultValue) {
+        return (value == null || value.isEmpty()) ? defaultValue : value;
+    }
+
 }
