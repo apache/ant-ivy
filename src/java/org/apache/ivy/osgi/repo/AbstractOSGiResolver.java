@@ -403,15 +403,8 @@ public abstract class AbstractOSGiResolver extends BasicResolver {
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public Map<String, String>[] listTokenValues(String[] tokens, Map<String, Object> criteria) {
-        Set<String> tokenSet = new HashSet<>(Arrays.asList(tokens));
-        Set<Map<String, String>> listTokenValues = listTokenValues(tokenSet, criteria);
-        return listTokenValues.toArray(new Map[listTokenValues.size()]);
-    }
-
-    private Set<Map<String, String>> listTokenValues(Set<String> tokens,
+    public Set<Map<String, String>> listTokenValues(Set<String> tokens,
             Map<String, Object> criteria) {
         Map<String, String> stringCriteria = new HashMap<>();
         for (Map.Entry<String, Object> entry : criteria.entrySet()) {
