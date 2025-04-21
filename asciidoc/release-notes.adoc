@@ -42,6 +42,8 @@ For details about the following changes, check our JIRA install at link:https://
 
 *List of changes since Ivy 2.6.0:*
 
+Note, if you have resolved dependencies with version of Ivy prior to 2.6.0, you may need to remove your Ivy cache for some fixes to have any effect.
+
 ////
  Samples :
 - NEW: bla bla bla (jira:IVY-1234[]) (Thanks to Jane Doe)
