@@ -297,10 +297,10 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
                 .getClassLoader()
                 .loadClass("org.apache.ivy.plugins.pack.Pack200Packing");
             addArchivePacking(pack200.newInstance());
-        } catch (Exception e) {
+        } catch (Throwable t) {
             // ignore: the pack200 packing isn't on the classpath
             Message.info("impossible to define pack200 packaging: "
-                         + "org.apache.ivy.plugins.pack.Pack200Packing was not found", e);
+                         + "org.apache.ivy.plugins.pack.Pack200Packing was not found", t);
         }
 
         addReportOutputter(new LogReportOutputter());

@@ -28,9 +28,6 @@ public class Pack200Packing extends StreamPacking {
 
     private static final String[] NAMES = {"pack200"};
 
-    public Pack200Packing() {
-    }
-
     @Override
     public String[] getNames() {
         return NAMES;
