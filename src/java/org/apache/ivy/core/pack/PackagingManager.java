@@ -26,6 +26,8 @@ import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DefaultArtifact;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.IvySettingsAware;
+import org.apache.ivy.plugins.pack.ArchivePacking;
+import org.apache.ivy.plugins.pack.StreamPacking;
 
 public class PackagingManager implements IvySettingsAware {
 

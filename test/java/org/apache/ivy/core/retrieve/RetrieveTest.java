@@ -41,11 +41,9 @@ import org.apache.ivy.util.MockMessageLogger;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Copy;
 import org.apache.tools.ant.taskdefs.Delete;
-import org.apache.tools.ant.taskdefs.condition.JavaVersion;
 import org.apache.tools.ant.types.FilterChain;
 import org.apache.tools.ant.filters.TokenFilter.ReplaceString;
 import org.junit.After;
-import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -500,10 +498,6 @@ public class RetrieveTest {
      */
     @Test
     public void testUnpackExt() throws Exception {
-        final JavaVersion java14OrHigher = new JavaVersion();
-        java14OrHigher.setAtLeast("14");
-        Assume.assumeFalse("Pack200 tools and API have been removed since JDK 14", java14OrHigher.eval());
-
         final ResolveOptions roptions = getResolveOptions(new String[] {"*"});
 
         final URL url = new File("test/repositories/1/packaging/module10/ivys/ivy-1.0.xml").toURI()

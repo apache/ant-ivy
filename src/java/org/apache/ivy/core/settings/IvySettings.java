@@ -33,8 +33,10 @@ import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.module.id.ModuleRules;
 import org.apache.ivy.core.module.status.StatusManager;
-import org.apache.ivy.core.pack.ArchivePacking;
+import org.apache.ivy.plugins.pack.ArchivePacking;
 import org.apache.ivy.core.pack.PackingRegistry;
+import org.apache.ivy.plugins.pack.OsgiBundlePacking;
+import org.apache.ivy.plugins.pack.ZipPacking;
 import org.apache.ivy.core.publish.PublishEngineSettings;
 import org.apache.ivy.core.repository.RepositoryManagementEngineSettings;
 import org.apache.ivy.core.resolve.ResolveEngineSettings;
@@ -284,6 +286,21 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
             // ignore: the matcher isn't on the classpath
             Message.info("impossible to define glob matcher: "
                     + "org.apache.ivy.plugins.matcher.GlobPatternMatcher was not found", e);
+        }
+
+        addArchivePacking(new ZipPacking());
+        addArchivePacking(new OsgiBundlePacking());
+        try {
+            // Pack200Packing is optional. Only add it when available.
+            @SuppressWarnings("unchecked")
+            Class<? extends ArchivePacking> pack200 = (Class<? extends ArchivePacking>) IvySettings.class
+                .getClassLoader()
+                .loadClass("org.apache.ivy.plugins.pack.Pack200Packing");
+            addArchivePacking(pack200.newInstance());
+        } catch (Exception e) {
+            // ignore: the pack200 packing isn't on the classpath
+            Message.info("impossible to define pack200 packaging: "
+                         + "org.apache.ivy.plugins.pack.Pack200Packing was not found", e);
         }
 
         addReportOutputter(new LogReportOutputter());
@@ -1554,6 +1571,10 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     }
 
     public synchronized void addConfigured(ArchivePacking packing) {
+        addArchivePacking(packing);
+    }
+
+    public synchronized void addArchivePacking(ArchivePacking packing) {
         init(packing);
         packingRegistry.register(packing);
     }

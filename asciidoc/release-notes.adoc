@@ -53,6 +53,7 @@ Note, if you have resolved dependencies with version of Ivy prior to 2.6.0, you 
 ////
 
 - FIX: improved Maven dependencyManagement matching for dependencies with a non-default type or classifier (IVY-1654) (Thanks to Mark Kittisopikul)
+- IMPROVEMENT: use Apache Commons Compress for pack200 handling to avoid issues on Java 14 and later. If pack200 is needed, make sure to add Apache Commons Compress to your classpath. (IVY-1652)
 
 == Committers and Contributors
 
