@@ -17,12 +17,8 @@
  */
 package org.apache.ivy.plugins.pack;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.zip.GZIPInputStream;
-
-import org.apache.commons.compress.compressors.pack200.Pack200CompressorInputStream;
 
 public class Pack200Packing extends StreamPacking {
 
@@ -51,19 +47,7 @@ public class Pack200Packing extends StreamPacking {
 
     @Override
     public InputStream unpack(InputStream packed) throws IOException {
-        BufferedInputStream buffered = new BufferedInputStream(packed);
-        buffered.mark(4);
-        byte[] magic = new byte[4];
-        buffered.read(magic, 0, 4);
-        buffered.reset();
-
-        InputStream in = buffered;
-        if (magic[0] == (byte) 0x1F && magic[1] == (byte) 0x8B && magic[2] == (byte) 0x08) {
-            // this is a gziped pack200
-            in = new GZIPInputStream(in);
-        }
-
-        return new Pack200CompressorInputStream(in);
+        return Pack200Util.unpack(packed);
     }
 
 }
