@@ -15,6 +15,7 @@ Import-Package: com.jcraft.jsch;resolution:=optional,
  javax.xml.transform,
  javax.xml.transform.sax,
  javax.xml.transform.stream,
+ org.apache.commons.compress.compressors.pack200;resolution:=optional,
  org.apache.commons.httpclient;resolution:=optional,
  org.apache.commons.httpclient.auth;resolution:=optional,
  org.apache.commons.httpclient.methods;resolution:=optional,
@@ -84,6 +85,7 @@ Export-Package: org.apache.ivy;version="2.0.0",
  org.apache.ivy.plugins.lock;version="2.0.0",
  org.apache.ivy.plugins.matcher;version="2.0.0",
  org.apache.ivy.plugins.namespace;version="2.0.0",
+ org.apache.ivy.plugins.pack;version="2.6.0",
  org.apache.ivy.plugins.parser;version="2.0.0",
  org.apache.ivy.plugins.parser.m2;version="2.0.0",
  org.apache.ivy.plugins.parser.xml;version="2.0.0",
@@ -110,4 +112,4 @@ Export-Package: org.apache.ivy;version="2.0.0",
  org.apache.ivy.util.filter;version="2.0.0",
  org.apache.ivy.util.url;version="2.0.0"
 Bundle-ClassPath: .
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
