@@ -52,8 +52,9 @@ Note, if you have resolved dependencies with version of Ivy prior to 2.6.0, you 
 - DOCUMENTATION: bla bla bla (jira:IVY-1234[]) (Thanks to Jane Doe)
 ////
 
-- FIX: improved Maven dependencyManagement matching for dependencies with a non-default type or classifier (IVY-1654) (Thanks to Mark Kittisopikul)
+- NEW: added a new `nearest` conflict manager, which handles conflicts in the same way that Maven does. (IVY-813) (Thanks to Eric Milles)
 - IMPROVEMENT: use Apache Commons Compress for pack200 handling to avoid issues on Java 14 and later. If pack200 is needed, make sure to add Apache Commons Compress to your classpath. (IVY-1652)
+- FIX: improved Maven dependencyManagement matching for dependencies with a non-default type or classifier (IVY-1654) (Thanks to Mark Kittisopikul)
 
 == Committers and Contributors
 
@@ -166,6 +167,7 @@ Here is the list of people who have contributed source code and documentation up
 * Glen Marchesani
 * Phil Messenger
 * Steve Miller
+* Eric Milles
 * Mathias Muller
 * Randy Nott
 * Peter Oxenham
