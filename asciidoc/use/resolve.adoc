@@ -78,7 +78,7 @@ This table gives some statistics about the dependency resolution. Each line corr
 
 [*__since 1.4__*]
 
- The inline mode allows to call a resolve without an Ivy file, by setting directly the module which should be resolved from the repository. It is particularly useful to install released software, like an Ant task for example. When `inline` is set to `true`, the organisation module and revision attributes are used to specify which module should be resolved from the repository.
+The inline mode allows to call a resolve without an Ivy file, by setting directly the module which should be resolved from the repository. It is particularly useful to install released software, like an Ant task for example. When `inline` is set to `true`, the organisation module and revision attributes are used to specify which module should be resolved from the repository.
 
 *Remark:* if you want the standard Ivy properties to be set or to reuse the results of an inline resolve by other post-resolve tasks like `retrieve`, `cachepath`, `report`...,  you must set the keep attribute to `true`!
 
