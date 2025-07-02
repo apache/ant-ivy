@@ -155,7 +155,11 @@ If there is the OSGi `resolution` parameter specified to `optional`, then the de
 a|
 [source, xml]
 ----
-<dependency osgi="bundle" org="" name="com.acme.product.plugin" rev="[3.2.1,)" conf="default->default"/>
+<dependency osgi="bundle"
+            org=""
+            name="com.acme.product.plugin"
+            rev="[3.2.1,)"
+            conf="default->default"/>
 ----
 
 
@@ -163,7 +167,10 @@ a|
 a|
 [source, xml]
 ----
-<dependency org="bundle" name="com.acme.product.plugin" rev="[3.2.1,)" conf="optional->default;transitive-optional->transitive-optional"/>
+<dependency org="bundle"
+            name="com.acme.product.plugin"
+            rev="[3.2.1,)"
+            conf="optional->default;transitive-optional->transitive-optional"/>
 ----
 
 
@@ -188,7 +195,10 @@ As it is an import package, the configuration of the dependency will be the `use
 a|
 [source, xml]
 ----
-<dependency org="package" name="com.acme.product.plugin.utils" rev="[3.2.1,)" conf="default->default;use_com.acme.product.plugin.utils->use_com.acme.product.plugin.utils"/>
+<dependency org="package"
+            name="com.acme.product.plugin.utils"
+            rev="[3.2.1,)"
+            conf="default->default;use_com.acme.product.plugin.utils->use_com.acme.product.plugin.utils"/>
 ----
 
 
@@ -196,7 +206,10 @@ a|
 a|
 [source, xml]
 ----
-<dependency org="package" name="com.acme.product.plugin.utils" rev="[3.2.1,)" conf="optional->default;transitive-optional->transitive-optional;use_com.acme.product.plugin.utils->use_com.acme.product.plugin.utils"/>
+<dependency org="package"
+            name="com.acme.product.plugin.utils"
+            rev="[3.2.1,)"
+            conf="optional->default;transitive-optional->transitive-optional;use_com.acme.product.plugin.utils->use_com.acme.product.plugin.utils"/>
 ----
 
 
