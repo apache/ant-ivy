@@ -25,6 +25,8 @@ For Ivy 2.4.0, a minimum of Java 5 is required.
 
 Since Ivy 2.5.0, a minimum of Java 7 is required.
 
+Since Ivy 2.5.1, a minimum of Java 8 is required.
+
 == Apache Ant
 
 Ivy doesn't require a specific version of Ant as long as the Ant being used complies with the JVM compatibility requirements noted above.
