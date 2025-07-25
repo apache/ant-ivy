@@ -2349,11 +2349,185 @@ public class ResolveTest {
         assertNotNull(report);
 
         // dependencies
-        assertTrue(getIvyFileInCache(ModuleRevisionId.newInstance("org1", "mod1.2", "2.1"))
-                .exists());
+        assertTrue(getIvyFileInCache(ModuleRevisionId.newInstance("org1", "mod1.2", "2.1")).exists());
         assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.1", "mod1.2", "jar", "jar").exists());
 
         assertFalse(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+    }
+
+    /**
+     * Test case for IVY-1485.
+     *
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1485">IVY-1485</a>
+     */
+    @Test
+    public void testDeliverWithTransitiveDepsInDifferentConfs() throws Exception {
+        ivy = Ivy.newInstance();
+        ivy.configure(new File("test/repositories/IVY-1485/ivysettings.xml"));
+
+        ResolveOptions opts = new ResolveOptions();
+        opts.setConfs(new String[] {"*"});
+        opts.setResolveId("resolveid");
+        opts.setTransitive(true);
+
+        ResolveReport report = ivy.resolve(new File("test/repositories/IVY-1485/ivy-simple.xml").toURL(), opts);
+        assertFalse(report.hasError());
+
+        ModuleRevisionId modAExpectedRevId = ModuleRevisionId.newInstance("simple", "modA", "5");
+
+        // check that the resolve report has the expected results, namely that the transitive dep on modA#1 has not
+        // overridden the direct dep on modA#5.  This is about testing the consistency of results between the resolve
+        // report and the delivered descriptor.
+
+        Set<ModuleRevisionId> reportMrids = report.getConfigurationReport("conf1").getModuleRevisionIds();
+        assertEquals(Collections.singleton(modAExpectedRevId), reportMrids);
+
+        DeliverOptions dopts = new DeliverOptions();
+        dopts.setGenerateRevConstraint(true);
+        dopts.setConfs(new String[] {"*"});
+        dopts.setStatus("release");
+        dopts.setPubdate(new Date());
+        dopts.setResolveId("resolveid");
+        String pubrev = "1";
+        String deliveryPattern = "build/test/deliver/assembly-[revision].xml";
+
+        ivy.deliver(pubrev, deliveryPattern, dopts);
+
+        // now check that the resolve report has the same info as the delivered descriptor
+
+        File deliveredIvyFile = new File("build/test/deliver/assembly-1.xml");
+        assertTrue(deliveredIvyFile.exists());
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(ivy.getSettings(), deliveredIvyFile.toURL(), false);
+        DependencyDescriptor[] dds = md.getDependencies();
+        assertEquals(2, dds.length);
+        assertEquals(ModuleRevisionId.newInstance("simple", "modA", "5"), dds[0].getDependencyRevisionId());
+        assertEquals(ModuleRevisionId.newInstance("simple", "modB", "1"), dds[1].getDependencyRevisionId());
+    }
+
+    /**
+     * Test case for IVY-1485.
+     *
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1485">IVY-1485</a>
+     */
+    @Test
+    public void testDeliverWithTransitiveDepsInOverlappingConfsTransitiveNewer() throws Exception {
+        ivy = Ivy.newInstance();
+        ivy.configure(new File("test/repositories/IVY-1485/ivysettings.xml"));
+
+        ResolveOptions opts = new ResolveOptions();
+        opts.setConfs(new String[] {"*"});
+        opts.setResolveId("resolveid");
+        opts.setTransitive(true);
+
+        ResolveReport report = ivy.resolve(new File("test/repositories/IVY-1485/ivy-overlap-transitive-newer.xml").toURL(), opts);
+        assertFalse(report.hasError());
+
+        ModuleRevisionId conf1ModAExpectedRevId = ModuleRevisionId.newInstance("overlap-newer", "modA", "1");
+        ModuleRevisionId conf2ModBExpectedRevId = ModuleRevisionId.newInstance("overlap-newer", "modB", "1");
+        ModuleRevisionId conf2ModAExpectedRevId = ModuleRevisionId.newInstance("overlap-newer", "modA", "5");
+        ModuleRevisionId conf3ModBExpectedRevId = ModuleRevisionId.newInstance("overlap-newer", "modB", "1");
+        ModuleRevisionId conf3ModAExpectedRevId = ModuleRevisionId.newInstance("overlap-newer", "modA", "5");
+
+        Set<ModuleRevisionId> conf1ReportMrids = report.getConfigurationReport("conf1").getModuleRevisionIds();
+        assertEquals(new HashSet<>(Arrays.asList(new ModuleRevisionId[] {conf1ModAExpectedRevId})), conf1ReportMrids);
+        Set<ModuleRevisionId> conf2ReportMrids = report.getConfigurationReport("conf2").getModuleRevisionIds();
+        assertEquals(new HashSet<>(Arrays.asList(new ModuleRevisionId[] {conf2ModBExpectedRevId, conf2ModAExpectedRevId})), conf2ReportMrids);
+        Set<ModuleRevisionId> conf3ReportMrids = report.getConfigurationReport("conf3").getModuleRevisionIds();
+        assertEquals(new HashSet<>(Arrays.asList(new ModuleRevisionId[] {conf3ModBExpectedRevId, conf3ModAExpectedRevId})), conf3ReportMrids);
+
+        DeliverOptions dopts = new DeliverOptions();
+        dopts.setGenerateRevConstraint(true);
+        dopts.setConfs(new String[] {"*"});
+        dopts.setStatus("release");
+        dopts.setPubdate(new Date());
+        dopts.setResolveId("resolveid");
+        String pubrev = "1";
+        String deliveryPattern = "build/test/deliver/assembly-[revision].xml";
+
+        ivy.deliver(pubrev, deliveryPattern, dopts);
+
+        // now check that the resolve report has the same info as the delivered descriptor
+
+        File deliveredIvyFile = new File("build/test/deliver/assembly-1.xml");
+        assertTrue(deliveredIvyFile.exists());
+
+        ResolveReport report2 = ivy.resolve(deliveredIvyFile.toURL(), opts);
+        assertFalse(report.hasError());
+
+        Set<ModuleRevisionId> conf1ReportMrids2 = report2.getConfigurationReport("conf1").getModuleRevisionIds();
+        assertEquals(new HashSet<>(Arrays.asList(new ModuleRevisionId[] {conf1ModAExpectedRevId})), conf1ReportMrids2);
+        Set<ModuleRevisionId> conf2ReportMrids2 = report2.getConfigurationReport("conf2").getModuleRevisionIds();
+        assertEquals(new HashSet<>(Arrays.asList(new ModuleRevisionId[] {conf2ModBExpectedRevId, conf2ModAExpectedRevId})), conf2ReportMrids2);
+        Set<ModuleRevisionId> conf3ReportMrids2 = report2.getConfigurationReport("conf3").getModuleRevisionIds();
+        assertEquals(new HashSet<>(Arrays.asList(new ModuleRevisionId[] {conf3ModBExpectedRevId, conf3ModAExpectedRevId})), conf3ReportMrids2);
+
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(ivy.getSettings(), deliveredIvyFile.toURL(), false);
+        DependencyDescriptor[] dds = md.getDependencies();
+        assertEquals(2, dds.length);
+        assertEquals(ModuleRevisionId.newInstance("overlap-newer", "modA", "1"), dds[0].getDependencyRevisionId());
+        assertEquals(ModuleRevisionId.newInstance("overlap-newer", "modB", "1"), dds[1].getDependencyRevisionId());
+    }
+
+    /**
+     * Test case for IVY-1485.
+     *
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1485">IVY-1485</a>
+     */
+    @Test
+    public void testDeliverWithTransitiveDepsInOverlappingConfsTransitiveOlder() throws Exception {
+        ivy = Ivy.newInstance();
+        ivy.configure(new File("test/repositories/IVY-1485/ivysettings.xml"));
+
+        ResolveOptions opts = new ResolveOptions();
+        opts.setConfs(new String[] {"*"});
+        opts.setResolveId("resolveid");
+        opts.setTransitive(true);
+
+        ResolveReport report = ivy.resolve(new File("test/repositories/IVY-1485/ivy-overlap-transitive-older.xml").toURL(), opts);
+        assertFalse(report.hasError());
+
+        ModuleRevisionId conf1ModAExpectedRevId = ModuleRevisionId.newInstance("overlap-older", "modA", "5");
+        ModuleRevisionId conf2ModBExpectedRevId = ModuleRevisionId.newInstance("overlap-older", "modB", "1");
+        ModuleRevisionId conf2ModAExpectedRevId = ModuleRevisionId.newInstance("overlap-older", "modA", "5");
+        ModuleRevisionId conf3ModBExpectedRevId = ModuleRevisionId.newInstance("overlap-older", "modB", "1");
+        ModuleRevisionId conf3ModAExpectedRevId = ModuleRevisionId.newInstance("overlap-older", "modA", "1");
+
+        Set<ModuleRevisionId> conf1ReportMrids = report.getConfigurationReport("conf1").getModuleRevisionIds();
+        assertEquals(new HashSet<>(Arrays.asList(new ModuleRevisionId[] {conf1ModAExpectedRevId})), conf1ReportMrids);
+        Set<ModuleRevisionId> conf2ReportMrids = report.getConfigurationReport("conf2").getModuleRevisionIds();
+        assertEquals(new HashSet<>(Arrays.asList(new ModuleRevisionId[] {conf2ModBExpectedRevId, conf2ModAExpectedRevId})), conf2ReportMrids);
+        Set<ModuleRevisionId> conf3ReportMrids = report.getConfigurationReport("conf3").getModuleRevisionIds();
+        assertEquals(new HashSet<>(Arrays.asList(new ModuleRevisionId[] {conf3ModBExpectedRevId, conf3ModAExpectedRevId})), conf3ReportMrids);
+
+        DeliverOptions dopts = new DeliverOptions();
+        dopts.setGenerateRevConstraint(true);
+        dopts.setConfs(new String[] {"*"});
+        dopts.setStatus("release");
+        dopts.setPubdate(new Date());
+        dopts.setResolveId("resolveid");
+        String pubrev = "1";
+        String deliveryPattern = "build/test/deliver/assembly-[revision].xml";
+
+        ivy.deliver(pubrev, deliveryPattern, dopts);
+
+        // now check that the resolve report has the same info as the delivered descriptor
+
+        File deliveredIvyFile = new File("build/test/deliver/assembly-1.xml");
+        assertTrue(deliveredIvyFile.exists());
+
+        ResolveReport report2 = ivy.resolve(deliveredIvyFile.toURL(), opts);
+        assertFalse(report.hasError());
+
+        Set<ModuleRevisionId> conf1ReportMrids2 = report2.getConfigurationReport("conf1").getModuleRevisionIds();
+        assertEquals(new HashSet<>(Arrays.asList(new ModuleRevisionId[] {conf1ModAExpectedRevId})), conf1ReportMrids2);
+        Set<ModuleRevisionId> conf2ReportMrids2 = report2.getConfigurationReport("conf2").getModuleRevisionIds();
+        assertEquals(new HashSet<>(Arrays.asList(new ModuleRevisionId[] {conf2ModBExpectedRevId, conf2ModAExpectedRevId})), conf2ReportMrids2);
+
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(ivy.getSettings(), deliveredIvyFile.toURL(), false);
+        DependencyDescriptor[] dds = md.getDependencies();
+        assertEquals(2, dds.length);
+        assertEquals(ModuleRevisionId.newInstance("overlap-older", "modA", "5"), dds[0].getDependencyRevisionId());
+        assertEquals(ModuleRevisionId.newInstance("overlap-older", "modB", "1"), dds[1].getDependencyRevisionId());
     }
 
     /**
@@ -6147,7 +6321,7 @@ public class ResolveTest {
      * @see <a href="https://issues.apache.org/jira/browse/IVY-1159">IVY-1159</a>
      */
     @Test
-    public void testIVY1159_orderIsModAModB() throws Exception {
+    public void testOrderIsModAModB() throws Exception {
         testIVY1159("ivy-depsorder_modA_then_modB.xml", false);
 
         File deliveredIvyFile = new File("build/test/deliver/ivy-1.xml");
@@ -6169,7 +6343,7 @@ public class ResolveTest {
      * @see <a href="https://issues.apache.org/jira/browse/IVY-1159">IVY-1159</a>
      */
     @Test
-    public void testIVY1159_orderIsModAModBReplaceForced() throws Exception {
+    public void testOrderIsModAModBReplaceForced() throws Exception {
         testIVY1159("ivy-depsorder_modA_then_modB.xml", true);
 
         File deliveredIvyFile = new File("build/test/deliver/ivy-1.xml");
@@ -6191,7 +6365,7 @@ public class ResolveTest {
      * @see <a href="https://issues.apache.org/jira/browse/IVY-1159">IVY-1159</a>
      */
     @Test
-    public void testIVY1159_orderIsModBModA() throws Exception {
+    public void testOrderIsModBModA() throws Exception {
         testIVY1159("ivy-depsorder_modB_then_modA.xml", false);
 
         File deliveredIvyFile = new File("build/test/deliver/ivy-1.xml");
@@ -6213,7 +6387,7 @@ public class ResolveTest {
      * @see <a href="https://issues.apache.org/jira/browse/IVY-1159">IVY-1159</a>
      */
     @Test
-    public void testIVY1159_orderIsModBModAReplaceForced() throws Exception {
+    public void testOrderIsModBModAReplaceForced() throws Exception {
         testIVY1159("ivy-depsorder_modB_then_modA.xml", true);
 
         File deliveredIvyFile = new File("build/test/deliver/ivy-1.xml");
@@ -6488,7 +6662,6 @@ public class ResolveTest {
         assertTrue("Missing artifact(s) with classifiers " + classifiers, classifiers.isEmpty());
     }
 
-
     /**
      * Tests the issue noted in IVY-1580.
      * <pre>
@@ -6515,8 +6688,8 @@ public class ResolveTest {
         // get the "default" conf, resolution report for the org.apache:1580:1.0.0 module (represented by the
         // ivy-1580.xml module descriptor)
         final ConfigurationResolveReport confReport = resolveReport.getConfigurationReport(rootModuleConf);
-        assertNotNull(rootModuleConf + " conf resolution report for " +
-                resolveReport.getModuleDescriptor().getModuleRevisionId() + " is null", confReport);
+        assertNotNull(rootModuleConf + " conf resolution report for "
+                + resolveReport.getModuleDescriptor().getModuleRevisionId() + " is null", confReport);
 
         final ModuleRevisionId apiDependencyId = ModuleRevisionId.newInstance("org.apache", "1580-foo-api", "1.2.3");
         final IvyNode apiDepNode = confReport.getDependency(apiDependencyId);
@@ -6540,21 +6713,18 @@ public class ResolveTest {
             final File apiJar = apiDownloadReport.getLocalFile();
             assertNotNull("artifact jar file is null for " + apiArtifact, apiJar);
             switch (apiArtifact.getType()) {
-                case "test-jar" : {
+                case "test-jar":
                     assertFalse("More than 1 test-jar artifact found", foundTestJarType);
                     foundTestJarType = true;
                     assertJarContains(apiJar, "api-test-file.txt");
                     break;
-                }
-                case "jar" : {
+                case "jar":
                     assertFalse("More than 1 jar artifact found", foundJarType);
                     foundJarType = true;
                     assertJarContains(apiJar, "api-file.txt");
                     break;
-                }
-                default: {
+                default:
                     fail("unexpected artifact type " + apiArtifact.getType() + " for artifact " + apiArtifact);
-                }
             }
         }
         assertTrue("No test-jar artifact found for dependency " + apiDependencyId, foundTestJarType);
@@ -6564,9 +6734,7 @@ public class ResolveTest {
         final ModuleRevisionId implDepId = ModuleRevisionId.newInstance("org.apache", "1580-foo-impl", "1.2.3");
         final IvyNode implDepNode = confReport.getDependency(implDepId);
         assertNotNull("Dependency " + implDepId + " not found in conf resolve report", implDepNode);
-
     }
-
 
     /**
      * Tests the issue noted in IVY-1586.
@@ -6602,8 +6770,8 @@ public class ResolveTest {
             // get the "default" conf, resolution report for the org.apache:1586:1.0.0 module (represented by the
             // ivy-1586.xml module descriptor)
             final ConfigurationResolveReport confReport = resolveReport.getConfigurationReport(rootModuleConf);
-            assertNotNull(rootModuleConf + " conf resolution report for " +
-                    resolveReport.getModuleDescriptor().getModuleRevisionId() + " is null", confReport);
+            assertNotNull(rootModuleConf + " conf resolution report for "
+                    + resolveReport.getModuleDescriptor().getModuleRevisionId() + " is null", confReport);
 
             final ModuleRevisionId apiDependencyId = ModuleRevisionId.newInstance("org.apache", "1580-foo-api", "1.2.3");
             final IvyNode apiDepNode = confReport.getDependency(apiDependencyId);
@@ -6633,7 +6801,6 @@ public class ResolveTest {
         }
     }
 
-
     /**
      * Tests that when the internal metadata file containing the artifact origin location
      * points to {@code file:} URI, then the location is correctly parsed.
@@ -6646,7 +6813,7 @@ public class ResolveTest {
         // resolve and download an artifact and let the origin details be stored in the internal metadata files
         // in ivy cache
         ResolveReport report = current.resolve(ModuleRevisionId.newInstance("org.apache",
-                "test","1.0"),
+                "test", "1.0"),
                 getResolveOptions(new String[] {"*"}).setDownload(true), false);
         assertNotNull("Resolve report is null", report);
         assertFalse("Resolution has errors", report.hasError());
@@ -6655,15 +6822,15 @@ public class ResolveTest {
         current.getSettings().setDefaultUseOrigin(true);
         // trigger the resolution again
         report = current.resolve(ModuleRevisionId.newInstance("org.apache",
-                "test","1.0"),
+                "test", "1.0"),
                 getResolveOptions(new String[] {"*"}).setDownload(true), false);
         assertNotNull("Resolve report is null", report);
         assertFalse("Resolution has errors", report.hasError());
     }
 
     private void assertJarContains(final File jar, final String jarEntryPath) throws IOException {
-        try (final JarFile jarFile = new JarFile(jar)) {
-            final JarEntry entry = jarFile.getJarEntry(jarEntryPath);
+        try (JarFile jarFile = new JarFile(jar)) {
+            JarEntry entry = jarFile.getJarEntry(jarEntryPath);
             assertNotNull(jarEntryPath + " is missing from jar file " + jar, entry);
         }
     }
