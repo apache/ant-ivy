@@ -75,7 +75,7 @@ Here is the list of people who have contributed source code and documentation up
 * Gintautas Grigelionis
 * Xavier Hanin
 * Nicolas Lalev&eacute;e
-* Jan Mat&egrave;rne 
+* Jan Mat&egrave;rne
 * Jaikiran Pai
 * Jon Schneider
 * Gilles Scokart
@@ -160,21 +160,21 @@ Here is the list of people who have contributed source code and documentation up
 * Andrey Lomakin
 * William Lyvers
 * Sakari Maaranen
+* David Maplesden
+* Glen Marchesani
 * Jan Materne
 * Markus M. May
 * Lewis John McGibbney
+* Phil Messenger
+* Steve Miller
+* Eric Milles
 * Abel Muino
 * J. Lewis Muir
+* Mathias Muller
 * Stephen Nesbitt
 * Joshua Nichols
 * Bernard Niset
 * Ales Nosek
-* David Maplesden
-* Glen Marchesani
-* Phil Messenger
-* Steve Miller
-* Eric Milles
-* Mathias Muller
 * Randy Nott
 * Peter Oxenham
 * Douglas Palmer
