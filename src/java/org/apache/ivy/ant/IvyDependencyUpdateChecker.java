@@ -17,26 +17,26 @@
  */
 package org.apache.ivy.ant;
 
-import java.io.IOException;
-import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ivy.core.module.descriptor.Configuration;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.report.ConfigurationResolveReport;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.resolve.ResolveOptions;
+
 import org.apache.tools.ant.BuildException;
 
 import static org.apache.ivy.util.StringUtils.splitToArray;
 
 public class IvyDependencyUpdateChecker extends IvyPostResolveTask {
-
-    private String revisionToCheck = "latest.integration";
 
     private boolean download = false;
 
@@ -44,82 +44,126 @@ public class IvyDependencyUpdateChecker extends IvyPostResolveTask {
 
     private boolean showTransitive = false;
 
+    private String revisionToCheck = "latest.integration";
+
+    public boolean isDownload() {
+        return download;
+    }
+
+    public void setDownload(boolean download) {
+        this.download = download;
+    }
+
+    public boolean isCheckIfChanged() {
+        return checkIfChanged;
+    }
+
+    public void setCheckIfChanged(boolean checkIfChanged) {
+        this.checkIfChanged = checkIfChanged;
+    }
+
+    public boolean isShowTransitive() {
+        return showTransitive;
+    }
+
+    public void setShowTransitive(boolean showTransitive) {
+        this.showTransitive = showTransitive;
+    }
+
+    public String getRevisionToCheck() {
+        return revisionToCheck;
+    }
+
+    public void setRevisionToCheck(String revisionToCheck) {
+        this.revisionToCheck = revisionToCheck;
+    }
+
+    //--------------------------------------------------------------------------
+
+    @Override
     public void doExecute() throws BuildException {
         prepareAndCheck();
 
-        ModuleDescriptor originalModuleDescriptor = getResolvedReport().getModuleDescriptor();
-        // clone module descriptor
-        DefaultModuleDescriptor latestModuleDescriptor = new DefaultModuleDescriptor(
-                originalModuleDescriptor.getModuleRevisionId(),
-                originalModuleDescriptor.getStatus(), originalModuleDescriptor.getPublicationDate());
-        // copy configurations
-        for (Configuration configuration : originalModuleDescriptor.getConfigurations()) {
-            latestModuleDescriptor.addConfiguration(configuration);
-        }
-        // clone dependency and add new one with the requested revisionToCheck
-        for (DependencyDescriptor dependencyDescriptor : originalModuleDescriptor.getDependencies()) {
-            ModuleRevisionId upToDateMrid = ModuleRevisionId.newInstance(
-                dependencyDescriptor.getDependencyRevisionId(), revisionToCheck);
-            latestModuleDescriptor.addDependency(dependencyDescriptor.clone(upToDateMrid));
-        }
-
-        // resolve
         ResolveOptions resolveOptions = new ResolveOptions();
+        resolveOptions.setCheckIfChanged(checkIfChanged);
+        resolveOptions.setConfs(splitToArray(getConf()));
         resolveOptions.setDownload(isDownload());
         resolveOptions.setLog(getLog());
-        resolveOptions.setConfs(splitToArray(getConf()));
-        resolveOptions.setCheckIfChanged(checkIfChanged);
-
-        ResolveReport latestReport;
         try {
-            latestReport = getIvyInstance().getResolveEngine().resolve(latestModuleDescriptor,
-                resolveOptions);
+            ResolveReport latestReport = getIvyInstance().getResolveEngine()
+                .resolve(createModuleDescriptorForRevisionToCheck(), resolveOptions);
 
             displayDependencyUpdates(getResolvedReport(), latestReport);
             if (showTransitive) {
                 displayNewDependencyOnLatest(getResolvedReport(), latestReport);
                 displayMissingDependencyOnLatest(getResolvedReport(), latestReport);
             }
-
-        } catch (ParseException | IOException e) {
+        } catch (Exception e) {
             throw new BuildException("impossible to resolve dependencies:\n\t" + e, e);
         }
+    }
 
+    private ModuleDescriptor createModuleDescriptorForRevisionToCheck() {
+        ModuleDescriptor moduleDescriptor = getResolvedReport().getModuleDescriptor();
+
+        // clone module descriptor
+        DefaultModuleDescriptor latestModuleDescriptor = new DefaultModuleDescriptor(
+            moduleDescriptor.getModuleRevisionId(), moduleDescriptor.getStatus(), moduleDescriptor.getPublicationDate());
+
+        // copy configurations
+        for (Configuration configuration : moduleDescriptor.getConfigurations()) {
+            latestModuleDescriptor.addConfiguration(configuration);
+        }
+
+        // clone direct dependencies with the requested revisionToCheck
+        for (DependencyDescriptor dependencyDescriptor : moduleDescriptor.getDependencies()) {
+            ModuleRevisionId upToDateMrid = ModuleRevisionId.newInstance(
+                dependencyDescriptor.getDependencyRevisionId(), revisionToCheck);
+            latestModuleDescriptor.addDependency(dependencyDescriptor.clone(upToDateMrid));
+        }
+
+        return latestModuleDescriptor;
     }
 
     private void displayDependencyUpdates(ResolveReport originalReport, ResolveReport latestReport) {
-        log("Dependencies updates available :");
-        boolean dependencyUpdateDetected = false;
-        for (IvyNode latest : latestReport.getDependencies()) {
-            for (IvyNode originalDependency : originalReport.getDependencies()) {
-                if (originalDependency.getModuleId().equals(latest.getModuleId())) {
-                    if (!originalDependency.getResolvedId().getRevision()
-                            .equals(latest.getResolvedId().getRevision())) {
-                        // is this dependency a transitive or a direct dependency?
-                        // (unfortunately .isTransitive() methods do not have the same meaning)
-                        boolean isTransitiveDependency = latest.getDependencyDescriptor(latest
-                                .getRoot()) == null;
-                        if (!isTransitiveDependency || showTransitive) {
-                            log(String.format("\t%s#%s%s\t%s -> %s",
-                                    originalDependency.getResolvedId().getOrganisation(),
-                                    originalDependency.getResolvedId().getName(),
-                                    isTransitiveDependency ? " (transitive)" : "",
-                                    originalDependency.getResolvedId().getRevision(),
-                                    latest.getResolvedId().getRevision()));
-                            dependencyUpdateDetected = true;
-                        }
-                    }
+        Map<String, List<String>> updatesByConf = new LinkedHashMap<>();
 
+        for (String conf : latestReport.getConfigurations()) {
+            ConfigurationResolveReport newReport = latestReport.getConfigurationReport(conf);
+            ConfigurationResolveReport oldReport = originalReport.getConfigurationReport(conf);
+
+            // NOTE: getModuleRevisionIds() filters evicted and problem deps
+            for (ModuleRevisionId latest : newReport.getModuleRevisionIds()) {
+                Iterable<IvyNode> iter = oldReport.getNodes(latest.getModuleId());
+                if (iter == null) continue;
+                for (IvyNode node : iter) {
+                    boolean revisionNE = !node.getResolvedId().getRevision().equals(latest.getRevision());
+                    boolean transitive = (node.getDependencyDescriptor(node.getRoot()) == null);
+                    if (revisionNE && (!transitive || showTransitive)) {
+                        String update = String.format("\t%s#%s%s\t%s -> %s",
+                            node.getResolvedId().getOrganisation(),
+                            node.getResolvedId().getName(),
+                            transitive ? " (transitive)" : "",
+                            node.getResolvedId().getRevision(),
+                            latest.getRevision());
+                        updatesByConf.computeIfAbsent(conf, k -> new ArrayList<>()).add(update);
+                    }
                 }
             }
         }
-        if (!dependencyUpdateDetected) {
-            log("\tAll dependencies are up to date");
+
+        log("Dependencies updates available :");
+        if (updatesByConf.isEmpty()) {
+            log("All dependencies are up to date");
+        } else {
+            updatesByConf.forEach((conf, updates) -> {
+                log("\tconf: " + conf);
+                updates.forEach(this::log);
+            });
         }
     }
 
-    private void displayMissingDependencyOnLatest(ResolveReport originalReport,
-            ResolveReport latestReport) {
+    private void displayMissingDependencyOnLatest(ResolveReport originalReport, ResolveReport latestReport) {
         List<ModuleRevisionId> listOfMissingDependencyOnLatest = new ArrayList<>();
         for (IvyNode originalDependency : originalReport.getDependencies()) {
             boolean dependencyFound = false;
@@ -141,8 +185,7 @@ public class IvyDependencyUpdateChecker extends IvyPostResolveTask {
         }
     }
 
-    private void displayNewDependencyOnLatest(ResolveReport originalReport,
-            ResolveReport latestReport) {
+    private void displayNewDependencyOnLatest(ResolveReport originalReport, ResolveReport latestReport) {
         List<ModuleRevisionId> listOfNewDependencyOnLatest = new ArrayList<>();
         for (IvyNode latest : latestReport.getDependencies()) {
             boolean dependencyFound = false;
@@ -161,37 +204,5 @@ public class IvyDependencyUpdateChecker extends IvyPostResolveTask {
                 log("\t" + moduleRevisionId.toString());
             }
         }
-    }
-
-    public String getRevisionToCheck() {
-        return revisionToCheck;
-    }
-
-    public void setRevisionToCheck(String revisionToCheck) {
-        this.revisionToCheck = revisionToCheck;
-    }
-
-    public boolean isDownload() {
-        return download;
-    }
-
-    public void setDownload(boolean download) {
-        this.download = download;
-    }
-
-    public boolean isShowTransitive() {
-        return showTransitive;
-    }
-
-    public void setShowTransitive(boolean showTransitive) {
-        this.showTransitive = showTransitive;
-    }
-
-    public boolean isCheckIfChanged() {
-        return checkIfChanged;
-    }
-
-    public void setCheckIfChanged(boolean checkIfChanged) {
-        this.checkIfChanged = checkIfChanged;
     }
 }
