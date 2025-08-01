@@ -17,6 +17,26 @@
  */
 package org.apache.ivy.core.resolve;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
 import org.apache.ivy.Ivy;
 import org.apache.ivy.TestHelper;
 import org.apache.ivy.core.cache.ArtifactOrigin;
@@ -52,56 +72,28 @@ import org.apache.ivy.util.CacheCleaner;
 import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.MockMessageLogger;
 import org.apache.ivy.util.XMLHelper;
+
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-
 import static org.apache.ivy.util.StringUtils.joinArray;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-/**
- *
- */
-public class ResolveTest {
+public final class ResolveTest {
+
     private Ivy ivy;
 
-    private File cache;
-
-    private File deliverDir;
-
-    private File workDir;
-
-    @Rule
-    public ExpectedException expExc = ExpectedException.none();
+    private File cache, workDir, deliverDir;
 
     @Before
     public void setUp() throws Exception {
@@ -3653,34 +3645,24 @@ public class ResolveTest {
     /**
      * Circular dependency: mod6.3 depends on mod6.2, which itself depends on mod6.3;
      * circular dependency strategy set to error.
-     *
-     * @throws Exception if something goes wrong
      */
     @Test
     public void testCircular() throws Exception {
-        expExc.expect(CircularDependencyException.class);
-        expExc.expectMessage("org6#mod6.3;1.0->org6#mod6.2;1.0->org6#mod6.3;latest.integration");
-
-        ResolveReport report = ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.0.xml"),
-                getResolveOptions(new String[] {"default"}));
+        ResolveReport report = ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.0.xml"), getResolveOptions(new String[] {"default"}));
         assertFalse(report.hasError());
 
-        ivy.getSettings().setCircularDependencyStrategy(
-                IgnoreCircularDependencyStrategy.getInstance());
-        report = ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.0.xml"),
-                getResolveOptions(new String[] {"default"}));
+        ivy.getSettings().setCircularDependencyStrategy(IgnoreCircularDependencyStrategy.getInstance());
+        report = ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.0.xml"), getResolveOptions(new String[] {"default"}));
         assertFalse(report.hasError());
 
-        ivy.getSettings().setCircularDependencyStrategy(
-                WarnCircularDependencyStrategy.getInstance());
-        report = ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.0.xml"),
-                getResolveOptions(new String[] {"default"}));
+        ivy.getSettings().setCircularDependencyStrategy(WarnCircularDependencyStrategy.getInstance());
+        report = ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.0.xml"), getResolveOptions(new String[] {"default"}));
         assertFalse(report.hasError());
 
-        ivy.getSettings().setCircularDependencyStrategy(
-                ErrorCircularDependencyStrategy.getInstance());
-        ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.0.xml"),
-                getResolveOptions(new String[] {"default"}));
+        ivy.getSettings().setCircularDependencyStrategy(ErrorCircularDependencyStrategy.getInstance());
+        Exception e = assertThrows(CircularDependencyException.class, () ->
+            ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.0.xml"), getResolveOptions(new String[] {"default"})));
+        assertEquals("org6#mod6.3;1.0->org6#mod6.2;1.0->org6#mod6.3;latest.integration", e.getMessage());
     }
 
     /**
@@ -3691,17 +3673,13 @@ public class ResolveTest {
      */
     @Test
     public void testCircular2() throws Exception {
-        expExc.expect(CircularDependencyException.class);
-        expExc.expectMessage("org8#mod8.5;NONE->org8#mod8.6;2.+->org8#mod8.5;2.+");
-
-        ResolveReport report = ivy.resolve(new File("test/repositories/circular/ivy.xml"),
-                getResolveOptions(new String[] {"*"}));
+        ResolveReport report = ivy.resolve(new File("test/repositories/circular/ivy.xml"), getResolveOptions(new String[] {"*"}));
         assertFalse(report.hasError());
 
-        ivy.getSettings().setCircularDependencyStrategy(
-                ErrorCircularDependencyStrategy.getInstance());
-        ivy.resolve(new File("test/repositories/circular/ivy.xml"),
-                getResolveOptions(new String[] {"*"}));
+        ivy.getSettings().setCircularDependencyStrategy(ErrorCircularDependencyStrategy.getInstance());
+        Exception e = assertThrows(CircularDependencyException.class, () ->
+            ivy.resolve(new File("test/repositories/circular/ivy.xml"), getResolveOptions(new String[] {"*"})));
+        assertEquals("org8#mod8.5;NONE->org8#mod8.6;2.+->org8#mod8.5;2.+", e.getMessage());
     }
 
     /**
@@ -3714,36 +3692,28 @@ public class ResolveTest {
      */
     @Test
     public void testCircular3() throws Exception {
-        expExc.expect(CircularDependencyException.class);
-        expExc.expectMessage("org6#mod6.3;1.2->org6#mod6.2;1.1->...");
-
-        ResolveReport report = ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.2.xml"),
-                getResolveOptions(new String[] {"default", "test"}));
+        ResolveReport report = ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.2.xml"), getResolveOptions(new String[] {"default", "test"}));
         assertFalse(report.hasError());
         // we should have mod 6.2 artifact in both configurations
         assertEquals(1, report.getConfigurationReport("default").getArtifactsNumber());
         assertEquals(1, report.getConfigurationReport("test").getArtifactsNumber());
 
-        ivy.getSettings().setCircularDependencyStrategy(
-                IgnoreCircularDependencyStrategy.getInstance());
-        report = ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.2.xml"),
-                getResolveOptions(new String[] {"default", "test"}));
+        ivy.getSettings().setCircularDependencyStrategy(IgnoreCircularDependencyStrategy.getInstance());
+        report = ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.2.xml"), getResolveOptions(new String[] {"default", "test"}));
         assertFalse(report.hasError());
         assertEquals(1, report.getConfigurationReport("default").getArtifactsNumber());
         assertEquals(1, report.getConfigurationReport("test").getArtifactsNumber());
 
-        ivy.getSettings().setCircularDependencyStrategy(
-                WarnCircularDependencyStrategy.getInstance());
-        report = ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.2.xml"),
-            getResolveOptions(new String[] {"default", "test"}));
+        ivy.getSettings().setCircularDependencyStrategy(WarnCircularDependencyStrategy.getInstance());
+        report = ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.2.xml"), getResolveOptions(new String[] {"default", "test"}));
         assertFalse(report.hasError());
         assertEquals(1, report.getConfigurationReport("default").getArtifactsNumber());
         assertEquals(1, report.getConfigurationReport("test").getArtifactsNumber());
 
-        ivy.getSettings().setCircularDependencyStrategy(
-                ErrorCircularDependencyStrategy.getInstance());
-        ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.2.xml"),
-                getResolveOptions(new String[] {"default", "test"}));
+        ivy.getSettings().setCircularDependencyStrategy(ErrorCircularDependencyStrategy.getInstance());
+        Exception e = assertThrows(CircularDependencyException.class, () ->
+            ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.2.xml"), getResolveOptions(new String[] {"default", "test"})));
+        assertEquals("org6#mod6.3;1.2->org6#mod6.2;1.1->...", e.getMessage());
     }
 
     @Test
@@ -4595,13 +4565,11 @@ public class ResolveTest {
         assertTrue(getArchiveFileInCache("org5", "mod5.1", "4.1", "art51B", "jar", "jar").exists());
     }
 
-
     /**
      * Test for issues IVY-982 and IVY-1547,
      * which have to do with resolve engine ignoring negated configurations
      * on the left side of the maps-to operator.
      */
-
     @Test
     public void testResolveWithNegation() throws Exception {
         ConfigurationResolveReport crp;
@@ -5281,8 +5249,8 @@ public class ResolveTest {
         ivy.getSettings().setDefaultResolver("parentChain");
         final File pom = new File("test/repositories/parentPom/org/apache/dm/sibling1/1.0/sibling1-1.0.pom");
         final ResolveReport report = ivy.resolve(pom, getResolveOptions(new String[]{"*"}));
-        Assert.assertNotNull("Resolve report is null", report);
-        Assert.assertFalse("Resolve report has errors", report.hasError());
+        assertNotNull("Resolve report is null", report);
+        assertFalse("Resolve report has errors", report.hasError());
     }
 
     @Test
