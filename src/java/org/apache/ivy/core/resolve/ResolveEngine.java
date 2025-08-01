@@ -59,7 +59,6 @@ import org.apache.ivy.core.report.DownloadReport;
 import org.apache.ivy.core.report.DownloadStatus;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.IvyNodeEviction.EvictionData;
-import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.core.sort.SortEngine;
 import org.apache.ivy.core.sort.SortOptions;
 import org.apache.ivy.plugins.conflict.ConflictManager;
@@ -188,8 +187,7 @@ public class ResolveEngine {
      * @throws ParseException if something goes wrong
      * @throws IOException if something goes wrong
      */
-    public ResolveReport resolve(URL ivySource, ResolveOptions options) throws ParseException,
-            IOException {
+    public ResolveReport resolve(URL ivySource, ResolveOptions options) throws ParseException, IOException {
         URLResource res = new URLResource(ivySource);
         ModuleDescriptorParser parser = ModuleDescriptorParserRegistry.getInstance().getParser(res);
         Message.verbose("using " + parser + " to parse " + ivySource);
@@ -214,8 +212,7 @@ public class ResolveEngine {
      * @throws ParseException if something goes wrong
      * @throws IOException if something goes wrong
      */
-    public ResolveReport resolve(ModuleDescriptor md, ResolveOptions options)
-            throws ParseException, IOException {
+    public ResolveReport resolve(ModuleDescriptor md, ResolveOptions options) throws ParseException, IOException {
         DependencyResolver oldDictator = getDictatorResolver();
         IvyContext context = IvyContext.getContext();
         try {
@@ -230,12 +227,10 @@ public class ResolveEngine {
 
             long start = System.currentTimeMillis();
             if (ResolveOptions.LOG_DEFAULT.equals(options.getLog())) {
-                Message.info(":: resolving dependencies :: " + md.getResolvedModuleRevisionId()
-                        + (options.isTransitive() ? "" : " [not transitive]"));
+                Message.info(":: resolving dependencies :: " + md.getResolvedModuleRevisionId() + (options.isTransitive() ? "" : " [not transitive]"));
                 Message.info("\tconfs: " + Arrays.asList(confs));
             } else {
-                Message.verbose(":: resolving dependencies :: " + md.getResolvedModuleRevisionId()
-                        + (options.isTransitive() ? "" : " [not transitive]"));
+                Message.verbose(":: resolving dependencies :: " + md.getResolvedModuleRevisionId() + (options.isTransitive() ? "" : " [not transitive]"));
                 Message.verbose("\tconfs: " + Arrays.asList(confs));
             }
             Message.verbose("\tvalidate = " + options.isValidate());
@@ -261,87 +256,15 @@ public class ResolveEngine {
             // we store the resolved dependencies revisions and statuses per asked dependency
             // revision id, for direct dependencies only.
             // this is used by the deliver task to resolve dynamic revisions to static ones
-            File ivyPropertiesInCache = cacheManager.getResolvedIvyPropertiesInCache(md
-                    .getResolvedModuleRevisionId());
+            File ivyPropertiesInCache = cacheManager.getResolvedIvyPropertiesInCache(md.getResolvedModuleRevisionId());
             if (cacheManager instanceof DefaultResolutionCacheManager) {
                 ((DefaultResolutionCacheManager) cacheManager).assertInsideCache(ivyPropertiesInCache);
             }
-            Properties props = new Properties();
-            if (dependencies.length > 0) {
-                Map<ModuleId, ModuleRevisionId> forcedRevisions = new HashMap<>();
-                for (IvyNode dependency : dependencies) {
-                    if (dependency.getModuleRevision() != null
-                            && dependency.getModuleRevision().isForce()) {
-                        forcedRevisions.put(dependency.getModuleId(),
-                                dependency.getResolvedId());
-                    }
-                }
 
-                IvyNode root = dependencies[0].getRoot();
-
-                Map<ModuleId, IvyNode> topLevelDeps = new HashMap<>();
-                for (IvyNode dependency : dependencies) {
-                    if (!dependency.hasProblem()) {
-                        DependencyDescriptor dd = dependency.getDependencyDescriptor(root);
-                        if (dd != null) {
-                            ModuleId orgMod = dependency.getModuleId();
-                            topLevelDeps.put(orgMod, dependency);
-                        }
-                    }
-                }
-
-                for (IvyNode dependency : dependencies) {
-                    if (!dependency.hasProblem() && !dependency.isCompletelyEvicted()) {
-                        DependencyDescriptor dd = dependency.getDependencyDescriptor(root);
-                        if (dd == null) {
-                            ModuleId mid = dependency.getModuleId();
-                            IvyNode tlDep = topLevelDeps.get(mid);
-                            if (tlDep != null) {
-                                dd = tlDep.getDependencyDescriptor(root);
-                            }
-                        }
-                        if (dd != null) {
-                            ModuleRevisionId depResolvedId = dependency.getResolvedId();
-                            ModuleDescriptor depDescriptor = dependency.getDescriptor();
-                            ModuleRevisionId depRevisionId = dd.getDependencyRevisionId();
-                            ModuleRevisionId forcedRevisionId = forcedRevisions.get(dependency
-                                    .getModuleId());
-
-                            if (dependency.getModuleRevision() != null
-                                    && dependency.getModuleRevision().isForce()
-                                    && !depResolvedId.equals(depRevisionId)
-                                    && !settings.getVersionMatcher().isDynamic(depRevisionId)) {
-                                // if we were forced to this revision and we
-                                // are not a dynamic revision, reset to the
-                                // asked revision
-                                depResolvedId = depRevisionId;
-                                depDescriptor = null;
-                            }
-
-                            if (depResolvedId == null) {
-                                throw new NullPointerException("getResolvedId() is null for "
-                                        + dependency.toString());
-                            }
-                            if (depRevisionId == null) {
-                                throw new NullPointerException("getDependencyRevisionId() "
-                                        + "is null for " + dd.toString());
-                            }
-                            String rev = depResolvedId.getRevision();
-                            String forcedRev = forcedRevisionId == null ? rev : forcedRevisionId
-                                    .getRevision();
-
-                            // The evicted modules have no description, so we can't put the status
-                            String status = depDescriptor == null ? "?" : depDescriptor.getStatus();
-                            Message.debug("storing dependency " + depResolvedId + " in props");
-                            props.put(depRevisionId.encodeToString(), rev + " " + status + " "
-                                    + forcedRev + " " + depResolvedId.getBranch());
-                        }
-                    }
-                }
+            try (FileOutputStream out = new FileOutputStream(ivyPropertiesInCache)) {
+                collectDependencyProperties(report)
+                    .store(out, md.getResolvedModuleRevisionId() + " resolved revisions");
             }
-            FileOutputStream out = new FileOutputStream(ivyPropertiesInCache);
-            props.store(out, md.getResolvedModuleRevisionId() + " resolved revisions");
-            out.close();
             Message.verbose("\tresolved ivy file produced in cache");
 
             report.setResolveTime(System.currentTimeMillis() - start);
@@ -358,8 +281,7 @@ public class ResolveEngine {
                 outputReport(report, cacheManager, options);
             }
 
-            Message.verbose("\tresolve done (" + report.getResolveTime() + "ms resolve - "
-                    + report.getDownloadTime() + "ms download)");
+            Message.verbose("\tresolve done (" + report.getResolveTime() + "ms resolve - " + report.getDownloadTime() + "ms download)");
             Message.sumupProblems();
 
             eventManager.fireIvyEvent(new EndResolveEvent(md, confs, report));
@@ -375,8 +297,85 @@ public class ResolveEngine {
         }
     }
 
-    public void outputReport(ResolveReport report, ResolutionCacheManager cacheMgr,
-            ResolveOptions options) throws IOException {
+    private Properties collectDependencyProperties(ResolveReport report) {
+        Properties props = new Properties();
+
+        List<IvyNode> dependencies = report.getDependencies();
+        if (!dependencies.isEmpty()) {
+            Map<ModuleId, ModuleRevisionId> forcedRevisions = new HashMap<>();
+            for (IvyNode dependency : dependencies) {
+                if (dependency.getModuleRevision() != null
+                        && dependency.getModuleRevision().isForce()) {
+                    forcedRevisions.put(dependency.getModuleId(), dependency.getResolvedId());
+                }
+            }
+
+            IvyNode root = dependencies.get(0).getRoot();
+
+            Map<ModuleId, IvyNode> topLevelDeps = new HashMap<>();
+            for (IvyNode dependency : dependencies) {
+                if (!dependency.hasProblem()) {
+                    DependencyDescriptor dd = dependency.getDependencyDescriptor(root);
+                    if (dd != null) {
+                        ModuleId orgMod = dependency.getModuleId();
+                        topLevelDeps.put(orgMod, dependency);
+                    }
+                }
+            }
+
+            for (IvyNode dependency : dependencies) {
+                if (!dependency.hasProblem() && !dependency.isCompletelyEvicted()) {
+                    DependencyDescriptor dd = dependency.getDependencyDescriptor(root);
+                    if (dd == null) {
+                        ModuleId mid = dependency.getModuleId();
+                        IvyNode tlDep = topLevelDeps.get(mid);
+                        if (tlDep != null) {
+                            dd = tlDep.getDependencyDescriptor(root);
+                        }
+                    }
+                    if (dd != null) {
+                        ModuleRevisionId depResolvedId = dependency.getResolvedId();
+                        ModuleDescriptor depDescriptor = dependency.getDescriptor();
+                        ModuleRevisionId depRevisionId = dd.getDependencyRevisionId();
+                        ModuleRevisionId forcedRevisionId = forcedRevisions.get(dependency.getModuleId());
+
+                        if (dependency.getModuleRevision() != null
+                                && dependency.getModuleRevision().isForce()
+                                && !depResolvedId.equals(depRevisionId)
+                                && !settings.getVersionMatcher().isDynamic(depRevisionId)) {
+                            // if we were forced to this revision and we
+                            // are not a dynamic revision, reset to the
+                            // asked revision
+                            depResolvedId = depRevisionId;
+                            depDescriptor = null;
+                        }
+
+                        if (depResolvedId == null) {
+                            throw new NullPointerException("getResolvedId() is null for " + dependency.toString());
+                        }
+                        if (depRevisionId == null) {
+                            throw new NullPointerException("getDependencyRevisionId() " + "is null for " + dd.toString());
+                        }
+                        String rev = depResolvedId.getRevision();
+                        String forcedRev = forcedRevisionId == null ? rev : forcedRevisionId.getRevision();
+
+                        // The evicted modules have no description, so we can't put the status
+                        String status = depDescriptor == null ? "?" : depDescriptor.getStatus();
+                        Message.debug("storing dependency " + depResolvedId + " in props");
+
+                        String key = depRevisionId.encodeToString();
+                        String val = rev + " " + status + " " + forcedRev + " " + depResolvedId.getBranch();
+                        props.put(key, val);
+                    }
+                }
+            }
+        }
+
+        return props;
+    }
+
+    public void outputReport(ResolveReport report, ResolutionCacheManager cacheMgr, ResolveOptions options)
+            throws IOException {
         if (ResolveOptions.LOG_DEFAULT.equals(options.getLog())) {
             Message.info(":: resolution report :: resolve " + report.getResolveTime() + "ms"
                     + " :: artifacts dl " + report.getDownloadTime() + "ms");
@@ -1227,5 +1226,4 @@ public class ResolveEngine {
     private void checkInterrupted() {
         IvyContext.getContext().getIvy().checkInterrupted();
     }
-
 }
