@@ -18,6 +18,7 @@
 package org.apache.ivy.core;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -166,7 +167,7 @@ public final class IvyPatternHelper {
             tokens.put(ORIGINAL_ARTIFACTNAME_KEY, new OriginalArtifactNameValue(origin));
         }
 
-        return substituteTokens(pattern, tokens, false);
+        return substituteTokens(pattern, tokens, false, true);
     }
 
     // CheckStyle:ParameterNumber ON
@@ -225,10 +226,10 @@ public final class IvyPatternHelper {
     public static String substituteTokens(String pattern, Map<String, String> tokens) {
         Map<String, Object> tokensCopy = new HashMap<>();
         tokensCopy.putAll(tokens);
-        return substituteTokens(pattern, tokensCopy, true);
+        return substituteTokens(pattern, tokensCopy, true, true);
     }
 
-    private static String substituteTokens(String pattern, Map<String, Object> tokens, boolean external) {
+    private static String substituteTokens(String pattern, Map<String, Object> tokens, boolean external, boolean checkPathTraversal) {
         Map<String, Object> tokensCopy = external ? tokens : new HashMap<>(tokens);
         if (tokensCopy.containsKey(ORGANISATION_KEY) && !tokensCopy.containsKey(ORGANISATION_KEY2)) {
             tokensCopy.put(ORGANISATION_KEY2, tokensCopy.get(ORGANISATION_KEY));
@@ -330,7 +331,10 @@ public final class IvyPatternHelper {
         }
 
         String afterTokenSubstitution = buffer.toString();
-        checkAgainstPathTraversal(pattern, afterTokenSubstitution);
+        if (checkPathTraversal) {
+            checkAgainstPathTraversal(pattern, afterTokenSubstitution);
+        }
+
         return afterTokenSubstitution;
     }
 
@@ -493,18 +497,49 @@ public final class IvyPatternHelper {
     }
 
     public static String getTokenRoot(String pattern) {
-        int index = pattern.indexOf('[');
-        if (index == -1) {
+        String token = getFirstToken(pattern);
+        if (token == null) {
+            // no token found, return the whole pattern
             return pattern;
-        } else {
-            // it could be that pattern is something like "lib/([optional]/)[module]"
-            // we don't want the '(' in the result
-            int optionalIndex = pattern.indexOf('(');
-            if (optionalIndex >= 0) {
-                index = Math.min(index, optionalIndex);
-            }
-            return pattern.substring(0, index);
         }
+
+        int index = pattern.indexOf('[' + token + ']');
+        if (index == -1) {
+            // should not happen, but just in case
+            return pattern;
+        }
+
+        // to tackle optional token parts, we follow this strategy:
+        // 1. substitute the token with a dummy value (e.g. "xxx")
+        // 2. substitute the token with an empty value
+        // 3. compare the two results and find the first character that is different
+        // -> this character is the first character that is not part of the root
+        String sub1 = substituteTokens(pattern, Collections.singletonMap(token, "xxx"), false, false);
+        String sub2 = substituteTokens(pattern, new HashMap<>(), true, false);
+
+        // due to the optional part, the second substitution could result in a shorter string
+        index = Math.min(index, sub2.length());
+
+        // now we compare the two strings character by character until we find a difference
+        for (int i = 0; i < index; i++) {
+            if (sub1.charAt(i) != sub2.charAt(i)) {
+                // we found the first character that is different, so we can return the root
+                index = i;
+                break;
+            }
+        }
+
+        // now let's find the last path separator before that index
+        // this tackles cases like "lib/config-[conf]/[module]" where we want to return "lib/" as root
+        for (int i = index - 1; i >= 0; i--) {
+            char c = sub1.charAt(i);
+            if (c == '/' || c == '\\') {
+                index = i + 1; // we want to include the separator in the result
+                break;
+            }
+        }
+
+        return sub1.substring(0, index);
     }
 
     public static String getFirstToken(String pattern) {

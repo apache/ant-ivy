@@ -72,14 +72,13 @@ public class IvyPatternHelperTest {
 
     @Test
     public void testTokenRoot() {
-        String pattern = "lib/[type]/[artifact].[ext]";
-        assertEquals("lib/", IvyPatternHelper.getTokenRoot(pattern));
-    }
-
-    @Test
-    public void testTokenRootWithOptionalFirstToken() {
-        String pattern = "lib/([type]/)[artifact].[ext]";
-        assertEquals("lib/", IvyPatternHelper.getTokenRoot(pattern));
+        assertEquals("lib/", IvyPatternHelper.getTokenRoot("lib/[type]/[artifact].[ext]"));
+        assertEquals("lib/", IvyPatternHelper.getTokenRoot("lib/([type]/)[artifact].[ext]"));
+        assertEquals("lib/", IvyPatternHelper.getTokenRoot("lib(/[type])/[artifact].[ext]"));
+        assertEquals("lib/", IvyPatternHelper.getTokenRoot("lib/(type-[type]/)[artifact].[ext]"));
+        assertEquals("lib/", IvyPatternHelper.getTokenRoot("lib(/type-[type])/[artifact].[ext]"));
+        assertEquals("lib/", IvyPatternHelper.getTokenRoot("lib/([type]/)"));
+        assertEquals("lib/lib (JDK 17)/", IvyPatternHelper.getTokenRoot("lib/lib (JDK 17)/[artifact].[ext]")); //IVY-1660
     }
 
     @Test(expected = IllegalArgumentException.class)

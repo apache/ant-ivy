@@ -55,6 +55,7 @@ Note, if you have resolved dependencies with version of Ivy prior to 2.6.0, you 
 - NEW: added a new `nearest` conflict manager, which handles conflicts in the same way that Maven does. (IVY-813) (Thanks to Eric Milles)
 - IMPROVEMENT: use Apache Commons Compress for pack200 handling to avoid issues on Java 14 and later. If pack200 is needed, make sure to add Apache Commons Compress to your classpath. (IVY-1652)
 - FIX: improved Maven dependencyManagement matching for dependencies with a non-default type or classifier (IVY-1654) (Thanks to Mark Kittisopikul)
+- FIX: the `ivy:retrieve` task failed when the retrieve pattern contained some text in parentheses before the first token, for instance: `/jobs/lib (JDK 17)/[artifact].[ext]` (IVY-1660)
 
 == Committers and Contributors
 
