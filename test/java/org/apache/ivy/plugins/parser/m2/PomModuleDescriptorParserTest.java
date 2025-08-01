@@ -17,13 +17,6 @@
  */
 package org.apache.ivy.plugins.parser.m2;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -58,12 +51,20 @@ import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParserTest;
 import org.apache.ivy.plugins.repository.url.URLResource;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.resolver.MockResolver;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParserTester {
 
@@ -85,9 +86,6 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
     private File dest = new File("build/test/test-write.xml");
 
     private MockResolver mockedResolver = new MockedDependencyResolver();
-
-    @Rule
-    public ExpectedException expExc = ExpectedException.none();
 
     @Rule
     public TemporaryFolder workDir = new TemporaryFolder();
@@ -220,12 +218,10 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
     }
 
     @Test
-    public void testParentNotFound() throws Exception {
-        expExc.expect(IOException.class);
-        expExc.expectMessage("Impossible to load parent");
-
-        PomModuleDescriptorParser.getInstance().parseDescriptor(new IvySettings(),
-                getClass().getResource("test-parent-not-found.pom"), false);
+    public void testParentNotFound() {
+        Exception exception = assertThrows(IOException.class, () ->
+            PomModuleDescriptorParser.getInstance().parseDescriptor(new IvySettings(), getClass().getResource("test-parent-not-found.pom"), false));
+        assertTrue(exception.getMessage().startsWith("Impossible to load parent"));
     }
 
     @Test
@@ -427,7 +423,7 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         assertEquals(5, dds.length);
         for (int i = 0; i < dds.length; i++) {
             assertEquals(2, dds[i].getAllDependencyArtifacts().length);
-            int withExt = i == 0 || i == 3 ? 1: 0;
+            int withExt = i == 0 || i == 3 ? 1 : 0;
             assertEquals(extraAtt, dds[i].getAllDependencyArtifacts()[withExt].getExtraAttributes());
         }
     }
@@ -1285,17 +1281,14 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         for (final String expectedPackagingType : packagingTypesToTest) {
             String sysPropToSet = null;
             switch (expectedPackagingType) {
-                case "bundle": {
+                case "bundle":
                     sysPropToSet = "PomModuleDescriptorParserTest.some-other-test-prop";
                     break;
-                }
-                case "jar": {
+                case "jar":
                     sysPropToSet = "PomModuleDescriptorParserTest.some-test-prop";
                     break;
-                }
-                default: {
+                default:
                     fail("Unexpected packaging type");
-                }
             }
             // activate the relevant profile, based on a system property
             System.setProperty(sysPropToSet, "foo");

@@ -51,21 +51,16 @@ import org.apache.ivy.util.FileUtil;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
-/**
- *
- */
 public class FileSystemResolverTest extends AbstractDependencyResolverTest {
-    // CheckStyle:MagicNumberCheck OFF
 
     private static final String FS = File.separator;
 
@@ -88,9 +83,6 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
     public FileSystemResolverTest() {
         setupLastModified();
     }
-
-    @Rule
-    public ExpectedException expExc = ExpectedException.none();
 
     @Before
     public void setUp() {
@@ -889,21 +881,14 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
         resolver.abortPublishTransaction();
 
         assertFalse(new File("test/repositories/1/myorg/mymodule/myrevision/ivy.xml").exists());
-        assertFalse(new File(
-                "test/repositories/1/myorg/mymodule/myrevision/myartifact-myrevision.myext")
-                .exists());
+        assertFalse(new File("test/repositories/1/myorg/mymodule/myrevision/myartifact-myrevision.myext").exists());
     }
 
     /**
      * Publishing with transaction=true and an unsupported pattern must fail.
-     *
-     * @throws Exception if something goes wrong
      */
     @Test
-    public void testUnsupportedTransaction() throws Exception {
-        expExc.expect(IllegalStateException.class);
-        expExc.expectMessage("transactional");
-
+    public void testUnsupportedTransaction() {
         FileSystemResolver resolver = new FileSystemResolver();
         resolver.setName("test");
         resolver.setSettings(settings);
@@ -919,20 +904,18 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
                 "myext");
         File src = new File("test/repositories/ivysettings.xml");
 
-        resolver.beginPublishTransaction(mrid, false);
-        resolver.publish(artifact, src, false);
+        Exception exception = assertThrows(IllegalStateException.class, () -> {
+            resolver.beginPublishTransaction(mrid, false);
+            resolver.publish(artifact, src, false);
+        });
+        assertTrue(exception.getMessage().contains("transactional"));
     }
 
     /**
      * Publishing with transaction=true and an unsupported combination of patterns must fail.
-     *
-     * @throws Exception if something goes wrong
      */
     @Test
-    public void testUnsupportedTransaction2() throws Exception {
-        expExc.expect(IllegalStateException.class);
-        expExc.expectMessage("transactional");
-
+    public void testUnsupportedTransaction2() {
         FileSystemResolver resolver = new FileSystemResolver();
         resolver.setName("test");
         resolver.setSettings(settings);
@@ -950,21 +933,19 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
                 "myext");
         File src = new File("test/repositories/ivysettings.xml");
 
-        resolver.beginPublishTransaction(mrid, false);
-        resolver.publish(ivyArtifact, src, false);
-        resolver.publish(artifact, src, false);
+        Exception exception = assertThrows(IllegalStateException.class, () -> {
+            resolver.beginPublishTransaction(mrid, false);
+            resolver.publish(ivyArtifact, src, false);
+            resolver.publish(artifact, src, false);
+        });
+        assertTrue(exception.getMessage().contains("transactional"));
     }
 
     /**
      * Publishing with transaction=true and overwrite mode must fail.
-     *
-     * @throws Exception if something goes wrong
      */
     @Test
-    public void testUnsupportedTransaction3() throws Exception {
-        expExc.expect(IllegalStateException.class);
-        expExc.expectMessage("transactional");
-
+    public void testUnsupportedTransaction3() {
         FileSystemResolver resolver = new FileSystemResolver();
         resolver.setName("test");
         resolver.setSettings(settings);
@@ -978,9 +959,12 @@ public class FileSystemResolverTest extends AbstractDependencyResolverTest {
                 "myext");
         File src = new File("test/repositories/ivysettings.xml");
 
-        // overwrite transaction not supported
-        resolver.beginPublishTransaction(mrid, true);
-        resolver.publish(artifact, src, true);
+        Exception exception = assertThrows(IllegalStateException.class, () -> {
+            // overwrite transaction not supported
+            resolver.beginPublishTransaction(mrid, true);
+            resolver.publish(artifact, src, true);
+        });
+        assertTrue(exception.getMessage().contains("transactional"));
     }
 
     @Test

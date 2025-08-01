@@ -17,6 +17,22 @@
  */
 package org.apache.ivy.plugins.parser.xml;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.text.ParseException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.Configuration;
@@ -41,40 +57,23 @@ import org.apache.ivy.util.DefaultMessageLogger;
 import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.XMLHelper;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.text.ParseException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashSet;
-import java.util.Set;
+import org.junit.Before;
+import org.junit.Test;
 
 import static org.apache.ivy.core.module.descriptor.Configuration.Visibility.PRIVATE;
 import static org.apache.ivy.core.module.descriptor.Configuration.Visibility.PUBLIC;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParserTester {
-    private IvySettings settings = null;
 
-    @Rule
-    public ExpectedException expExc = ExpectedException.none();
+    private IvySettings settings;
 
     @Before
     public void setUp() {
@@ -148,52 +147,42 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
     }
 
     @Test
-    public void testBad() throws IOException, ParseException {
-        expExc.expect(ParseException.class);
-        expExc.expectMessage("'modul'");
-
+    public void testBad() {
         assertTrue(XMLHelper.canUseSchemaValidation());
 
-        XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
-                getClass().getResource("test-bad.xml"), true);
+        Exception exception = assertThrows(ParseException.class, () ->
+            XmlModuleDescriptorParser.getInstance().parseDescriptor(settings, getClass().getResource("test-bad.xml"), true));
+        assertTrue(exception.getMessage().contains("'modul'"));
     }
 
     @Test
-    public void testBadOrg() throws IOException, ParseException {
-        expExc.expect(ParseException.class);
-        expExc.expectMessage("organization");
-
+    public void testBadOrg() {
         assertTrue(XMLHelper.canUseSchemaValidation());
 
-        XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
-                getClass().getResource("test-bad-org.xml"), true);
+        Exception exception = assertThrows(ParseException.class, () ->
+            XmlModuleDescriptorParser.getInstance().parseDescriptor(settings, getClass().getResource("test-bad-org.xml"), true));
+        assertTrue(exception.getMessage().contains("organization"));
     }
 
     @Test
-    public void testBadConfs() throws IOException, ParseException {
-        expExc.expect(ParseException.class);
-        expExc.expectMessage("invalidConf");
-
-        XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
-                getClass().getResource("test-bad-confs.xml"), true);
+    public void testBadConfs() {
+        Exception exception = assertThrows(ParseException.class, () ->
+            XmlModuleDescriptorParser.getInstance().parseDescriptor(settings, getClass().getResource("test-bad-confs.xml"), true));
+        assertTrue(exception.getMessage().contains("invalidConf"));
     }
 
     @Test
-    public void testCyclicConfs2() throws IOException, ParseException {
-        expExc.expect(ParseException.class);
-        expExc.expectMessage("A => B => A");
-
-        XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
-                getClass().getResource("test-cyclic-confs1.xml"), true);
+    public void testCyclicConfs2() {
+        Exception exception = assertThrows(ParseException.class, () ->
+            XmlModuleDescriptorParser.getInstance().parseDescriptor(settings, getClass().getResource("test-cyclic-confs1.xml"), true));
+        assertTrue(exception.getMessage().contains("A => B => A"));
     }
 
     @Test
-    public void testCyclicConfs3() throws IOException, ParseException {
-        expExc.expect(ParseException.class);
-        expExc.expectMessage("A => C => B => A");
-
-        XmlModuleDescriptorParser.getInstance().parseDescriptor(settings,
-                getClass().getResource("test-cyclic-confs2.xml"), true);
+    public void testCyclicConfs3() {
+        Exception exception = assertThrows(ParseException.class, () ->
+            XmlModuleDescriptorParser.getInstance().parseDescriptor(settings, getClass().getResource("test-cyclic-confs2.xml"), true));
+        assertTrue(exception.getMessage().contains("A => C => B => A"));
     }
 
     @Test
@@ -1474,7 +1463,7 @@ public class XmlModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         final Path targetDir = Paths.get(System.getProperty("java.io.tmpdir"), "foo%2Fbar");
         Files.createDirectories(targetDir);
         final Path parentIvyXMLPath = Paths.get(targetDir.toString(), "parent-ivy.xml");
-        try (final InputStream is = parentIvyXML.openStream()) {
+        try (InputStream is = parentIvyXML.openStream()) {
             Files.copy(is, parentIvyXMLPath, StandardCopyOption.REPLACE_EXISTING);
         }
         assertTrue("Parent ivy xml file wasn't copied", Files.isRegularFile(parentIvyXMLPath));

@@ -17,19 +17,16 @@
  */
 package org.apache.ivy.core.module.id;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 
 public class ModuleRevisionIdTest {
-
-    @Rule
-    public ExpectedException expExc = ExpectedException.none();
 
     @Test
     public void testParse() {
@@ -67,10 +64,8 @@ public class ModuleRevisionIdTest {
     }
 
     private void testParseFailure(String mrid) {
-        expExc.expect(IllegalArgumentException.class);
-        expExc.expectMessage(mrid);
-
-        ModuleRevisionId.parse(mrid);
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> ModuleRevisionId.parse(mrid));
+        assertTrue(exception.getMessage().contains(mrid));
     }
 
     @Test
@@ -90,11 +85,9 @@ public class ModuleRevisionIdTest {
         extraAttributes.put("nullatt", null);
         testEncodeDecodeToString(
             ModuleRevisionId.newInstance("org/apache", "pre/name", "1.0-dev8/2", extraAttributes));
-
     }
 
     private void testEncodeDecodeToString(ModuleRevisionId mrid) {
         assertEquals(mrid, ModuleRevisionId.decode(mrid.encodeToString()));
     }
-
 }

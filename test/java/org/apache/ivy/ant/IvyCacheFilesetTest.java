@@ -17,11 +17,6 @@
  */
 package org.apache.ivy.ant;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
@@ -29,25 +24,28 @@ import java.util.List;
 
 import org.apache.ivy.TestHelper;
 import org.apache.ivy.core.report.ArtifactDownloadReport;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Delete;
 import org.apache.tools.ant.types.FileSet;
+
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 
 public class IvyCacheFilesetTest {
 
     private IvyCacheFileset fileset;
 
     private Project project;
-
-    @Rule
-    public ExpectedException expExc = ExpectedException.none();
 
     @Before
     public void setUp() {
@@ -227,11 +225,10 @@ public class IvyCacheFilesetTest {
 
     @Test
     public void requireCommonBaseDirEmptyList() {
+        List<ArtifactDownloadReport> reports = Collections.emptyList();
         // we expect a BuildException when we try to find a (non-existent) common base dir
         // across file system roots
-        expExc.expect(BuildException.class);
-        List<ArtifactDownloadReport> reports = Collections.emptyList();
-        fileset.requireCommonBaseDir(reports);
+        assertThrows(BuildException.class, () -> fileset.requireCommonBaseDir(reports));
     }
 
     @Test
@@ -241,14 +238,13 @@ public class IvyCacheFilesetTest {
             // single file system root isn't what we are interested in, in this test method
             return;
         }
-        // we expect a BuildException when we try to find a (non-existent) common base dir
-        // across file system roots
-        expExc.expect(BuildException.class);
         List<ArtifactDownloadReport> reports = Arrays.asList(
             artifactDownloadReport(new File(fileSystemRoots[0], "a/b/c/d")),
             artifactDownloadReport(new File(fileSystemRoots[1], "a/b/e/f"))
-        );
-        fileset.requireCommonBaseDir(reports);
+                );
+        // we expect a BuildException when we try to find a (non-existent) common base dir
+        // across file system roots
+        assertThrows(BuildException.class, () -> fileset.requireCommonBaseDir(reports));
     }
 
     @Test

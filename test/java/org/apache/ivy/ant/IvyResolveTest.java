@@ -31,24 +31,20 @@ import org.apache.tools.ant.taskdefs.Parallel;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 
 public class IvyResolveTest {
 
-    private Project project;
-
     private IvyResolve resolve;
 
-    @Rule
-    public ExpectedException expExc = ExpectedException.none();
+    private Project project;
 
     @Before
     public void setUp() {
@@ -324,12 +320,10 @@ public class IvyResolveTest {
 
     @Test
     public void testFailureWithMissingConfigurations() {
-        expExc.expect(BuildException.class);
-        expExc.expectMessage("unknown");
-
         resolve.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
         resolve.setConf("default,unknown");
-        resolve.execute();
+        Exception exception = assertThrows(BuildException.class, () -> resolve.execute());
+        assertEquals("requested configuration not found in apache#resolve-simple;1.0: [ 'unknown' ]", exception.getCause().getMessage());
     }
 
     @Test(expected = BuildException.class)

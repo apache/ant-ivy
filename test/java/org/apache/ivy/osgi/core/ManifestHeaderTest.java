@@ -17,20 +17,17 @@
  */
 package org.apache.ivy.osgi.core;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.experimental.runners.Enclosed;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Collection;
 
-import static org.hamcrest.Matchers.hasProperty;
-import static org.hamcrest.Matchers.is;
+import org.junit.Test;
+import org.junit.experimental.runners.Enclosed;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 
 @RunWith(Enclosed.class)
 public class ManifestHeaderTest {
@@ -92,14 +89,10 @@ public class ManifestHeaderTest {
             ManifestHeaderValue value = new ManifestHeaderValue("glassfish javax.servlet.3.1.0.b33");
             assertEquals("glassfish javax.servlet.3.1.0.b33", value.getSingleValue());
         }
-
     }
 
     @RunWith(Parameterized.class)
     public static class IllegalOptionTests {
-
-        @Rule
-        public ExpectedException expExc = ExpectedException.none();
 
         @Parameterized.Parameters(name = "Illegal token at {1} in {0}")
         public static Collection<Object[]> data() {
@@ -119,12 +112,10 @@ public class ManifestHeaderTest {
          * Expected failure when the parameter is illegal
          */
         @Test
-        public void testSyntaxError() throws ParseException {
-            expExc.expect(ParseException.class);
-            expExc.expect(hasProperty("errorOffset", is(offset)));
-            new ManifestHeaderValue(value);
+        public void testSyntaxError() {
+            ParseException exception = assertThrows(ParseException.class, () -> new ManifestHeaderValue(value));
+            assertEquals(offset, exception.getErrorOffset());
         }
-
     }
 
     @RunWith(Parameterized.class)
@@ -155,7 +146,5 @@ public class ManifestHeaderTest {
         public void testNormalisation() throws Exception {
             assertEquals(new ManifestHeaderValue(normalised), new ManifestHeaderValue(value));
         }
-
     }
-
 }

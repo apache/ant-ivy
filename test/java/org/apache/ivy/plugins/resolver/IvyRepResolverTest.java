@@ -17,9 +17,6 @@
  */
 package org.apache.ivy.plugins.resolver;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
 import java.io.File;
 import java.util.List;
 
@@ -38,24 +35,23 @@ import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.core.sort.SortEngine;
+
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
-/**
- *
- */
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
+
 public class IvyRepResolverTest extends AbstractDependencyResolverTest {
+
     private IvySettings settings;
 
     private ResolveEngine engine;
 
     private ResolveData data;
-
-    @Rule
-    public ExpectedException expExc = ExpectedException.none();
 
     @Before
     public void setUp() {
@@ -97,21 +93,19 @@ public class IvyRepResolverTest extends AbstractDependencyResolverTest {
     /**
      * Test case for IVY-625. Must fail if no ivyroot specified.
      *
-     * @throws Exception if something goes wrong
      * @see <a href="https://issues.apache.org/jira/browse/IVY-625">IVY-625</a>
      */
     @Test
-    public void testMandatoryRoot() throws Exception {
-        expExc.expect(IllegalStateException.class);
-        expExc.expectMessage("ivyroot");
-
+    public void testMandatoryRoot() {
         IvyRepResolver resolver = new IvyRepResolver();
         resolver.setName("test");
         resolver.setSettings(settings);
 
         ModuleRevisionId mrid = ModuleRevisionId.newInstance("apache", "commons-cli", "1.0");
 
-        resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), data);
+        Exception exception = assertThrows(IllegalStateException.class, () ->
+            resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), data));
+        assertTrue(exception.getMessage().contains("ivyroot"));
     }
 
     @Test
