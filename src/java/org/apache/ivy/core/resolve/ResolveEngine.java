@@ -300,72 +300,77 @@ public class ResolveEngine {
     private Properties collectDependencyProperties(ResolveReport report) {
         Properties props = new Properties();
 
-        List<IvyNode> dependencies = report.getDependencies();
-        if (!dependencies.isEmpty()) {
-            Map<ModuleId, ModuleRevisionId> forcedRevisions = new HashMap<>();
-            for (IvyNode dependency : dependencies) {
-                if (dependency.getModuleRevision() != null
-                        && dependency.getModuleRevision().isForce()) {
-                    forcedRevisions.put(dependency.getModuleId(), dependency.getResolvedId());
-                }
-            }
+        if (!report.getDependencies().isEmpty()) {
+            for (String conf : report.getConfigurations()) {
+                ConfigurationResolveReport confReport = report.getConfigurationReport(conf);
+                Set<ModuleRevisionId> mrids = confReport.getModuleRevisionIds();
 
-            IvyNode root = dependencies.get(0).getRoot();
-
-            Map<ModuleId, IvyNode> topLevelDeps = new HashMap<>();
-            for (IvyNode dependency : dependencies) {
-                if (!dependency.hasProblem()) {
-                    DependencyDescriptor dd = dependency.getDependencyDescriptor(root);
-                    if (dd != null) {
-                        ModuleId orgMod = dependency.getModuleId();
-                        topLevelDeps.put(orgMod, dependency);
-                    }
-                }
-            }
-
-            for (IvyNode dependency : dependencies) {
-                if (!dependency.hasProblem() && !dependency.isCompletelyEvicted()) {
-                    DependencyDescriptor dd = dependency.getDependencyDescriptor(root);
-                    if (dd == null) {
-                        ModuleId mid = dependency.getModuleId();
-                        IvyNode tlDep = topLevelDeps.get(mid);
-                        if (tlDep != null) {
-                            dd = tlDep.getDependencyDescriptor(root);
+                IvyNode root = null;
+                Map<ModuleId, IvyNode> topLevelDeps = new HashMap<>();
+                Map<ModuleId, ModuleRevisionId> forcedRevisions = new HashMap<>();
+                for (ModuleRevisionId mrid : mrids) {
+                    for (IvyNode node : confReport.getNodes(mrid.getModuleId())) {
+                        if (node.getModuleRevision() != null && node.getModuleRevision().isForce()) {
+                            forcedRevisions.put(node.getModuleId(), node.getResolvedId());
+                        }
+                        if (root == null) {
+                            root = node.getRoot();
+                        }
+                        if (!node.hasProblem()) {
+                            DependencyDescriptor dd = node.getDependencyDescriptor(root);
+                            if (dd != null) {
+                                topLevelDeps.put(node.getModuleId(), node);
+                            }
                         }
                     }
-                    if (dd != null) {
-                        ModuleRevisionId depResolvedId = dependency.getResolvedId();
-                        ModuleDescriptor depDescriptor = dependency.getDescriptor();
-                        ModuleRevisionId depRevisionId = dd.getDependencyRevisionId();
-                        ModuleRevisionId forcedRevisionId = forcedRevisions.get(dependency.getModuleId());
+                }
 
-                        if (dependency.getModuleRevision() != null
-                                && dependency.getModuleRevision().isForce()
-                                && !depResolvedId.equals(depRevisionId)
-                                && !settings.getVersionMatcher().isDynamic(depRevisionId)) {
-                            // if we were forced to this revision and we
-                            // are not a dynamic revision, reset to the
-                            // asked revision
-                            depResolvedId = depRevisionId;
-                            depDescriptor = null;
+                for (ModuleRevisionId mrid : mrids) {
+                    for (IvyNode dependency : confReport.getNodes(mrid.getModuleId())) {
+                        if (!dependency.hasProblem() && !dependency.isCompletelyEvicted()) {
+                            DependencyDescriptor dd = dependency.getDependencyDescriptor(root);
+                            if (dd == null) {
+                                ModuleId mid = dependency.getModuleId();
+                                IvyNode tlDep = topLevelDeps.get(mid);
+                                if (tlDep != null) {
+                                    dd = tlDep.getDependencyDescriptor(root);
+                                }
+                            }
+                            if (dd != null) {
+                                ModuleRevisionId depResolvedId = dependency.getResolvedId();
+                                ModuleDescriptor depDescriptor = dependency.getDescriptor();
+                                ModuleRevisionId depRevisionId = dd.getDependencyRevisionId();
+                                ModuleRevisionId forcedRevisionId = forcedRevisions.get(dependency.getModuleId());
+
+                                if (dependency.getModuleRevision() != null
+                                        && dependency.getModuleRevision().isForce()
+                                        && !depResolvedId.equals(depRevisionId)
+                                        && !settings.getVersionMatcher().isDynamic(depRevisionId)) {
+                                    // if we were forced to this revision and we
+                                    // are not a dynamic revision, reset to the
+                                    // asked revision
+                                    depResolvedId = depRevisionId;
+                                    depDescriptor = null;
+                                }
+
+                                if (depResolvedId == null) {
+                                    throw new NullPointerException("getResolvedId() is null for " + dependency.toString());
+                                }
+                                if (depRevisionId == null) {
+                                    throw new NullPointerException("getDependencyRevisionId() " + "is null for " + dd.toString());
+                                }
+                                String rev = depResolvedId.getRevision();
+                                String forcedRev = forcedRevisionId == null ? rev : forcedRevisionId.getRevision();
+
+                                // The evicted modules have no description, so we can't put the status
+                                String status = depDescriptor == null ? "?" : depDescriptor.getStatus();
+                                Message.debug("storing dependency " + depResolvedId + " in props");
+
+                                String key = depRevisionId.encodeToString();
+                                String val = rev + " " + status + " " + forcedRev + " " + depResolvedId.getBranch();
+                                props.put(key, val);
+                            }
                         }
-
-                        if (depResolvedId == null) {
-                            throw new NullPointerException("getResolvedId() is null for " + dependency.toString());
-                        }
-                        if (depRevisionId == null) {
-                            throw new NullPointerException("getDependencyRevisionId() " + "is null for " + dd.toString());
-                        }
-                        String rev = depResolvedId.getRevision();
-                        String forcedRev = forcedRevisionId == null ? rev : forcedRevisionId.getRevision();
-
-                        // The evicted modules have no description, so we can't put the status
-                        String status = depDescriptor == null ? "?" : depDescriptor.getStatus();
-                        Message.debug("storing dependency " + depResolvedId + " in props");
-
-                        String key = depRevisionId.encodeToString();
-                        String val = rev + " " + status + " " + forcedRev + " " + depResolvedId.getBranch();
-                        props.put(key, val);
                     }
                 }
             }
