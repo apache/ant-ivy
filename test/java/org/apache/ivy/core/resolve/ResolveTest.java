@@ -17,6 +17,26 @@
  */
 package org.apache.ivy.core.resolve;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
 import org.apache.ivy.Ivy;
 import org.apache.ivy.TestHelper;
 import org.apache.ivy.core.cache.ArtifactOrigin;
@@ -52,56 +72,28 @@ import org.apache.ivy.util.CacheCleaner;
 import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.MockMessageLogger;
 import org.apache.ivy.util.XMLHelper;
+
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-
 import static org.apache.ivy.util.StringUtils.joinArray;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-/**
- *
- */
-public class ResolveTest {
+public final class ResolveTest {
+
     private Ivy ivy;
 
-    private File cache;
-
-    private File deliverDir;
-
-    private File workDir;
-
-    @Rule
-    public ExpectedException expExc = ExpectedException.none();
+    private File cache, workDir, deliverDir;
 
     @Before
     public void setUp() throws Exception {
@@ -2349,11 +2341,185 @@ public class ResolveTest {
         assertNotNull(report);
 
         // dependencies
-        assertTrue(getIvyFileInCache(ModuleRevisionId.newInstance("org1", "mod1.2", "2.1"))
-                .exists());
+        assertTrue(getIvyFileInCache(ModuleRevisionId.newInstance("org1", "mod1.2", "2.1")).exists());
         assertTrue(getArchiveFileInCache("org1", "mod1.2", "2.1", "mod1.2", "jar", "jar").exists());
 
         assertFalse(getArchiveFileInCache("org1", "mod1.2", "2.0", "mod1.2", "jar", "jar").exists());
+    }
+
+    /**
+     * Test case for IVY-1485.
+     *
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1485">IVY-1485</a>
+     */
+    @Test
+    public void testDeliverWithTransitiveDepsInDifferentConfs() throws Exception {
+        ivy = Ivy.newInstance();
+        ivy.configure(new File("test/repositories/IVY-1485/ivysettings.xml"));
+
+        ResolveOptions opts = new ResolveOptions();
+        opts.setConfs(new String[] {"*"});
+        opts.setResolveId("resolveid");
+        opts.setTransitive(true);
+
+        ResolveReport report = ivy.resolve(new File("test/repositories/IVY-1485/ivy-simple.xml").toURL(), opts);
+        assertFalse(report.hasError());
+
+        ModuleRevisionId modAExpectedRevId = ModuleRevisionId.newInstance("simple", "modA", "5");
+
+        // check that the resolve report has the expected results, namely that the transitive dep on modA#1 has not
+        // overridden the direct dep on modA#5.  This is about testing the consistency of results between the resolve
+        // report and the delivered descriptor.
+
+        Set<ModuleRevisionId> reportMrids = report.getConfigurationReport("conf1").getModuleRevisionIds();
+        assertEquals(Collections.singleton(modAExpectedRevId), reportMrids);
+
+        DeliverOptions dopts = new DeliverOptions();
+        dopts.setGenerateRevConstraint(true);
+        dopts.setConfs(new String[] {"*"});
+        dopts.setStatus("release");
+        dopts.setPubdate(new Date());
+        dopts.setResolveId("resolveid");
+        String pubrev = "1";
+        String deliveryPattern = "build/test/deliver/assembly-[revision].xml";
+
+        ivy.deliver(pubrev, deliveryPattern, dopts);
+
+        // now check that the resolve report has the same info as the delivered descriptor
+
+        File deliveredIvyFile = new File("build/test/deliver/assembly-1.xml");
+        assertTrue(deliveredIvyFile.exists());
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(ivy.getSettings(), deliveredIvyFile.toURL(), false);
+        DependencyDescriptor[] dds = md.getDependencies();
+        assertEquals(2, dds.length);
+        assertEquals(ModuleRevisionId.newInstance("simple", "modA", "5"), dds[0].getDependencyRevisionId());
+        assertEquals(ModuleRevisionId.newInstance("simple", "modB", "1"), dds[1].getDependencyRevisionId());
+    }
+
+    /**
+     * Test case for IVY-1485.
+     *
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1485">IVY-1485</a>
+     */
+    @Test
+    public void testDeliverWithTransitiveDepsInOverlappingConfsTransitiveNewer() throws Exception {
+        ivy = Ivy.newInstance();
+        ivy.configure(new File("test/repositories/IVY-1485/ivysettings.xml"));
+
+        ResolveOptions opts = new ResolveOptions();
+        opts.setConfs(new String[] {"*"});
+        opts.setResolveId("resolveid");
+        opts.setTransitive(true);
+
+        ResolveReport report = ivy.resolve(new File("test/repositories/IVY-1485/ivy-overlap-transitive-newer.xml").toURL(), opts);
+        assertFalse(report.hasError());
+
+        ModuleRevisionId conf1ModAExpectedRevId = ModuleRevisionId.newInstance("overlap-newer", "modA", "1");
+        ModuleRevisionId conf2ModBExpectedRevId = ModuleRevisionId.newInstance("overlap-newer", "modB", "1");
+        ModuleRevisionId conf2ModAExpectedRevId = ModuleRevisionId.newInstance("overlap-newer", "modA", "5");
+        ModuleRevisionId conf3ModBExpectedRevId = ModuleRevisionId.newInstance("overlap-newer", "modB", "1");
+        ModuleRevisionId conf3ModAExpectedRevId = ModuleRevisionId.newInstance("overlap-newer", "modA", "5");
+
+        Set<ModuleRevisionId> conf1ReportMrids = report.getConfigurationReport("conf1").getModuleRevisionIds();
+        assertEquals(new HashSet<>(Arrays.asList(new ModuleRevisionId[] {conf1ModAExpectedRevId})), conf1ReportMrids);
+        Set<ModuleRevisionId> conf2ReportMrids = report.getConfigurationReport("conf2").getModuleRevisionIds();
+        assertEquals(new HashSet<>(Arrays.asList(new ModuleRevisionId[] {conf2ModBExpectedRevId, conf2ModAExpectedRevId})), conf2ReportMrids);
+        Set<ModuleRevisionId> conf3ReportMrids = report.getConfigurationReport("conf3").getModuleRevisionIds();
+        assertEquals(new HashSet<>(Arrays.asList(new ModuleRevisionId[] {conf3ModBExpectedRevId, conf3ModAExpectedRevId})), conf3ReportMrids);
+
+        DeliverOptions dopts = new DeliverOptions();
+        dopts.setGenerateRevConstraint(true);
+        dopts.setConfs(new String[] {"*"});
+        dopts.setStatus("release");
+        dopts.setPubdate(new Date());
+        dopts.setResolveId("resolveid");
+        String pubrev = "1";
+        String deliveryPattern = "build/test/deliver/assembly-[revision].xml";
+
+        ivy.deliver(pubrev, deliveryPattern, dopts);
+
+        // now check that the resolve report has the same info as the delivered descriptor
+
+        File deliveredIvyFile = new File("build/test/deliver/assembly-1.xml");
+        assertTrue(deliveredIvyFile.exists());
+
+        ResolveReport report2 = ivy.resolve(deliveredIvyFile.toURL(), opts);
+        assertFalse(report.hasError());
+
+        Set<ModuleRevisionId> conf1ReportMrids2 = report2.getConfigurationReport("conf1").getModuleRevisionIds();
+        assertEquals(new HashSet<>(Arrays.asList(new ModuleRevisionId[] {conf1ModAExpectedRevId})), conf1ReportMrids2);
+        Set<ModuleRevisionId> conf2ReportMrids2 = report2.getConfigurationReport("conf2").getModuleRevisionIds();
+        assertEquals(new HashSet<>(Arrays.asList(new ModuleRevisionId[] {conf2ModBExpectedRevId, conf2ModAExpectedRevId})), conf2ReportMrids2);
+        Set<ModuleRevisionId> conf3ReportMrids2 = report2.getConfigurationReport("conf3").getModuleRevisionIds();
+        assertEquals(new HashSet<>(Arrays.asList(new ModuleRevisionId[] {conf3ModBExpectedRevId, conf3ModAExpectedRevId})), conf3ReportMrids2);
+
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(ivy.getSettings(), deliveredIvyFile.toURL(), false);
+        DependencyDescriptor[] dds = md.getDependencies();
+        assertEquals(2, dds.length);
+        assertEquals(ModuleRevisionId.newInstance("overlap-newer", "modA", "1"), dds[0].getDependencyRevisionId());
+        assertEquals(ModuleRevisionId.newInstance("overlap-newer", "modB", "1"), dds[1].getDependencyRevisionId());
+    }
+
+    /**
+     * Test case for IVY-1485.
+     *
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1485">IVY-1485</a>
+     */
+    @Test
+    public void testDeliverWithTransitiveDepsInOverlappingConfsTransitiveOlder() throws Exception {
+        ivy = Ivy.newInstance();
+        ivy.configure(new File("test/repositories/IVY-1485/ivysettings.xml"));
+
+        ResolveOptions opts = new ResolveOptions();
+        opts.setConfs(new String[] {"*"});
+        opts.setResolveId("resolveid");
+        opts.setTransitive(true);
+
+        ResolveReport report = ivy.resolve(new File("test/repositories/IVY-1485/ivy-overlap-transitive-older.xml").toURL(), opts);
+        assertFalse(report.hasError());
+
+        ModuleRevisionId conf1ModAExpectedRevId = ModuleRevisionId.newInstance("overlap-older", "modA", "5");
+        ModuleRevisionId conf2ModBExpectedRevId = ModuleRevisionId.newInstance("overlap-older", "modB", "1");
+        ModuleRevisionId conf2ModAExpectedRevId = ModuleRevisionId.newInstance("overlap-older", "modA", "5");
+        ModuleRevisionId conf3ModBExpectedRevId = ModuleRevisionId.newInstance("overlap-older", "modB", "1");
+        ModuleRevisionId conf3ModAExpectedRevId = ModuleRevisionId.newInstance("overlap-older", "modA", "1");
+
+        Set<ModuleRevisionId> conf1ReportMrids = report.getConfigurationReport("conf1").getModuleRevisionIds();
+        assertEquals(new HashSet<>(Arrays.asList(new ModuleRevisionId[] {conf1ModAExpectedRevId})), conf1ReportMrids);
+        Set<ModuleRevisionId> conf2ReportMrids = report.getConfigurationReport("conf2").getModuleRevisionIds();
+        assertEquals(new HashSet<>(Arrays.asList(new ModuleRevisionId[] {conf2ModBExpectedRevId, conf2ModAExpectedRevId})), conf2ReportMrids);
+        Set<ModuleRevisionId> conf3ReportMrids = report.getConfigurationReport("conf3").getModuleRevisionIds();
+        assertEquals(new HashSet<>(Arrays.asList(new ModuleRevisionId[] {conf3ModBExpectedRevId, conf3ModAExpectedRevId})), conf3ReportMrids);
+
+        DeliverOptions dopts = new DeliverOptions();
+        dopts.setGenerateRevConstraint(true);
+        dopts.setConfs(new String[] {"*"});
+        dopts.setStatus("release");
+        dopts.setPubdate(new Date());
+        dopts.setResolveId("resolveid");
+        String pubrev = "1";
+        String deliveryPattern = "build/test/deliver/assembly-[revision].xml";
+
+        ivy.deliver(pubrev, deliveryPattern, dopts);
+
+        // now check that the resolve report has the same info as the delivered descriptor
+
+        File deliveredIvyFile = new File("build/test/deliver/assembly-1.xml");
+        assertTrue(deliveredIvyFile.exists());
+
+        ResolveReport report2 = ivy.resolve(deliveredIvyFile.toURL(), opts);
+        assertFalse(report.hasError());
+
+        Set<ModuleRevisionId> conf1ReportMrids2 = report2.getConfigurationReport("conf1").getModuleRevisionIds();
+        assertEquals(new HashSet<>(Arrays.asList(new ModuleRevisionId[] {conf1ModAExpectedRevId})), conf1ReportMrids2);
+        Set<ModuleRevisionId> conf2ReportMrids2 = report2.getConfigurationReport("conf2").getModuleRevisionIds();
+        assertEquals(new HashSet<>(Arrays.asList(new ModuleRevisionId[] {conf2ModBExpectedRevId, conf2ModAExpectedRevId})), conf2ReportMrids2);
+
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(ivy.getSettings(), deliveredIvyFile.toURL(), false);
+        DependencyDescriptor[] dds = md.getDependencies();
+        assertEquals(2, dds.length);
+        assertEquals(ModuleRevisionId.newInstance("overlap-older", "modA", "5"), dds[0].getDependencyRevisionId());
+        assertEquals(ModuleRevisionId.newInstance("overlap-older", "modB", "1"), dds[1].getDependencyRevisionId());
     }
 
     /**
@@ -3479,34 +3645,24 @@ public class ResolveTest {
     /**
      * Circular dependency: mod6.3 depends on mod6.2, which itself depends on mod6.3;
      * circular dependency strategy set to error.
-     *
-     * @throws Exception if something goes wrong
      */
     @Test
     public void testCircular() throws Exception {
-        expExc.expect(CircularDependencyException.class);
-        expExc.expectMessage("org6#mod6.3;1.0->org6#mod6.2;1.0->org6#mod6.3;latest.integration");
-
-        ResolveReport report = ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.0.xml"),
-                getResolveOptions(new String[] {"default"}));
+        ResolveReport report = ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.0.xml"), getResolveOptions(new String[] {"default"}));
         assertFalse(report.hasError());
 
-        ivy.getSettings().setCircularDependencyStrategy(
-                IgnoreCircularDependencyStrategy.getInstance());
-        report = ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.0.xml"),
-                getResolveOptions(new String[] {"default"}));
+        ivy.getSettings().setCircularDependencyStrategy(IgnoreCircularDependencyStrategy.getInstance());
+        report = ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.0.xml"), getResolveOptions(new String[] {"default"}));
         assertFalse(report.hasError());
 
-        ivy.getSettings().setCircularDependencyStrategy(
-                WarnCircularDependencyStrategy.getInstance());
-        report = ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.0.xml"),
-                getResolveOptions(new String[] {"default"}));
+        ivy.getSettings().setCircularDependencyStrategy(WarnCircularDependencyStrategy.getInstance());
+        report = ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.0.xml"), getResolveOptions(new String[] {"default"}));
         assertFalse(report.hasError());
 
-        ivy.getSettings().setCircularDependencyStrategy(
-                ErrorCircularDependencyStrategy.getInstance());
-        ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.0.xml"),
-                getResolveOptions(new String[] {"default"}));
+        ivy.getSettings().setCircularDependencyStrategy(ErrorCircularDependencyStrategy.getInstance());
+        Exception e = assertThrows(CircularDependencyException.class, () ->
+            ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.0.xml"), getResolveOptions(new String[] {"default"})));
+        assertEquals("org6#mod6.3;1.0->org6#mod6.2;1.0->org6#mod6.3;latest.integration", e.getMessage());
     }
 
     /**
@@ -3517,17 +3673,13 @@ public class ResolveTest {
      */
     @Test
     public void testCircular2() throws Exception {
-        expExc.expect(CircularDependencyException.class);
-        expExc.expectMessage("org8#mod8.5;NONE->org8#mod8.6;2.+->org8#mod8.5;2.+");
-
-        ResolveReport report = ivy.resolve(new File("test/repositories/circular/ivy.xml"),
-                getResolveOptions(new String[] {"*"}));
+        ResolveReport report = ivy.resolve(new File("test/repositories/circular/ivy.xml"), getResolveOptions(new String[] {"*"}));
         assertFalse(report.hasError());
 
-        ivy.getSettings().setCircularDependencyStrategy(
-                ErrorCircularDependencyStrategy.getInstance());
-        ivy.resolve(new File("test/repositories/circular/ivy.xml"),
-                getResolveOptions(new String[] {"*"}));
+        ivy.getSettings().setCircularDependencyStrategy(ErrorCircularDependencyStrategy.getInstance());
+        Exception e = assertThrows(CircularDependencyException.class, () ->
+            ivy.resolve(new File("test/repositories/circular/ivy.xml"), getResolveOptions(new String[] {"*"})));
+        assertEquals("org8#mod8.5;NONE->org8#mod8.6;2.+->org8#mod8.5;2.+", e.getMessage());
     }
 
     /**
@@ -3540,36 +3692,28 @@ public class ResolveTest {
      */
     @Test
     public void testCircular3() throws Exception {
-        expExc.expect(CircularDependencyException.class);
-        expExc.expectMessage("org6#mod6.3;1.2->org6#mod6.2;1.1->...");
-
-        ResolveReport report = ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.2.xml"),
-                getResolveOptions(new String[] {"default", "test"}));
+        ResolveReport report = ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.2.xml"), getResolveOptions(new String[] {"default", "test"}));
         assertFalse(report.hasError());
         // we should have mod 6.2 artifact in both configurations
         assertEquals(1, report.getConfigurationReport("default").getArtifactsNumber());
         assertEquals(1, report.getConfigurationReport("test").getArtifactsNumber());
 
-        ivy.getSettings().setCircularDependencyStrategy(
-                IgnoreCircularDependencyStrategy.getInstance());
-        report = ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.2.xml"),
-                getResolveOptions(new String[] {"default", "test"}));
+        ivy.getSettings().setCircularDependencyStrategy(IgnoreCircularDependencyStrategy.getInstance());
+        report = ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.2.xml"), getResolveOptions(new String[] {"default", "test"}));
         assertFalse(report.hasError());
         assertEquals(1, report.getConfigurationReport("default").getArtifactsNumber());
         assertEquals(1, report.getConfigurationReport("test").getArtifactsNumber());
 
-        ivy.getSettings().setCircularDependencyStrategy(
-                WarnCircularDependencyStrategy.getInstance());
-        report = ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.2.xml"),
-            getResolveOptions(new String[] {"default", "test"}));
+        ivy.getSettings().setCircularDependencyStrategy(WarnCircularDependencyStrategy.getInstance());
+        report = ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.2.xml"), getResolveOptions(new String[] {"default", "test"}));
         assertFalse(report.hasError());
         assertEquals(1, report.getConfigurationReport("default").getArtifactsNumber());
         assertEquals(1, report.getConfigurationReport("test").getArtifactsNumber());
 
-        ivy.getSettings().setCircularDependencyStrategy(
-                ErrorCircularDependencyStrategy.getInstance());
-        ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.2.xml"),
-                getResolveOptions(new String[] {"default", "test"}));
+        ivy.getSettings().setCircularDependencyStrategy(ErrorCircularDependencyStrategy.getInstance());
+        Exception e = assertThrows(CircularDependencyException.class, () ->
+            ivy.resolve(new File("test/repositories/2/mod6.3/ivy-1.2.xml"), getResolveOptions(new String[] {"default", "test"})));
+        assertEquals("org6#mod6.3;1.2->org6#mod6.2;1.1->...", e.getMessage());
     }
 
     @Test
@@ -4421,13 +4565,11 @@ public class ResolveTest {
         assertTrue(getArchiveFileInCache("org5", "mod5.1", "4.1", "art51B", "jar", "jar").exists());
     }
 
-
     /**
      * Test for issues IVY-982 and IVY-1547,
      * which have to do with resolve engine ignoring negated configurations
      * on the left side of the maps-to operator.
      */
-
     @Test
     public void testResolveWithNegation() throws Exception {
         ConfigurationResolveReport crp;
@@ -5107,8 +5249,8 @@ public class ResolveTest {
         ivy.getSettings().setDefaultResolver("parentChain");
         final File pom = new File("test/repositories/parentPom/org/apache/dm/sibling1/1.0/sibling1-1.0.pom");
         final ResolveReport report = ivy.resolve(pom, getResolveOptions(new String[]{"*"}));
-        Assert.assertNotNull("Resolve report is null", report);
-        Assert.assertFalse("Resolve report has errors", report.hasError());
+        assertNotNull("Resolve report is null", report);
+        assertFalse("Resolve report has errors", report.hasError());
     }
 
     @Test
@@ -6147,7 +6289,7 @@ public class ResolveTest {
      * @see <a href="https://issues.apache.org/jira/browse/IVY-1159">IVY-1159</a>
      */
     @Test
-    public void testIVY1159_orderIsModAModB() throws Exception {
+    public void testOrderIsModAModB() throws Exception {
         testIVY1159("ivy-depsorder_modA_then_modB.xml", false);
 
         File deliveredIvyFile = new File("build/test/deliver/ivy-1.xml");
@@ -6169,7 +6311,7 @@ public class ResolveTest {
      * @see <a href="https://issues.apache.org/jira/browse/IVY-1159">IVY-1159</a>
      */
     @Test
-    public void testIVY1159_orderIsModAModBReplaceForced() throws Exception {
+    public void testOrderIsModAModBReplaceForced() throws Exception {
         testIVY1159("ivy-depsorder_modA_then_modB.xml", true);
 
         File deliveredIvyFile = new File("build/test/deliver/ivy-1.xml");
@@ -6191,7 +6333,7 @@ public class ResolveTest {
      * @see <a href="https://issues.apache.org/jira/browse/IVY-1159">IVY-1159</a>
      */
     @Test
-    public void testIVY1159_orderIsModBModA() throws Exception {
+    public void testOrderIsModBModA() throws Exception {
         testIVY1159("ivy-depsorder_modB_then_modA.xml", false);
 
         File deliveredIvyFile = new File("build/test/deliver/ivy-1.xml");
@@ -6213,7 +6355,7 @@ public class ResolveTest {
      * @see <a href="https://issues.apache.org/jira/browse/IVY-1159">IVY-1159</a>
      */
     @Test
-    public void testIVY1159_orderIsModBModAReplaceForced() throws Exception {
+    public void testOrderIsModBModAReplaceForced() throws Exception {
         testIVY1159("ivy-depsorder_modB_then_modA.xml", true);
 
         File deliveredIvyFile = new File("build/test/deliver/ivy-1.xml");
@@ -6488,7 +6630,6 @@ public class ResolveTest {
         assertTrue("Missing artifact(s) with classifiers " + classifiers, classifiers.isEmpty());
     }
 
-
     /**
      * Tests the issue noted in IVY-1580.
      * <pre>
@@ -6515,8 +6656,8 @@ public class ResolveTest {
         // get the "default" conf, resolution report for the org.apache:1580:1.0.0 module (represented by the
         // ivy-1580.xml module descriptor)
         final ConfigurationResolveReport confReport = resolveReport.getConfigurationReport(rootModuleConf);
-        assertNotNull(rootModuleConf + " conf resolution report for " +
-                resolveReport.getModuleDescriptor().getModuleRevisionId() + " is null", confReport);
+        assertNotNull(rootModuleConf + " conf resolution report for "
+                + resolveReport.getModuleDescriptor().getModuleRevisionId() + " is null", confReport);
 
         final ModuleRevisionId apiDependencyId = ModuleRevisionId.newInstance("org.apache", "1580-foo-api", "1.2.3");
         final IvyNode apiDepNode = confReport.getDependency(apiDependencyId);
@@ -6540,21 +6681,18 @@ public class ResolveTest {
             final File apiJar = apiDownloadReport.getLocalFile();
             assertNotNull("artifact jar file is null for " + apiArtifact, apiJar);
             switch (apiArtifact.getType()) {
-                case "test-jar" : {
+                case "test-jar":
                     assertFalse("More than 1 test-jar artifact found", foundTestJarType);
                     foundTestJarType = true;
                     assertJarContains(apiJar, "api-test-file.txt");
                     break;
-                }
-                case "jar" : {
+                case "jar":
                     assertFalse("More than 1 jar artifact found", foundJarType);
                     foundJarType = true;
                     assertJarContains(apiJar, "api-file.txt");
                     break;
-                }
-                default: {
+                default:
                     fail("unexpected artifact type " + apiArtifact.getType() + " for artifact " + apiArtifact);
-                }
             }
         }
         assertTrue("No test-jar artifact found for dependency " + apiDependencyId, foundTestJarType);
@@ -6564,9 +6702,7 @@ public class ResolveTest {
         final ModuleRevisionId implDepId = ModuleRevisionId.newInstance("org.apache", "1580-foo-impl", "1.2.3");
         final IvyNode implDepNode = confReport.getDependency(implDepId);
         assertNotNull("Dependency " + implDepId + " not found in conf resolve report", implDepNode);
-
     }
-
 
     /**
      * Tests the issue noted in IVY-1586.
@@ -6602,8 +6738,8 @@ public class ResolveTest {
             // get the "default" conf, resolution report for the org.apache:1586:1.0.0 module (represented by the
             // ivy-1586.xml module descriptor)
             final ConfigurationResolveReport confReport = resolveReport.getConfigurationReport(rootModuleConf);
-            assertNotNull(rootModuleConf + " conf resolution report for " +
-                    resolveReport.getModuleDescriptor().getModuleRevisionId() + " is null", confReport);
+            assertNotNull(rootModuleConf + " conf resolution report for "
+                    + resolveReport.getModuleDescriptor().getModuleRevisionId() + " is null", confReport);
 
             final ModuleRevisionId apiDependencyId = ModuleRevisionId.newInstance("org.apache", "1580-foo-api", "1.2.3");
             final IvyNode apiDepNode = confReport.getDependency(apiDependencyId);
@@ -6633,7 +6769,6 @@ public class ResolveTest {
         }
     }
 
-
     /**
      * Tests that when the internal metadata file containing the artifact origin location
      * points to {@code file:} URI, then the location is correctly parsed.
@@ -6646,7 +6781,7 @@ public class ResolveTest {
         // resolve and download an artifact and let the origin details be stored in the internal metadata files
         // in ivy cache
         ResolveReport report = current.resolve(ModuleRevisionId.newInstance("org.apache",
-                "test","1.0"),
+                "test", "1.0"),
                 getResolveOptions(new String[] {"*"}).setDownload(true), false);
         assertNotNull("Resolve report is null", report);
         assertFalse("Resolution has errors", report.hasError());
@@ -6655,15 +6790,15 @@ public class ResolveTest {
         current.getSettings().setDefaultUseOrigin(true);
         // trigger the resolution again
         report = current.resolve(ModuleRevisionId.newInstance("org.apache",
-                "test","1.0"),
+                "test", "1.0"),
                 getResolveOptions(new String[] {"*"}).setDownload(true), false);
         assertNotNull("Resolve report is null", report);
         assertFalse("Resolution has errors", report.hasError());
     }
 
     private void assertJarContains(final File jar, final String jarEntryPath) throws IOException {
-        try (final JarFile jarFile = new JarFile(jar)) {
-            final JarEntry entry = jarFile.getJarEntry(jarEntryPath);
+        try (JarFile jarFile = new JarFile(jar)) {
+            JarEntry entry = jarFile.getJarEntry(jarEntryPath);
             assertNotNull(jarEntryPath + " is missing from jar file " + jar, entry);
         }
     }
