@@ -24,10 +24,11 @@ import java.io.IOException;
 import java.util.Properties;
 
 /**
- * A simple Properties extension easing the loading and saving of data
+ * A simple Properties extension easing the loading and saving of data.
  */
 @SuppressWarnings("serial")
 public class PropertiesFile extends Properties {
+
     private File file;
 
     private String header;
@@ -73,4 +74,8 @@ public class PropertiesFile extends Properties {
         }
     }
 
+    @Override
+    public Object setProperty(String key, String value) {
+        return (value == null) ? remove(key) : super.setProperty(key, value);
+    }
 }
