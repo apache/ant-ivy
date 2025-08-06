@@ -22,6 +22,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringReader;
 import java.text.ParseException;
 
 import org.apache.ivy.TestHelper;
@@ -43,9 +45,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class IvyPublishTest {
     private File cache;
@@ -120,8 +122,7 @@ public class IvyPublishTest {
         pubParent.execute();
 
         // update=true implies merge=true
-        project.setProperty("ivy.dep.file",
-            "test/java/org/apache/ivy/ant/ivy-extends-multiconf.xml");
+        project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-extends-multiconf.xml");
         publish.setResolver("1");
         publish.setUpdate(true);
         publish.setOrganisation("apache");
@@ -139,47 +140,43 @@ public class IvyPublishTest {
     }
 
     private void checkPublishedFile(File published, String expectedFilename) throws IOException {
+        checkPublishedFile(published, new InputStreamReader(getClass().getResourceAsStream(expectedFilename)));
+    }
+
+    private void checkPublishedFile(File published, Reader expectedReader) throws IOException {
         // do a text compare, since we want to test comments as well as structure.
         // we could do a better job of this with xmlunit
-        try (BufferedReader merged = new BufferedReader(new FileReader(published))) {
-            try (BufferedReader expected = new BufferedReader(new InputStreamReader(getClass()
-                    .getResourceAsStream(expectedFilename)))) {
-                int lineNo = 1;
-                String mergeLine = merged.readLine();
-                String expectedLine = expected.readLine();
-                while (mergeLine != null && expectedLine != null) {
+        try (BufferedReader merged = new BufferedReader(new FileReader(published));
+              BufferedReader expected = new BufferedReader(expectedReader)) {
+            int lineNo = 1;
+            String mergeLine = merged.readLine();
+            String expectedLine = expected.readLine();
+            while (mergeLine != null && expectedLine != null) {
 
-                    // strip timestamps for the comparison
-                    if (mergeLine.contains("<info")) {
-                        mergeLine = mergeLine.replaceFirst("\\s?publication=\"\\d+\"", "");
-                    }
-                    // discard whitespace-only lines
-                    if (!(mergeLine.trim().isEmpty() && expectedLine.trim().isEmpty())) {
-                        assertEquals("published descriptor matches at line[" + lineNo + "]", expectedLine,
-                                mergeLine);
-                    }
-
-                    ++lineNo;
-                    mergeLine = merged.readLine();
-                    expectedLine = expected.readLine();
+                // strip timestamps for the comparison
+                if (mergeLine.contains("<info")) {
+                    mergeLine = mergeLine.replaceFirst("\\s?publication=\"\\d+\"", "");
                 }
+                // discard whitespace-only lines
+                if (!(mergeLine.trim().isEmpty() && expectedLine.trim().isEmpty())) {
+                    assertEquals("published descriptor matches at line[" + lineNo + "]", expectedLine, mergeLine);
+                }
+
+                lineNo += 1;
+                mergeLine = merged.readLine();
+                expectedLine = expected.readLine();
             }
         }
     }
 
     /**
-     * Test case for IVY-1248.
-     *
-     * @throws IOException if something goes wrong
-     * @see <a href="https://issues.apache.org/jira/browse/IVY-1248">IVY-1248</a>
+     * Test case for <a href="https://issues.apache.org/jira/browse/IVY-1248">IVY-1248</a>.
      */
     @Test
     public void testMergeParentWithoutPublishingParent() throws IOException {
         // here we directly publish a module extending ivy-multiconf.xml,
         // the module parent is not published not yet in cache
         // update=true implies merge=true
-        // project.setProperty("ivy.dep.file",
-        // "test/java/org/apache/ivy/ant/ivy-extends-multiconf.xml");
         publish.setResolver("1");
         publish.setUpdate(true);
         publish.setOrganisation("apache");
@@ -197,12 +194,10 @@ public class IvyPublishTest {
     }
 
     /**
-     * Test case for IVY-1248.
+     * Test case for <a href="https://issues.apache.org/jira/browse/IVY-1248">IVY-1248</a>.
+     * <p>
      * Here we directly publish a module extending ivy-multiconf.xml,
      * the module parent is not published not yet in cache.
-     *
-     * @throws IOException if something goes wrong
-     * @see <a href="https://issues.apache.org/jira/browse/IVY-1248">IVY-1248</a>
      */
     @Test
     public void testMergeParentWithoutPublishingParentForceDeliver() throws IOException {
@@ -227,7 +222,10 @@ public class IvyPublishTest {
         // should have published the files with "1" resolver
         File published = new File("test/repositories/1/apache/resolve-extends/ivys/ivy-1.2.xml");
         assertTrue(published.exists());
-        checkPublishedFile(published, "ivy-extends-merged.xml");
+
+        String expect = FileUtil.readEntirely(getClass().getResourceAsStream("ivy-extends-merged.xml"));
+        expect = expect.replace("name=\"mod1.2\" rev=\"2.0\"", "name=\"mod1.2\" rev=\"2.1\" revConstraint=\"2.0\"");
+        checkPublishedFile(published, new StringReader(expect));
     }
 
     @Test
@@ -866,5 +864,4 @@ public class IvyPublishTest {
         assertEquals("new version", reader.readLine());
         reader.close();
     }
-
 }

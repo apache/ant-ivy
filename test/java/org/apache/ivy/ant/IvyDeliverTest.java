@@ -21,7 +21,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -96,7 +96,7 @@ public class IvyDeliverTest {
         del.execute();
     }
 
-   @Test
+    @Test
     public void testMergeParent() throws IOException {
         // publish the parent descriptor first, so that it can be found while
         // we are reading the child descriptor.
@@ -114,8 +114,7 @@ public class IvyDeliverTest {
         pubParent.execute();
 
         // resolve and deliver the child descriptor
-        project.setProperty("ivy.dep.file",
-            "test/java/org/apache/ivy/ant/ivy-extends-multiconf.xml");
+        project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-extends-multiconf.xml");
         res = new IvyResolve();
         res.setProject(project);
         res.execute();
@@ -132,24 +131,26 @@ public class IvyDeliverTest {
         // we could do a better job of this with xmlunit
         int lineNo = 1;
 
-       try (BufferedReader merged = new BufferedReader(new FileReader(delivered));
-            BufferedReader expected = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("ivy-extends-merged.xml")))) {
-           String mergeLine = merged.readLine();
-           String expectedLine = expected.readLine();
-           while (mergeLine != null && expectedLine != null) {
-               mergeLine = mergeLine.trim();
-               expectedLine = expectedLine.trim();
+        String expect = FileUtil.readEntirely(getClass().getResourceAsStream("ivy-extends-merged.xml"));
+        expect = expect.replace("name=\"mod1.2\" rev=\"2.0\"", "name=\"mod1.2\" rev=\"2.1\" revConstraint=\"2.0\"");
 
-               if (!mergeLine.startsWith("<info")) {
-                   assertEquals("published descriptor matches at line[" + lineNo + "]",
-                           expectedLine.trim(), mergeLine.trim());
-               }
+        try (BufferedReader merged = new BufferedReader(new FileReader(delivered));
+              BufferedReader expected = new BufferedReader(new StringReader(expect))) {
+            String mergeLine = merged.readLine();
+            String expectedLine = expected.readLine();
+            while (mergeLine != null && expectedLine != null) {
+                mergeLine = mergeLine.trim();
+                expectedLine = expectedLine.trim();
 
-               ++lineNo;
-               mergeLine = merged.readLine();
-               expectedLine = expected.readLine();
-           }
-       }
+                if (!mergeLine.startsWith("<info")) {
+                    assertEquals("published descriptor matches at line[" + lineNo + "]", expectedLine.trim(), mergeLine.trim());
+                }
+
+                lineNo += 1;
+                mergeLine = merged.readLine();
+                expectedLine = expected.readLine();
+            }
+        }
     }
 
     @Test
