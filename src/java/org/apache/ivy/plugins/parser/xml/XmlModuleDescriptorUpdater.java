@@ -285,15 +285,11 @@ public final class XmlModuleDescriptorUpdater {
 
             flushMergedElementsBefore(qName);
 
-            // according to ivy.xsd, all <dependency> elements must occur before
-            // the <exclude>, <override> or <conflict> elements
             if (options.isMerge()
-                    && "ivy-module/dependencies".equals(getContext())
-                    && ("exclude".equals(localName) || "override".equals(localName) || "conflict".equals(localName))) {
+                    && !mergedDependencies
+                    && "ivy-module/dependencies".equals(getContext())) {
                 ModuleDescriptor merged = options.getMergedDescriptor();
                 writeInheritedDependencies(merged);
-                out.println();
-                out.print(getIndent());
             }
 
             context.push(qName);
@@ -973,7 +969,7 @@ public final class XmlModuleDescriptorUpdater {
          *            just write the inherited items inline, with a comment indicating where they
          *            came from.
          */
-        private void writeInheritedItems(ModuleDescriptor merged, InheritableItem[] items,
+        private boolean writeInheritedItems(ModuleDescriptor merged, InheritableItem[] items,
                 ItemPrinter printer, String itemName, boolean includeContainer) {
             // first categorize inherited items by their source module, so that
             // we can add some useful comments
@@ -995,6 +991,10 @@ public final class XmlModuleDescriptorUpdater {
                         newMapping.isEmpty() ? "" : " defaultconfmapping=\"" + newMapping + "\"",
                         (confMappingOverride != null) ? " confmappingoverride=\"" + confMappingOverride + "\"" : ""));
                 context.push(itemName);
+                if ("dependencies".equals(itemName)) {
+                    out.println();
+                    out.print(getIndent());
+                }
                 justOpen = null;
             }
 
@@ -1019,13 +1019,17 @@ public final class XmlModuleDescriptorUpdater {
                 // restore the prior indent
                 out.print(currentIndent);
             }
+
+            return hasItems;
         }
 
         private void writeInheritanceComment(String itemDescription, Object parentInfo) {
             PrintWriter out = getWriter();
-            out.println();
-            out.println(getIndent() + "<!-- " + itemDescription + " inherited from " + parentInfo
-                    + " -->");
+            if (!"dependencies".equals(itemDescription)) {
+                out.println();
+                out.print(getIndent());
+            }
+            out.println("<!-- " + itemDescription + " inherited from " + parentInfo + " -->");
         }
 
         /**
@@ -1088,7 +1092,10 @@ public final class XmlModuleDescriptorUpdater {
             if (!mergedDependencies) {
                 mergedDependencies = true;
                 InheritableItem[] items = getDependencies(merged);
-                writeInheritedItems(merged, items, DependencyPrinter.INSTANCE, "dependencies", false);
+                if (writeInheritedItems(merged, items, DependencyPrinter.INSTANCE, "dependencies", false)) {
+                    out.println("<!-- dependencies inherited end -->");
+                    out.print(getIndent());
+                }
             }
         }
 
@@ -1123,7 +1130,7 @@ public final class XmlModuleDescriptorUpdater {
          *            a descriptor element name, for example "configurations" or "info"
          */
         private void flushMergedElementsBefore(String moduleElement) {
-            if (options.isMerge() && context.size() == 1 && "ivy-module".equals(context.peek()) && !(mergedConfigurations && mergedDependencies)) {
+            if (options.isMerge() && "ivy-module".equals(getContext()) && !(mergedConfigurations && mergedDependencies)) {
                 // calculate the position of the element in ivy-module
                 int position = (moduleElement == null) ? MODULE_ELEMENTS.size() : MODULE_ELEMENTS.indexOf(moduleElement);
                 ModuleDescriptor merged = options.getMergedDescriptor();
@@ -1150,7 +1157,6 @@ public final class XmlModuleDescriptorUpdater {
         }
 
         public void endElement(String uri, String localName, String qName) throws SAXException {
-
             String path = getContext();
             if (options.isMerge()) {
                 ModuleDescriptor merged = options.getMergedDescriptor();
@@ -1163,10 +1169,6 @@ public final class XmlModuleDescriptorUpdater {
                     case "ivy-module/configurations":
                         // write inherited configurations after all child configurations
                         writeInheritedConfigurations(merged);
-                        break;
-                    case "ivy-module/dependencies":
-                        // write inherited dependencies after all child dependencies
-                        writeInheritedDependencies(merged);
                         break;
                     case "ivy-module":
                         // write any remaining inherited data before we close the
@@ -1250,9 +1252,14 @@ public final class XmlModuleDescriptorUpdater {
                 justOpen = null;
             }
 
-            write("<!--");
-            write(String.valueOf(ch, start, length));
-            write("-->");
+            if (options.isMerge()
+                    && !mergedDependencies
+                    && "ivy-module/dependencies".equals(getContext())) {
+                ModuleDescriptor merged = options.getMergedDescriptor();
+                writeInheritedDependencies(merged);
+            }
+
+            write(new StringBuilder("<!--").append(ch, start, length).append("-->").toString());
 
             if (inHeader) {
                 write(LINE_SEPARATOR);
