@@ -105,6 +105,10 @@ public abstract class IvyPostResolveTask extends IvyTask {
         return resolve.createExclude();
     }
 
+    public IvyOverride createOverride() {
+      return resolve.createOverride();
+    }
+
     public IvyConflict createConflict() {
         return resolve.createConflict();
     }

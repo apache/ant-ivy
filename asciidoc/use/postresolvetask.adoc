@@ -83,7 +83,8 @@ There is one important difference with the ivy.xml's link:../ivyfile/dependencie
 |Element|Description|Cardinality
 |link:../ivyfile/dependency{outfilesuffix}[dependency]|declares a dependency to resolve|0..n
 |link:../ivyfile/exclude{outfilesuffix}[exclude]|excludes artifacts, modules or whole organizations from the set of dependencies to resolve|0..n
-|link:../ivyfile/override{outfilesuffix}[override]|specify an override mediation rule, overriding the revision and/or branch requested for a transitive dependency (*__since 2.0__*)|0..n
+|link:../ivyfile/override{outfilesuffix}[override]|specify an override mediation rule, overriding the revision and/or branch requested for a transitive dependency (*__since 2.6__*)|0..n
+|link:../ivyfile/conflict{outfilesuffix}[conflict]|specify a a conflict manager for one or several dependencies|0..n
 |=======
 
 == Examples

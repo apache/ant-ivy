@@ -96,6 +96,8 @@ public class IvyResolve extends IvyTask {
 
     private List<IvyExclude> excludes = new ArrayList<>();
 
+    private List<IvyOverride> overrides = new ArrayList<>();
+
     private List<IvyConflict> conflicts = new ArrayList<>();
 
     public boolean isUseOrigin() {
@@ -225,6 +227,12 @@ public class IvyResolve extends IvyTask {
         return ex;
     }
 
+    public IvyOverride createOverride() {
+        IvyOverride o = new IvyOverride();
+        overrides.add(o);
+        return o;
+    }
+
     public IvyConflict createConflict() {
         IvyConflict c = new IvyConflict();
         conflicts.add(c);
@@ -246,7 +254,8 @@ public class IvyResolve extends IvyTask {
             type = getProperty(type, settings, "ivy.resolve.default.type.filter");
             String[] confs = splitToArray(conf);
 
-            boolean childs = !dependencies.isEmpty() || !excludes.isEmpty() || !conflicts.isEmpty();
+            boolean childs = !dependencies.isEmpty() || !excludes.isEmpty() || !overrides.isEmpty()
+                || !conflicts.isEmpty();
 
             ResolveReport report;
             if (childs) {
@@ -280,6 +289,10 @@ public class IvyResolve extends IvyTask {
                     DefaultExcludeRule rule = exclude.asRule(settings);
                     rule.addConfiguration("default");
                     md.addExcludeRule(rule);
+                }
+
+                for (IvyOverride override : overrides) {
+                  override.addOverride(md, settings);
                 }
 
                 for (IvyConflict conflict : conflicts) {
