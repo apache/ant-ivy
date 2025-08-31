@@ -27,7 +27,7 @@ This task generates a resolved descriptor of the current module, based upon the 
 
 Moreover, all included configurations' files are included in the Ivy file, and variables are replaced by their values.
 
-Finally, in the resolved Ivy file, dynamic revisions are replaced by the static ones that have been found during the resolve step, so the Ivy file can be used later safely to obtain the same dependencies (providing that a revision uniquely identifies a module, which should be the case for proper Ivy use).
+Finally, in the resolved Ivy file, dynamic revisions are replaced by the static ones that have been found during the resolve step, so the Ivy file can be used later safely to obtain the same dependencies (providing that a revision uniquely identifies a module, which should be the case for proper Ivy use). Note that this replacement is done before any conflict resolution happens. This can cause differences between the selected versions in the delivered ivy.xml file and the ones that are actually retrieved. This should not be a problem, because if the delivered ivy.xml is used to resolve the dependencies again, the conflict resolution will select the correct versions, even if not all configurations are resolved. This way, we ensure a reproducible dependency resolution as much as possible.
 
 (*__since 1.3__*) The replacement of dynamic revisions by static ones can be turned off, so that dynamic revisions are kept in the Ivy file. This is an exception to the recommended standard that published module descriptors be fully resolved, so use it with caution.
 
