@@ -1101,9 +1101,21 @@ public final class XmlModuleDescriptorUpdater {
         private void writeInheritedDependencies(ModuleDescriptor merged) {
             if (!mergedDependencies) {
                 mergedDependencies = true;
-                writeInheritedItems(merged, merged.getDependencies(), DependencyPrinter.INSTANCE,
+                writeInheritedItems(merged, getDependencies(merged), DependencyPrinter.INSTANCE,
                     "dependencies", false);
             }
+        }
+
+        private DependencyDescriptor[] getDependencies(ModuleDescriptor merged) {
+          DependencyDescriptor[] dependencies = merged.getDependencies();
+          for (int i = 0; i < dependencies.length; i += 1) {
+            ModuleRevisionId mrid = dependencies[i].getDependencyRevisionId();
+            String rev = resolvedRevisions.get(mrid); // IVY-1410
+            if (rev != null && !rev.equals(mrid.getRevision())) {
+              dependencies[i] = dependencies[i].clone(ModuleRevisionId.newInstance(mrid, rev));
+            }
+          }
+          return dependencies;
         }
 
         /**

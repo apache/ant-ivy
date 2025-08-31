@@ -92,6 +92,25 @@ public class DeliverTest {
         assertTrue(deliverContent.contains("name=\"b\" rev=\"1.5\""));
     }
 
+    /**
+     * Test case for <a href="https://issues.apache.org/jira/browse/IVY-1410">IVY-1410</a>.
+     */
+    @Test
+    public void testDeliver1410() throws Exception {
+        Project project = ivyDeliver.getProject();
+        project.setProperty("ivy.settings.file", "test/repositories/ivysettings-1.xml");
+        File ivyFile = new File(new URI(DeliverTest.class.getResource("ivy-1410.xml").toString()));
+
+        resolve(ivyFile);
+
+        ivyDeliver.setReplacedynamicrev(true);
+        ivyDeliver.doExecute();
+
+        String deliverContent = readFile(deliverDir.getAbsolutePath() + "/ivys/ivy-1.0.xml");
+        assertTrue(deliverContent.contains("org=\"org1\" name=\"mod1.1\" rev=\"1.1\""));
+        assertTrue(deliverContent.contains("org=\"org2\" name=\"mod2.1\" rev=\"0.7\""));
+    }
+
     private void resolve(File ivyFile) {
         IvyResolve ivyResolve = new IvyResolve();
         ivyResolve.setProject(ivyDeliver.getProject());
