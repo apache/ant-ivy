@@ -17,8 +17,6 @@
  */
 package org.apache.ivy.ant;
 
-import java.io.IOException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,13 +28,12 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.resolve.ResolveOptions;
+
 import org.apache.tools.ant.BuildException;
 
 import static org.apache.ivy.util.StringUtils.splitToArray;
 
 public class IvyDependencyUpdateChecker extends IvyPostResolveTask {
-
-    private String revisionToCheck = "latest.integration";
 
     private boolean download = false;
 
@@ -44,47 +41,85 @@ public class IvyDependencyUpdateChecker extends IvyPostResolveTask {
 
     private boolean showTransitive = false;
 
+    private String revisionToCheck = "latest.integration";
+
+    public boolean isDownload() {
+        return download;
+    }
+
+    public void setDownload(boolean download) {
+        this.download = download;
+    }
+
+    public boolean isCheckIfChanged() {
+        return checkIfChanged;
+    }
+
+    public void setCheckIfChanged(boolean checkIfChanged) {
+        this.checkIfChanged = checkIfChanged;
+    }
+
+    public boolean isShowTransitive() {
+        return showTransitive;
+    }
+
+    public void setShowTransitive(boolean showTransitive) {
+        this.showTransitive = showTransitive;
+    }
+
+    public String getRevisionToCheck() {
+        return revisionToCheck;
+    }
+
+    public void setRevisionToCheck(String revisionToCheck) {
+        this.revisionToCheck = revisionToCheck;
+    }
+
+    //--------------------------------------------------------------------------
+
+    @Override
     public void doExecute() throws BuildException {
         prepareAndCheck();
 
-        ModuleDescriptor originalModuleDescriptor = getResolvedReport().getModuleDescriptor();
-        // clone module descriptor
-        DefaultModuleDescriptor latestModuleDescriptor = new DefaultModuleDescriptor(
-                originalModuleDescriptor.getModuleRevisionId(),
-                originalModuleDescriptor.getStatus(), originalModuleDescriptor.getPublicationDate());
-        // copy configurations
-        for (Configuration configuration : originalModuleDescriptor.getConfigurations()) {
-            latestModuleDescriptor.addConfiguration(configuration);
-        }
-        // clone dependency and add new one with the requested revisionToCheck
-        for (DependencyDescriptor dependencyDescriptor : originalModuleDescriptor.getDependencies()) {
-            ModuleRevisionId upToDateMrid = ModuleRevisionId.newInstance(
-                dependencyDescriptor.getDependencyRevisionId(), revisionToCheck);
-            latestModuleDescriptor.addDependency(dependencyDescriptor.clone(upToDateMrid));
-        }
-
-        // resolve
         ResolveOptions resolveOptions = new ResolveOptions();
+        resolveOptions.setCheckIfChanged(checkIfChanged);
+        resolveOptions.setConfs(splitToArray(getConf()));
         resolveOptions.setDownload(isDownload());
         resolveOptions.setLog(getLog());
-        resolveOptions.setConfs(splitToArray(getConf()));
-        resolveOptions.setCheckIfChanged(checkIfChanged);
-
-        ResolveReport latestReport;
         try {
-            latestReport = getIvyInstance().getResolveEngine().resolve(latestModuleDescriptor,
-                resolveOptions);
+            ResolveReport latestReport = getIvyInstance().getResolveEngine()
+                .resolve(createModuleDescriptorForRevisionToCheck(), resolveOptions);
 
             displayDependencyUpdates(getResolvedReport(), latestReport);
             if (showTransitive) {
                 displayNewDependencyOnLatest(getResolvedReport(), latestReport);
                 displayMissingDependencyOnLatest(getResolvedReport(), latestReport);
             }
-
-        } catch (ParseException | IOException e) {
+        } catch (Exception e) {
             throw new BuildException("impossible to resolve dependencies:\n\t" + e, e);
         }
+    }
 
+    private ModuleDescriptor createModuleDescriptorForRevisionToCheck() {
+        ModuleDescriptor moduleDescriptor = getResolvedReport().getModuleDescriptor();
+
+        // clone module descriptor
+        DefaultModuleDescriptor latestModuleDescriptor = new DefaultModuleDescriptor(
+            moduleDescriptor.getModuleRevisionId(), moduleDescriptor.getStatus(), moduleDescriptor.getPublicationDate());
+
+        // copy configurations
+        for (Configuration configuration : moduleDescriptor.getConfigurations()) {
+            latestModuleDescriptor.addConfiguration(configuration);
+        }
+
+        // clone direct dependencies with the requested revisionToCheck
+        for (DependencyDescriptor dependencyDescriptor : moduleDescriptor.getDependencies()) {
+            ModuleRevisionId upToDateMrid = ModuleRevisionId.newInstance(
+                dependencyDescriptor.getDependencyRevisionId(), revisionToCheck);
+            latestModuleDescriptor.addDependency(dependencyDescriptor.clone(upToDateMrid));
+        }
+
+        return latestModuleDescriptor;
     }
 
     private void displayDependencyUpdates(ResolveReport originalReport, ResolveReport latestReport) {
@@ -118,8 +153,7 @@ public class IvyDependencyUpdateChecker extends IvyPostResolveTask {
         }
     }
 
-    private void displayMissingDependencyOnLatest(ResolveReport originalReport,
-            ResolveReport latestReport) {
+    private void displayMissingDependencyOnLatest(ResolveReport originalReport, ResolveReport latestReport) {
         List<ModuleRevisionId> listOfMissingDependencyOnLatest = new ArrayList<>();
         for (IvyNode originalDependency : originalReport.getDependencies()) {
             boolean dependencyFound = false;
@@ -141,8 +175,7 @@ public class IvyDependencyUpdateChecker extends IvyPostResolveTask {
         }
     }
 
-    private void displayNewDependencyOnLatest(ResolveReport originalReport,
-            ResolveReport latestReport) {
+    private void displayNewDependencyOnLatest(ResolveReport originalReport, ResolveReport latestReport) {
         List<ModuleRevisionId> listOfNewDependencyOnLatest = new ArrayList<>();
         for (IvyNode latest : latestReport.getDependencies()) {
             boolean dependencyFound = false;
@@ -161,37 +194,5 @@ public class IvyDependencyUpdateChecker extends IvyPostResolveTask {
                 log("\t" + moduleRevisionId.toString());
             }
         }
-    }
-
-    public String getRevisionToCheck() {
-        return revisionToCheck;
-    }
-
-    public void setRevisionToCheck(String revisionToCheck) {
-        this.revisionToCheck = revisionToCheck;
-    }
-
-    public boolean isDownload() {
-        return download;
-    }
-
-    public void setDownload(boolean download) {
-        this.download = download;
-    }
-
-    public boolean isShowTransitive() {
-        return showTransitive;
-    }
-
-    public void setShowTransitive(boolean showTransitive) {
-        this.showTransitive = showTransitive;
-    }
-
-    public boolean isCheckIfChanged() {
-        return checkIfChanged;
-    }
-
-    public void setCheckIfChanged(boolean checkIfChanged) {
-        this.checkIfChanged = checkIfChanged;
     }
 }
