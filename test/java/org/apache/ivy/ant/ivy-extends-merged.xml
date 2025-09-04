@@ -15,13 +15,13 @@
    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
    KIND, either express or implied.  See the License for the
    specific language governing permissions and limitations
-   under the License.    
+   under the License.
 -->
-<ivy-module version="2.0"> 
+<ivy-module version="2.0">
 
 	<info organisation="apache" module="resolve-extends" revision="1.2" status="release">
 		<!-- <extends organisation="apache" module="resolve-simple" revision="1.0" location="./ivy-multiconf.xml"/> -->
-        
+
 		<!-- description inherited from parent -->
 		<description>Demonstrates configuration-specific dependencies</description>
 	</info>
@@ -37,10 +37,10 @@
 	</configurations>
 
 	<publications/>
-  
+
 	<dependencies>
 		<!-- not in parent -->
-		<dependency org="org2" name="mod2.1" rev="0.3" conf="default"/>
+		<dependency org="org2" name="mod2.1" rev="0.3" conf="default->compile(default)"/>
 		<!-- overrides parent -->
 		<dependency org="org1" name="mod1.1" rev="1.1" conf="default,compile->default" transitive="false"/>
 
