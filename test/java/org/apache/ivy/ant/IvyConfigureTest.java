@@ -17,12 +17,6 @@
  */
 package org.apache.ivy.ant;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-
 import java.io.File;
 import java.util.List;
 
@@ -33,21 +27,26 @@ import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.resolver.IBiblioResolver;
 import org.apache.ivy.plugins.resolver.IvyRepResolver;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.Reference;
+
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 
 public class IvyConfigureTest {
+
     private IvyConfigure configure;
 
     private Project project;
-
-    @Rule
-    public ExpectedException expExc = ExpectedException.none();
 
     @Before
     public void setUp() {
@@ -278,10 +277,6 @@ public class IvyConfigureTest {
      */
     @Test
     public void testOverrideNotAllowed() {
-        expExc.expect(BuildException.class);
-        expExc.expectMessage("Overriding a previous definition of ivy:settings with the id '"
-                + configure.getSettingsId() + "' is not allowed when using override='notallowed'.");
-
         configure.setFile(new File("test/repositories/ivysettings.xml"));
         configure.execute();
 
@@ -293,7 +288,9 @@ public class IvyConfigureTest {
         configure.setOverride("notallowed");
         configure.setFile(new File("test/repositories/ivysettings.xml"));
 
-        configure.execute();
+        Exception exception = assertThrows(BuildException.class, () -> configure.execute());
+        assertEquals("Overriding a previous definition of ivy:settings with the id '"
+                + configure.getSettingsId() + "' is not allowed when using override='notallowed'.", exception.getMessage());
     }
 
     /**
@@ -301,18 +298,13 @@ public class IvyConfigureTest {
      */
     @Test
     public void testInvalidOverride() {
-        expExc.expect(IllegalArgumentException.class);
-        expExc.expectMessage("invalid override value 'unknown'. Valid values are "
-                + "[true, false, notallowed]");
-
-        configure.setOverride("unknown");
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> configure.setOverride("unknown"));
+        assertEquals("invalid override value 'unknown'. Valid values are [true, false, notallowed]", exception.getMessage());
     }
 
     /**
      * Tests that if the Ivy settings file <code>include</code>s another file as
      * <code>optional</code>, then the absence of that file doesn't lead to failures
-     *
-     * @throws Exception if something goes wrong
      */
     @Test
     public void testOptionalFileInclude() throws Exception {

@@ -17,6 +17,11 @@
  */
 package org.apache.ivy.core.settings;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.List;
+
 import org.apache.ivy.core.cache.DefaultRepositoryCacheManager;
 import org.apache.ivy.core.cache.ResolutionCacheManager;
 import org.apache.ivy.core.module.descriptor.Artifact;
@@ -43,27 +48,20 @@ import org.apache.ivy.plugins.version.ChainVersionMatcher;
 import org.apache.ivy.plugins.version.MavenTimedSnapshotVersionMatcher;
 import org.apache.ivy.plugins.version.MockVersionMatcher;
 import org.apache.ivy.plugins.version.VersionMatcher;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.List;
+import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 /**
  * Test the parsing of Ivy settings file through the {@link XmlSettingsParser}
  */
 public class XmlSettingsParserTest {
-    @Rule
-    public ExpectedException expExc = ExpectedException.none();
 
     @Test
     public void test() throws Exception {
@@ -261,18 +259,15 @@ public class XmlSettingsParserTest {
 
     /**
      * Test of resolver referencing a non existent cache.
-     *
-     * @throws Exception if something goes wrong
      */
     @Test
-    public void testInvalidCache() throws Exception {
-        expExc.expect(ParseException.class);
-        expExc.expectMessage("mycache");
-
+    public void testInvalidCache() {
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
 
-        parser.parse(XmlSettingsParserTest.class.getResource("ivysettings-cache-invalid.xml"));
+        Exception exception = assertThrows(ParseException.class, () ->
+            parser.parse(XmlSettingsParserTest.class.getResource("ivysettings-cache-invalid.xml")));
+        assertTrue(exception.getMessage().endsWith("unknown cache manager 'mycache'. Available caches are [mycache2]"));
     }
 
     @Test

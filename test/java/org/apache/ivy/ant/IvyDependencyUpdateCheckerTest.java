@@ -28,20 +28,16 @@ import org.apache.tools.ant.Project;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 
 public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
 
     private IvyDependencyUpdateChecker dependencyUpdateChecker;
-
-    @Rule
-    public ExpectedException expExc = ExpectedException.none();
 
     @Before
     public void setUp() {
@@ -146,12 +142,10 @@ public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
      */
     @Test
     public void testFailureWithMissingConfigurations() {
-        expExc.expect(BuildException.class);
-        expExc.expectMessage("unknown");
-
         dependencyUpdateChecker.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
         dependencyUpdateChecker.setConf("default,unknown");
-        dependencyUpdateChecker.execute();
+        Exception exception = assertThrows(BuildException.class, () -> dependencyUpdateChecker.execute());
+        assertEquals("requested configuration not found in apache#resolve-simple;1.0: [ 'unknown' ]", exception.getCause().getMessage());
     }
 
     /**

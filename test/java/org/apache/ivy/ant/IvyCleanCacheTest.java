@@ -17,20 +17,23 @@
  */
 package org.apache.ivy.ant;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.io.File;
 
 import org.apache.ivy.TestHelper;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
+
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 
 public class IvyCleanCacheTest {
+
     private IvyCleanCache cleanCache;
 
     private File cacheDir;
@@ -40,9 +43,6 @@ public class IvyCleanCacheTest {
     private File repoCache;
 
     private File resolutionCache;
-
-    @Rule
-    public ExpectedException expExc = ExpectedException.none();
 
     @Before
     public void setUp() throws Exception {
@@ -106,10 +106,9 @@ public class IvyCleanCacheTest {
      */
     @Test
     public void testUnknownCache() {
-        expExc.expect(BuildException.class);
-        expExc.expectMessage("unknown cache 'yourcache'");
         cleanCache.setResolution(false);
         cleanCache.setCache("yourcache");
-        cleanCache.perform();
+        Exception exception = assertThrows(BuildException.class, () -> cleanCache.perform());
+        assertEquals("unknown cache 'yourcache'", exception.getMessage());
     }
 }
