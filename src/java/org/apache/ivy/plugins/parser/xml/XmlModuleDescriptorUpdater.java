@@ -59,6 +59,7 @@ import org.apache.ivy.util.DateUtil;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.XMLHelper;
 import org.apache.ivy.util.extendable.ExtendableItemHelper;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -409,13 +410,22 @@ public final class XmlModuleDescriptorUpdater {
 
                 // copy
                 write("<" + qName);
-                for (int i = 0; i < attributes.getLength(); i++) {
-                    write(" " + attributes.getQName(i) + "=\""
-                            + substitute(settings, attributes.getValue(i)) + "\"");
+                if (options.isMerge() && path.equals("ivy-module")) {
+                    for (int i = 0, n = attributes.getLength(); i < n; i += 1) {
+                        if (attributes.getQName(i).startsWith("xmlns:")) continue;
+                        write(" " + attributes.getQName(i) + "=\"" + substitute(settings, attributes.getValue(i)) + "\"");
+                    }
+                    Map<String, String> namespaces = options.getMergedDescriptor().getExtraAttributesNamespaces();
+                    for (Map.Entry<String, String> namespace : namespaces.entrySet()) {
+                        write(" xmlns:" + namespace.getKey() + "=\"" + substitute(settings, namespace.getValue()) + "\"");
+                    }
+                } else {
+                    for (int i = 0, n = attributes.getLength(); i < n; i += 1) {
+                        write(" " + attributes.getQName(i) + "=\"" + substitute(settings, attributes.getValue(i)) + "\"");
+                    }
                 }
             }
             justOpen = qName;
-            // indent.append("\t");
         }
 
         private void startExtends(Attributes attributes) {
