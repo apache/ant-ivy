@@ -241,9 +241,11 @@ public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
         assertLogContaining("org1#mod1.2\t2.0 -> 2.2");
         // ivy-extends-multiconf.xml declares org2:mod2.1:0.3
         assertLogContaining("org2#mod2.1\t0.3 -> 0.7");
-        // org2:mod2.1:0.3 ivy.xml declares org1:mod1.1:1.0
-        assertLogContaining("org1#mod1.1\t1.0 -> 2.0");
-        // org1:mod1.1:2.0 ivy.xml declares org1:mod1.2:2.1
-        assertLogContaining("org1#mod1.2\t2.1 -> 2.2");
+        // org2:mod2.1:0.3 ivy.xml declares org1:mod1.1:1.0 -- but showTransitives is false
+        assertLogNotContaining("org1#mod1.1\t1.0 -> 2.0");
+        assertLogNotContaining("org1#mod1.1 (transitive)\t1.0 -> 2.0");
+        // org1:mod1.1:2.0 ivy.xml declares org1:mod1.2:2.1 -- it evicted direct dependency
+        assertLogNotContaining("org1#mod1.2\t2.1 -> 2.2");
+        assertLogNotContaining("org1#mod1.2 (transitive)\t2.1 -> 2.2");
     }
 }
