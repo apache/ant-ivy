@@ -30,6 +30,7 @@ import org.apache.ivy.core.module.status.StatusManager;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.util.DateUtil;
 import org.apache.ivy.util.Message;
+
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.taskdefs.CallTarget;
 import org.apache.tools.ant.taskdefs.Echo;
@@ -412,19 +413,20 @@ public class IvyDeliver extends IvyTask {
                 drResolver = new DeliverDRResolver();
             }
 
-            DeliverOptions options = new DeliverOptions(status, pubdate, drResolver,
-                    doValidate(settings), replacedynamicrev, splitToArray(conf))
-                    .setResolveId(resolveId).setReplaceForcedRevisions(isReplaceForcedRev())
-                    .setGenerateRevConstraint(generateRevConstraint).setMerge(merge)
-                    .setPubBranch(pubBranch);
+            DeliverOptions options =
+                new DeliverOptions(status, pubdate, drResolver, doValidate(settings), replacedynamicrev, splitToArray(conf))
+                    .setGenerateRevConstraint(generateRevConstraint)
+                    .setReplaceForcedRevisions(isReplaceForcedRev())
+                    .setResolveId(resolveId)
+                    .setPubBranch(pubBranch)
+                    .setMerge(merge);
             if (mrid == null) {
                 ivy.deliver(pubRevision, deliverpattern, options);
             } else {
                 ivy.deliver(mrid, pubRevision, deliverpattern, options);
             }
         } catch (Exception e) {
-            throw new BuildException("impossible to deliver " + (mrid == null ? resolveId : mrid)
-                    + ": " + e, e);
+            throw new BuildException("impossible to deliver " + (mrid == null ? resolveId : mrid) + ": " + e, e);
         } finally {
             if (isLeading) {
                 if (deliveryList.exists()) {
