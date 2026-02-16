@@ -178,17 +178,13 @@ public class ChainResolver extends AbstractResolver {
         return null;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public Map<String, String>[] listTokenValues(String[] tokens, Map<String, Object> criteria) {
+    public Set<Map<String, String>> listTokenValues(Set<String> tokens, Map<String, Object> criteria) {
         Set<Map<String, String>> result = new HashSet<>();
         for (DependencyResolver resolver : chain) {
-            Map<String, String>[] temp = resolver.listTokenValues(tokens,
-                    new HashMap<>(criteria));
-            result.addAll(Arrays.asList(temp));
+            result.addAll(resolver.listTokenValues(tokens, new HashMap<>(criteria)));
         }
-
-        return result.toArray(new Map[result.size()]);
+        return result;
     }
 
     @Override
