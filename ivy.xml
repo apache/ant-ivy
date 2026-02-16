@@ -32,6 +32,7 @@
         <conf name="oro" extends="core" description="to use optional glob matcher"/>
         <conf name="vfs" extends="core" description="core + optional VirtualFileSystem(VFS) support" />
         <conf name="sftp" extends="core" description="core + optional SFTP support" />
+        <conf name="pack200" extends="core" description="core + optional pack200 support" />
         <conf name="standalone" extends="core" description="to launch in standalone mode (from command line)"/>
         <conf name="ant" extends="core" description="core + ant jar provided as a dependency"/>
         <conf name="default" extends="core" description="full ivy with all dependencies"/>
@@ -46,14 +47,18 @@
     <dependencies>
         <dependency org="org.apache.ant" name="ant" rev="${apache-ant.version}" conf="default,ant"/>
         <dependency org="org.apache.httpcomponents" name="httpclient" rev="${httpclient.version}" conf="default,httpclient->runtime,master"/>
-        <dependency org="oro" name="oro" rev="${oro.version}" conf="default,oro"/>
+        <dependency org="org.apache.commons" name="commons-compress" rev="${commons-compress.version}" conf="default,pack200"/>
         <dependency org="org.apache.commons" name="commons-vfs2" rev="${commons-vfs2.version}" conf="default,vfs"/>
+        <dependency org="oro" name="oro" rev="${oro.version}" conf="default,oro"/>
         <dependency org="com.jcraft" name="jsch" rev="${jsch.version}" conf="default,sftp"/>
         <dependency org="com.jcraft" name="jsch.agentproxy" rev="${jsch.agentproxy.version}" conf="default,sftp"/>
         <dependency org="com.jcraft" name="jsch.agentproxy.connector-factory" rev="${jsch.agentproxy.version}" conf="default,sftp"/>
         <dependency org="com.jcraft" name="jsch.agentproxy.jsch" rev="${jsch.agentproxy.version}" conf="default,sftp"/>
         <dependency org="org.bouncycastle" name="bcpg-jdk15on" rev="${bouncycastle.version}" conf="default"/>
         <dependency org="org.bouncycastle" name="bcprov-jdk15on" rev="${bouncycastle.version}" conf="default"/>
+
+        <!-- we manually specify a dependency on commons-codec so that both the httpclient and the pack200 configs resolve to the same version -->
+        <dependency org="commons-codec" name="commons-codec" rev="${commons-codec.version}" conf="default,httpclient,pack200"/>
 
         <!-- Test dependencies -->
         <dependency org="junit" name="junit" rev="${junit.version}" conf="test"/>
@@ -67,8 +72,8 @@
         <dependency org="xmlunit" name="xmlunit" rev="${xmlunit.version}" conf="test" transitive="false"/>
 
         <!-- Global excludes -->
-        <exclude org="junit" module="junit" conf="core,default,httpclient,oro,vfs,sftp,standalone,ant"/>
-        <exclude org="org.hamcrest" module="hamcrest-core" conf="core,default,httpclient,oro,vfs,sftp,standalone,ant"/>
+        <exclude org="junit" module="junit" conf="core,default,httpclient,oro,vfs,sftp,pack200,standalone,ant"/>
+        <exclude org="org.hamcrest" module="hamcrest-core" conf="core,default,httpclient,oro,vfs,sftp,standalone,pack200,ant"/>
         <!-- Exclude the whole outdated commons-httpclient org -->
         <exclude org="commons-httpclient" conf="*"/>
     </dependencies>

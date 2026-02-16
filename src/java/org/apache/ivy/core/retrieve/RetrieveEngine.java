@@ -290,6 +290,11 @@ public class RetrieveEngine {
         String destIvyPattern = IvyPatternHelper.substituteVariables(options.getDestIvyPattern(),
             settings.getVariables());
 
+        File fileRetrieveRoot = settings.resolveFile(IvyPatternHelper
+                .getTokenRoot(destFilePattern));
+        File ivyRetrieveRoot = destIvyPattern == null ? null : settings
+                .resolveFile(IvyPatternHelper.getTokenRoot(destIvyPattern));
+
         // find what we must retrieve where
 
         // ArtifactDownloadReport source -> Set (String copyDestAbsolutePath)
@@ -340,6 +345,7 @@ public class RetrieveEngine {
                 }
 
                 String destPattern = "ivy".equals(adr.getType()) ? destIvyPattern : destFilePattern;
+                File root = "ivy".equals(adr.getType()) ? ivyRetrieveRoot : fileRetrieveRoot;
 
                 if (!"ivy".equals(adr.getType())
                         && !options.getArtifactFilter().accept(adr.getArtifact())) {
@@ -357,7 +363,14 @@ public class RetrieveEngine {
                     dest = new HashSet<>();
                     artifactsToCopy.put(adr, dest);
                 }
-                String copyDest = settings.resolveFile(destFileName).getAbsolutePath();
+                File copyDestFile = settings.resolveFile(destFileName).getAbsoluteFile();
+                if (root != null &&
+                    !FileUtil.isLeadingPath(root, copyDestFile)) {
+                    Message.warn("not retrieving artifact " + artifact + " as its destination "
+                                 + copyDestFile + " is not inside " + root);
+                    continue;
+                }
+                String copyDest = copyDestFile.getPath();
 
                 String[] destinations = new String[] {copyDest};
                 if (options.getMapper() != null) {
@@ -411,7 +424,7 @@ public class RetrieveEngine {
                     ArtifactDownloadReport current = artifactsList.get(i);
                     if (winnerMD.equals(current.getArtifact().getModuleRevisionId())) {
                         throw new RuntimeException("Multiple artifacts of the module " + winnerMD
-                                + " are retrieved to the same file! Update the retrieve pattern "
+                                + " are retrieved to the same file! Update the retrieve pattern"
                                 + " to fix this error.");
                     }
                 }

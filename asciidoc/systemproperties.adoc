@@ -1,0 +1,67 @@
+////
+   Licensed to the Apache Software Foundation (ASF) under one
+   or more contributor license agreements.  See the NOTICE file
+   distributed with this work for additional information
+   regarding copyright ownership.  The ASF licenses this file
+   to you under the Apache License, Version 2.0 (the
+   "License"); you may not use this file except in compliance
+   with the License.  You may obtain a copy of the License at
+
+     https://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing,
+   software distributed under the License is distributed on an
+   "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+   KIND, either express or implied.  See the License for the
+   specific language governing permissions and limitations
+   under the License.
+////
+
+= Java System Properties Affecting Ivy
+
+== XML Parser Settings
+
+Starting with Ivy 2.5.2 Ivy's XML parser can be controlled via the use
+of two newly introduced system properties.
+
+If you want to restore the default behavior of Ivy 2.5.1 and earlier
+you need to set `ivy.xml.allow-doctype-processing` to `true` and
+`ivy.xml.external-resources` to `ALL`.
+
+=== `ivy.xml.allow-doctype-processing`
+
+This system property accepts `true` or `false` as values. When set to
+`false` Ivy will not allow any processing of doctype declarations at
+all, while setting it to `true` enables it.
+
+The default is to allow doctype processing if and only if Ivy is
+parsing a Maven POM file.
+
+=== `ivy.xml.external-resources`
+
+This system property controls if external resources are read during
+doctype processing - and if so, where they can be loadad from. The
+value of this system property is only ever used if
+`ivy.xml.allow-doctype-processing` is not `false`.
+
+The accepted values are
+
+* `PROHIBIT` makes Ivy fail if any doctype tries to load an external
+  resource.
+* `IGNORE` makes Ivy ignore any external resource that the doctype
+  declaration wants to load.
+* `LOCAL_ONLY` allows external resources to be loaded via `file:` or
+  `jar:file` URIs only.
+* `ALL` allows external resources to be loaded from any URI.
+
+The default behavior is to not allow doctype processing at all, but if
+it is enabled the value `PROHIBIT` is assumed unless the property has
+been set explicitly.
+
+When reading Maven POMs a specific internal system id is recognized as
+resource and will be loaded from a resource shipping with the Ivy
+distribution in order to deal with invalid POM files accepted by
+Apache Maven - and the default value for this property is
+`IGNORE`in that case. See
+link:https://issues.apache.org/jira/browse/IVY-921[IVY-921] for
+details.

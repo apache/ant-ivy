@@ -15,26 +15,31 @@
  *  limitations under the License.
  *
  */
-package org.apache.ivy.util.url;
+package org.apache.ivy.plugins.pack;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.zip.GZIPInputStream;
 
-import java.net.URL;
-import java.util.List;
+import org.apache.commons.compress.compressors.pack200.Pack200CompressorInputStream;
 
-import org.junit.Test;
+class Pack200Util {
 
-public class ArtifactoryListingTest {
-    // remote.test
+  static InputStream unpack(InputStream packed) throws IOException {
+    BufferedInputStream buffered = new BufferedInputStream(packed);
+    buffered.mark(4);
+    byte[] magic = new byte[4];
+    buffered.read(magic, 0, 4);
+    buffered.reset();
 
-    @Test
-    public void testWicketListing() throws Exception {
-        ApacheURLLister lister = new ApacheURLLister();
-
-        List<URL> content = lister.listAll(new URL(
-                "http://repo.jfrog.org/artifactory/libs-releases-local/org/apache/wicket/wicket/"));
-        assertNotNull(content);
-        assertEquals(3, content.size());
+    InputStream in = buffered;
+    if (magic[0] == (byte) 0x1F && magic[1] == (byte) 0x8B && magic[2] == (byte) 0x08) {
+      // this is a gziped pack200
+      in = new GZIPInputStream(in);
     }
+
+    return new Pack200CompressorInputStream(in);
+  }
+
 }

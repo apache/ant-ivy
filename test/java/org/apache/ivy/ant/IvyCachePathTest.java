@@ -23,9 +23,11 @@ import org.apache.ivy.TestHelper;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
+import org.apache.tools.ant.taskdefs.condition.JavaVersion;
 import org.apache.tools.ant.types.Path;
 
 import org.junit.After;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -290,6 +292,10 @@ public class IvyCachePathTest {
 
     @Test
     public void testPackedOSGi() {
+        final JavaVersion java14OrHigher = new JavaVersion();
+        java14OrHigher.setAtLeast("14");
+        Assume.assumeFalse("Pack200 tools and API have been removed since JDK 14", java14OrHigher.eval());
+
         project.setProperty("ivy.dep.file",
             "test/repositories/1/packaging/module8/ivys/ivy-1.0.xml");
         path.setPathid("testOSGi");

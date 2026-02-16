@@ -28,20 +28,16 @@ import org.apache.tools.ant.Project;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 
 public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
 
     private IvyDependencyUpdateChecker dependencyUpdateChecker;
-
-    @Rule
-    public ExpectedException expExc = ExpectedException.none();
 
     @Before
     public void setUp() {
@@ -54,8 +50,8 @@ public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
         dependencyUpdateChecker.setProject(project);
     }
 
-   @After
-   public void tearDown() {
+    @After
+    public void tearDown() {
         TestHelper.cleanCache();
     }
 
@@ -137,8 +133,7 @@ public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
      */
     @Test(expected = BuildException.class)
     public void testFailure() {
-        dependencyUpdateChecker
-                .setFile(new File("test/java/org/apache/ivy/ant/ivy-failure.xml"));
+        dependencyUpdateChecker.setFile(new File("test/java/org/apache/ivy/ant/ivy-failure.xml"));
         dependencyUpdateChecker.execute();
     }
 
@@ -147,13 +142,10 @@ public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
      */
     @Test
     public void testFailureWithMissingConfigurations() {
-        expExc.expect(BuildException.class);
-        expExc.expectMessage("unknown");
-
-        dependencyUpdateChecker
-                .setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
+        dependencyUpdateChecker.setFile(new File("test/java/org/apache/ivy/ant/ivy-simple.xml"));
         dependencyUpdateChecker.setConf("default,unknown");
-        dependencyUpdateChecker.execute();
+        Exception exception = assertThrows(BuildException.class, () -> dependencyUpdateChecker.execute());
+        assertEquals("requested configuration not found in apache#resolve-simple;1.0: [ 'unknown' ]", exception.getCause().getMessage());
     }
 
     /**
@@ -161,8 +153,7 @@ public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
      */
     @Test(expected = BuildException.class)
     public void testFailureOnBadDependencyIvyFile() {
-        dependencyUpdateChecker.setFile(new File(
-                "test/java/org/apache/ivy/ant/ivy-failure2.xml"));
+        dependencyUpdateChecker.setFile(new File("test/java/org/apache/ivy/ant/ivy-failure2.xml"));
         dependencyUpdateChecker.execute();
     }
 
@@ -171,15 +162,13 @@ public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
      */
     @Test(expected = BuildException.class)
     public void testFailureOnBadStatusInDependencyIvyFile() {
-        dependencyUpdateChecker.setFile(new File(
-                "test/java/org/apache/ivy/ant/ivy-failure3.xml"));
+        dependencyUpdateChecker.setFile(new File("test/java/org/apache/ivy/ant/ivy-failure3.xml"));
         dependencyUpdateChecker.execute();
     }
 
     @Test
     public void testHaltOnFailure() {
-        dependencyUpdateChecker
-                .setFile(new File("test/java/org/apache/ivy/ant/ivy-failure.xml"));
+        dependencyUpdateChecker.setFile(new File("test/java/org/apache/ivy/ant/ivy-failure.xml"));
         dependencyUpdateChecker.setHaltonfailure(false);
         dependencyUpdateChecker.execute();
     }
@@ -190,10 +179,8 @@ public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
         dependencyUpdateChecker.setConf("*,!default");
         dependencyUpdateChecker.execute();
 
-        // assertTrue(getIvyFileInCache(ModuleRevisionId.newInstance("org1", "mod1.1", "2.0"))
-        // .exists());
-        // assertFalse(getIvyFileInCache(ModuleRevisionId.newInstance("org1", "mod1.2", "2.0"))
-        // .exists());
+        // assertTrue(getIvyFileInCache(ModuleRevisionId.newInstance("org1", "mod1.1", "2.0")).exists());
+        // assertFalse(getIvyFileInCache(ModuleRevisionId.newInstance("org1", "mod1.2", "2.0")).exists());
 
         assertLogContaining("Dependencies updates available :");
         assertLogContaining("All dependencies are up to date");
@@ -213,8 +200,7 @@ public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
         dependencyUpdateChecker.getProject().setProperty("ivy.dep.file", ivyFile.getAbsolutePath());
         dependencyUpdateChecker.execute();
 
-        // assertTrue(getResolvedIvyFileInCache(
-        // ModuleRevisionId.newInstance("apache", "resolve-simple", "1.0")).exists());
+        // assertTrue(getResolvedIvyFileInCache(ModuleRevisionId.newInstance("apache", "resolve-simple", "1.0")).exists());
     }
 
     /**
@@ -228,8 +214,7 @@ public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
             "test/java/org/apache/ivy/ant/ivy-simple.xml");
         dependencyUpdateChecker.execute();
 
-        // assertTrue(getResolvedIvyFileInCache(
-        // ModuleRevisionId.newInstance("apache", "resolve-simple", "1.0")).exists());
+        // assertTrue(getResolvedIvyFileInCache(ModuleRevisionId.newInstance("apache", "resolve-simple", "1.0")).exists());
 
         assertLogContaining("Dependencies updates available :");
         assertLogContaining("org1#mod1.2\t2.0 -> 2.2");
@@ -237,26 +222,28 @@ public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
 
     @Test
     public void testSimpleExtends() {
-        dependencyUpdateChecker.setFile(new File(
-                "test/java/org/apache/ivy/ant/ivy-extends-multiconf.xml"));
+        dependencyUpdateChecker.setFile(new File("test/java/org/apache/ivy/ant/ivy-extends-multiconf.xml"));
         dependencyUpdateChecker.execute();
-        assertEquals("1", dependencyUpdateChecker.getProject().getProperty("ivy.parents.count"));
-        assertEquals("apache",
-            dependencyUpdateChecker.getProject().getProperty("ivy.parent[0].organisation"));
-        assertEquals("resolve-simple",
-            dependencyUpdateChecker.getProject().getProperty("ivy.parent[0].module"));
-        assertEquals("1.0",
-            dependencyUpdateChecker.getProject().getProperty("ivy.parent[0].revision"));
-        assertNull(dependencyUpdateChecker.getProject().getProperty("ivy.parent[0].branch"));
 
-        assertLogContaining("Dependencies updates available :");
+        Project project = dependencyUpdateChecker.getProject();
+        assertEquals("1", project.getProperty("ivy.parents.count"));
+        assertEquals("apache", project.getProperty("ivy.parent[0].organisation"));
+        assertEquals("resolve-simple", project.getProperty("ivy.parent[0].module"));
+        assertEquals("1.0", project.getProperty("ivy.parent[0].revision"));
+        assertNull(project.getProperty("ivy.parent[0].branch"));
+
+        assertLogContaining("Dependencies updates available");
+        // ivy-extends-multiconf.xml declares org1:mod1.1:1.1
         assertLogContaining("org1#mod1.1\t1.1 -> 2.0");
-        assertLogContaining("org1#mod1.1\t1.0 -> 2.0");
-        assertLogContaining("org1#mod1.2\t2.1 -> 2.2");
-        assertLogContaining("org2#mod2.1\t0.3 -> 0.7");
-
-        // inherited from parent
+        // ivy-multiconf.xml declares org1:mod1.1:2.0 -- no update available
+        assertLogNotContaining("org1#mod1.1\t2.0");
+        // ivy-multiconf.xml declares org1:mod1.2:2.0
         assertLogContaining("org1#mod1.2\t2.0 -> 2.2");
+        // ivy-extends-multiconf.xml declares org2:mod2.1:0.3
+        assertLogContaining("org2#mod2.1\t0.3 -> 0.7");
+        // org2:mod2.1:0.3 ivy.xml declares org1:mod1.1:1.0
+        assertLogContaining("org1#mod1.1\t1.0 -> 2.0");
+        // org1:mod1.1:2.0 ivy.xml declares org1:mod1.2:2.1
+        assertLogContaining("org1#mod1.2\t2.1 -> 2.2");
     }
-
 }

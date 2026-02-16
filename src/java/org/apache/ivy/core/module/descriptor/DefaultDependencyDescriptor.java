@@ -229,6 +229,10 @@ public class DefaultDependencyDescriptor implements DependencyDescriptor {
         return getDependencyRevisionId().getModuleId();
     }
 
+    public ModuleDescriptor getModuleDescriptor() {
+        return md;
+    }
+
     public ModuleRevisionId getDependencyRevisionId() {
         return revId;
     }

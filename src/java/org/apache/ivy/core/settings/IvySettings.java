@@ -33,7 +33,6 @@ import org.apache.ivy.core.module.id.ModuleId;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.module.id.ModuleRules;
 import org.apache.ivy.core.module.status.StatusManager;
-import org.apache.ivy.core.pack.ArchivePacking;
 import org.apache.ivy.core.pack.PackingRegistry;
 import org.apache.ivy.core.publish.PublishEngineSettings;
 import org.apache.ivy.core.repository.RepositoryManagementEngineSettings;
@@ -50,6 +49,7 @@ import org.apache.ivy.plugins.circular.WarnCircularDependencyStrategy;
 import org.apache.ivy.plugins.conflict.ConflictManager;
 import org.apache.ivy.plugins.conflict.LatestCompatibleConflictManager;
 import org.apache.ivy.plugins.conflict.LatestConflictManager;
+import org.apache.ivy.plugins.conflict.NearestConflictManager;
 import org.apache.ivy.plugins.conflict.NoConflictManager;
 import org.apache.ivy.plugins.conflict.StrictConflictManager;
 import org.apache.ivy.plugins.latest.LatestLexicographicStrategy;
@@ -67,6 +67,9 @@ import org.apache.ivy.plugins.matcher.MapMatcher;
 import org.apache.ivy.plugins.matcher.PatternMatcher;
 import org.apache.ivy.plugins.matcher.RegexpPatternMatcher;
 import org.apache.ivy.plugins.namespace.Namespace;
+import org.apache.ivy.plugins.pack.ArchivePacking;
+import org.apache.ivy.plugins.pack.OsgiBundlePacking;
+import org.apache.ivy.plugins.pack.ZipPacking;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParser;
 import org.apache.ivy.plugins.parser.ModuleDescriptorParserRegistry;
 import org.apache.ivy.plugins.parser.ParserSettings;
@@ -267,6 +270,7 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
                 latestTimeStrategy));
         addConflictManager("all", new NoConflictManager());
         addConflictManager("strict", new StrictConflictManager());
+        addConflictManager("nearest", new NearestConflictManager());
 
         addMatcher(ExactPatternMatcher.INSTANCE);
         addMatcher(RegexpPatternMatcher.INSTANCE);
@@ -284,6 +288,21 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
             // ignore: the matcher isn't on the classpath
             Message.info("impossible to define glob matcher: "
                     + "org.apache.ivy.plugins.matcher.GlobPatternMatcher was not found", e);
+        }
+
+        addArchivePacking(new ZipPacking());
+        addArchivePacking(new OsgiBundlePacking());
+        try {
+            // Pack200Packing is optional. Only add it when available.
+            @SuppressWarnings("unchecked")
+            Class<? extends ArchivePacking> pack200 = (Class<? extends ArchivePacking>) IvySettings.class
+                .getClassLoader()
+                .loadClass("org.apache.ivy.plugins.pack.Pack200Packing");
+            addArchivePacking(pack200.newInstance());
+        } catch (Exception t) {
+            // ignore: the pack200 packing isn't on the classpath
+            Message.info("impossible to define pack200 packaging: "
+                         + "org.apache.ivy.plugins.pack.Pack200Packing was not found", t);
         }
 
         addReportOutputter(new LogReportOutputter());
@@ -1554,6 +1573,10 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     }
 
     public synchronized void addConfigured(ArchivePacking packing) {
+        addArchivePacking(packing);
+    }
+
+    public synchronized void addArchivePacking(ArchivePacking packing) {
         init(packing);
         packingRegistry.register(packing);
     }

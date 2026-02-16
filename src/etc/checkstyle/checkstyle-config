@@ -44,6 +44,7 @@
     <module name="JavadocType">
       <property name="scope" value="protected"/>
     </module>
+    <!--
     <module name="JavadocMethod">
       <property name="scope" value="protected"/>
       <!-- <property name="allowUndeclaredRTE" value="true"/> -->
@@ -51,6 +52,7 @@
     <module name="JavadocVariable">
        <property name="scope" value="public"/>
     </module>
+    -->
 
     <!-- element naming -->
     <module name="PackageName"/>
@@ -125,9 +127,8 @@
     <module name="ArrayTypeStyle"/>
     <!-- <module name="TodoComment"/> -->
     <module name="UpperEll"/>
-    <!-- allow comment suppression of checks -->
-    <!-- <module name="FileContentsHolder"/> --><!-- removed in 8.2 -->
     <!--
+    <module name="FileContentsHolder"/>
     <module name="GenericIllegalRegexp">
       <property name="format" value="\s+$"/>
       <property name="message" value="Line has trailing spaces."/>
@@ -140,7 +141,14 @@
     </module>
   </module>
 
-  <!-- <module name="au.com.redhillconsulting.simian.SimianCheck"/> -->
+  <!--
+  <module name="SuppressionCommentFilter">
+    <property name="offCommentFormat" value="CheckStyle\:([\w\|]+) *OFF"/>
+    <property name="onCommentFormat" value="CheckStyle\:([\w\|]+) *ON"/>
+    <property name="checkFormat" value="$1"/>
+  </module>
+  -->
+
   <module name="SuppressionFilter">
     <property name="file" value="${checkstyle.src.dir}/checkstyle-suppress.xml"/>
   </module>

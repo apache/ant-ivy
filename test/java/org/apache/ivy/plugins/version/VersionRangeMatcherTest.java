@@ -45,6 +45,9 @@ public class VersionRangeMatcherTest {
         assertAccept("(3.8,4.0)", "3.9", true);
         assertAccept("(3.8,4.0)", "4.0", false);
         assertAccept("(3.8,4.0)", "4.1", false);
+
+        assertAccept("[2.3.0,3.0.0)", "3.0.0", false);
+        assertAccept("[2.3.0,3.0.0)", "2.3.0", true);
     }
 
     @Test
@@ -117,6 +120,8 @@ public class VersionRangeMatcherTest {
         assertAccept("[1.0,2.0[", "2.0", false);
         assertAccept("]1.0,2.0[", "2.0", false);
         assertAccept("]1.0,2.0]", "2.0", true);
+        assertAccept("[2.3.0,3.0.0[", "3.0.0", false);
+        assertAccept("[2.3.0,3.0.0[", "2.3.0", true);
     }
 
     @Test

@@ -72,9 +72,9 @@ This resolver shares the link:../settings/resolvers{outfilesuffix}#common[common
 [options="header",cols="15%,50%,35%"]
 |=======
 |Attribute|Description|Required
-|m2compatible|True if this resolver should be Maven 2 compatible, false otherwise (*__since 1.3__*)|No, defaults to false
+|m2compatible|True if this resolver should be Maven 2 compatible, false otherwise (*__since 1.3__*).|No, defaults to false
 |local|True if this resolver should be considered local, false otherwise (*__since 1.4__*). See useOrigin attribute on the link:../settings/caches{outfilesuffix}[caches] element for details.|No, defaults to true
-|transactional|true to force the use of transaction, false to prevent the use of transaction, auto to get transaction when possible (*__since 2.0__*). See above for details.|No, defaults to auto
+|transactional|True to force the use of transaction, false to prevent the use of transaction, auto to get transaction when possible (*__since 2.0__*). See above for details.|No, defaults to auto
 |=======
 
 
@@ -84,6 +84,6 @@ This resolver shares the link:../settings/resolvers{outfilesuffix}#common[common
 [options="header"]
 |=======
 |Element|Description|Cardinality
-|ivy|defines a pattern for Ivy files, using the pattern attribute|0..n
-|artifact|defines a pattern for artifacts, using the pattern attribute|1..n
+|ivy|Defines a link:../concept{outfilesuffix}#patterns[pattern] for Ivy files, using the pattern attribute.|0..n
+|artifact|Defines a link:../concept{outfilesuffix}#patterns[pattern] for artifacts, using the pattern attribute.|1..n
 |=======

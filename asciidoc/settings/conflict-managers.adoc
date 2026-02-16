@@ -42,6 +42,9 @@ Here is a list of built-in conflict managers (which do not require anything in t
     * strict +
      this conflict manager throws an exception (i.e. causes a build failure) whenever a conflict is found.
 
+    * nearest (*__since 2.6.0__*) +
+     this conflict manager selects the nearest version in the dependency graph, i.e. the one which is closest to the root of the dependency graph. This is compatible with the Maven conflict handling.
+
 The two "latest" conflict managers also take into account the force attribute of the dependencies.
 In fact, direct dependencies can declare a force attribute (see link:../ivyfile/dependency{outfilesuffix}[dependency]), which indicates that the revision given in the direct dependency should be preferred over indirect dependencies.
 

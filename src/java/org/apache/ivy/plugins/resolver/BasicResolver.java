@@ -244,6 +244,15 @@ public abstract class BasicResolver extends AbstractResolver {
 
                 nsMd = DefaultModuleDescriptor.newDefaultInstance(nsMrid,
                     nsDd.getAllDependencyArtifacts());
+
+                ModuleDescriptor md = dd.getModuleDescriptor();
+                if (md != null) {
+                    Map<String, String> extraAttributesNamespaces = md.getExtraAttributesNamespaces();
+                    for (Map.Entry<String, String> entry : extraAttributesNamespaces.entrySet()) {
+                      ((DefaultModuleDescriptor) nsMd).addExtraAttributeNamespace(entry.getKey(), entry.getValue());
+                    }
+                }
+
                 ResolvedResource artifactRef = findFirstArtifactRef(nsMd, nsDd, data);
                 checkInterrupted();
 

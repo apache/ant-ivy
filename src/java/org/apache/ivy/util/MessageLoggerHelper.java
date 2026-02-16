@@ -17,34 +17,35 @@
  */
 package org.apache.ivy.util;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public final class MessageLoggerHelper {
     public static void sumupProblems(MessageLogger logger) {
-        List<String> myProblems = logger.getProblems();
-        if (myProblems.size() > 0) {
-            List<String> myWarns = logger.getWarns();
-            List<String> myErrors = logger.getErrors();
-            logger.info(""); // new line on info to isolate error summary
-            if (!myErrors.isEmpty()) {
-                logger.log(":: problems summary ::", Message.MSG_ERR);
-            } else {
-                logger.log(":: problems summary ::", Message.MSG_WARN);
-            }
-            if (myWarns.size() > 0) {
-                logger.log(":::: WARNINGS", Message.MSG_WARN);
-                for (String msg : myWarns) {
-                    logger.log("\t" + msg + "\n", Message.MSG_WARN);
-                }
-            }
-            if (myErrors.size() > 0) {
-                logger.log(":::: ERRORS", Message.MSG_ERR);
-                for (String msg : myErrors) {
-                    logger.log("\t" + msg + "\n", Message.MSG_ERR);
-                }
-            }
-            logger.info("\n:: USE VERBOSE OR DEBUG MESSAGE LEVEL FOR MORE DETAILS");
+        if (logger.getProblems().isEmpty()) {
+            return;
         }
+        final List<String> warns = new ArrayList<>(logger.getWarns());
+        final List<String> errors = new ArrayList<>(logger.getErrors());
+        logger.info(""); // new line on info to isolate error summary
+        if (!errors.isEmpty()) {
+            logger.log(":: problems summary ::", Message.MSG_ERR);
+        } else {
+            logger.log(":: problems summary ::", Message.MSG_WARN);
+        }
+        if (warns.size() > 0) {
+            logger.log(":::: WARNINGS", Message.MSG_WARN);
+            for (String msg : warns) {
+                logger.log("\t" + msg + "\n", Message.MSG_WARN);
+            }
+        }
+        if (errors.size() > 0) {
+            logger.log(":::: ERRORS", Message.MSG_ERR);
+            for (String msg : errors) {
+                logger.log("\t" + msg + "\n", Message.MSG_ERR);
+            }
+        }
+        logger.info("\n:: USE VERBOSE OR DEBUG MESSAGE LEVEL FOR MORE DETAILS");
     }
 
     private MessageLoggerHelper() {

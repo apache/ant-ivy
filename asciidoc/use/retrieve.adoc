@@ -35,8 +35,8 @@ For instance, for the pattern `lib/[conf]/[artifact].[ext]`, the root will be `l
 [options="header",cols="15%,50%,35%"]
 |=======
 |Attribute|Description|Required
-|pattern|the pattern to use to copy the dependencies|No. Defaults to `${ivy.retrieve.pattern}`
-|ivypattern|the pattern to use to copy the Ivy files of dependencies (*__since 1.3__*)|No. Dependency Ivy files are not retrieved by default.
+|pattern|The link:../concept{outfilesuffix}#patterns[pattern] to use to copy the dependencies. Make sure to specify a pattern that defines unique filenames for the artifacts.|No. Defaults to `${ivy.retrieve.pattern}`
+|ivypattern|the link:../concept{outfilesuffix}#patterns[pattern] to use to copy the Ivy files of dependencies (*__since 1.3__*)|No. Dependency Ivy files are not retrieved by default.
 |conf|a comma separated list of the configurations to retrieve|No. Defaults to the configurations resolved by the last resolve call, or `$$*$$` if no resolve was explicitly called
 |sync|`true` to synchronize the destination, false to just make a copy (*__since 1.4__*)|No. Defaults to `false`
 |type|comma separated list of accepted artifact types (*__since 1.4__*)|No. All artifact types are accepted by default.

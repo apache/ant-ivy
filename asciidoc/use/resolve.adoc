@@ -78,7 +78,7 @@ This table gives some statistics about the dependency resolution. Each line corr
 
 [*__since 1.4__*]
 
- The inline mode allows to call a resolve without an Ivy file, by setting directly the module which should be resolved from the repository. It is particularly useful to install released software, like an Ant task for example. When `inline` is set to `true`, the organisation module and revision attributes are used to specify which module should be resolved from the repository.
+The inline mode allows to call a resolve without an Ivy file, by setting directly the module which should be resolved from the repository. It is particularly useful to install released software, like an Ant task for example. When `inline` is set to `true`, the organisation module and revision attributes are used to specify which module should be resolved from the repository.
 
 *Remark:* if you want the standard Ivy properties to be set or to reuse the results of an inline resolve by other post-resolve tasks like `retrieve`, `cachepath`, `report`...,  you must set the keep attribute to `true`!
 
@@ -148,7 +148,8 @@ There is one important difference with the ivy.xml's link:../ivyfile/dependencie
 |Element|Description|Cardinality
 |link:../ivyfile/dependency{outfilesuffix}[dependency]|declares a dependency to resolve|0..n
 |link:../ivyfile/exclude{outfilesuffix}[exclude]|excludes artifacts, modules or whole organizations from the set of dependencies to resolve|0..n
-|link:../ivyfile/override{outfilesuffix}[override]|specify an override mediation rule, overriding the revision and/or branch requested for a transitive dependency (*__since 2.0__*)|0..n
+|link:../ivyfile/override{outfilesuffix}[override]|specify an override mediation rule, overriding the revision and/or branch requested for a transitive dependency (*__since 2.6__*)|0..n
+|link:../ivyfile/conflict{outfilesuffix}[conflict]|specify a a conflict manager for one or several dependencies|0..n
 |=======
 
 == Examples

@@ -22,6 +22,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.ivy.core.cache.DefaultResolutionCacheManager;
 import org.apache.ivy.core.cache.ResolutionCacheManager;
 import org.apache.ivy.core.report.ConfigurationResolveReport;
 import org.apache.ivy.core.report.ResolveReport;
@@ -52,6 +53,9 @@ public class XmlReportOutputter implements ReportOutputter {
             ResolutionCacheManager cacheMgr) throws IOException {
         File reportFile = cacheMgr.getConfigurationResolveReportInCache(resolveId,
             report.getConfiguration());
+        if (cacheMgr instanceof DefaultResolutionCacheManager) {
+            ((DefaultResolutionCacheManager) cacheMgr).assertInsideCache(reportFile);
+        }
         File reportParentDir = reportFile.getParentFile();
         reportParentDir.mkdirs();
         OutputStream stream = new FileOutputStream(reportFile);

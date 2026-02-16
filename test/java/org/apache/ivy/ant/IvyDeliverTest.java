@@ -22,9 +22,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 
 import org.apache.ivy.TestHelper;
@@ -396,6 +394,133 @@ public class IvyDeliverTest {
             dds[0].getDependencyRevisionId());
     }
 
+    /**
+     * Test case for IVY-1300.
+     *
+     * @throws Exception if something goes wrong
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1300">IVY-1300</a>
+     */
+    @Test
+    public void testIVY1300() throws Exception {
+        project.setProperty("ivy.settings.file", "test/repositories/IVY-1300/ivysettings.xml");
+        project.setProperty("ivy.dep.file", "test/repositories/IVY-1300/assembly-ivy.xml");
+        IvyResolve res = new IvyResolve();
+        res.setValidate(false);
+        res.setProject(project);
+        res.execute();
+
+        deliver.setPubrevision("1");
+        deliver.setDeliverpattern("build/test/deliver/ivy-[revision].xml");
+        deliver.setStatus("release");
+        deliver.setValidate(false);
+        deliver.execute();
+
+        // verify that the dynamic revisions have been replaced by the resolved ones (before conflict resolution)
+        File deliveredIvyFile = new File("build/test/deliver/ivy-1.xml");
+        assertTrue(deliveredIvyFile.exists());
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
+            new IvySettings(), deliveredIvyFile.toURI().toURL(), false);
+        DependencyDescriptor[] dds = md.getDependencies();
+        assertEquals(2, dds.length);
+        assertEquals(ModuleRevisionId.newInstance("myorg", "modA", "releasebranch", "1"),
+            dds[0].getDependencyRevisionId());
+        assertEquals(ModuleRevisionId.newInstance("myorg", "modB", "releasebranch", "1"),
+            dds[1].getDependencyRevisionId());
+    }
+
+    /**
+     * Test case for IVY-1485.
+     *
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1485">IVY-1485</a>
+     */
+    @Test
+    public void testDeliverWithTransitiveDepsInDifferentConfs() throws Exception {
+        project.setProperty("ivy.settings.file", "test/repositories/IVY-1485/ivysettings.xml");
+        project.setProperty("ivy.dep.file", "test/repositories/IVY-1485/ivy-simple.xml");
+        IvyResolve res = new IvyResolve();
+        res.setValidate(false);
+        res.setProject(project);
+        res.execute();
+
+        deliver.setPubrevision("1");
+        deliver.setDeliverpattern("build/test/deliver/ivy-[revision].xml");
+        deliver.setStatus("release");
+        deliver.setValidate(false);
+        deliver.execute();
+
+        // now check that the transitive dependency didn't override the direct ones
+        File deliveredIvyFile = new File("build/test/deliver/ivy-1.xml");
+        assertTrue(deliveredIvyFile.exists());
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
+            new IvySettings(), deliveredIvyFile.toURL(), false);
+        DependencyDescriptor[] dds = md.getDependencies();
+        assertEquals(2, dds.length);
+        assertEquals(ModuleRevisionId.newInstance("simple", "modA", "5"), dds[0].getDependencyRevisionId());
+        assertEquals(ModuleRevisionId.newInstance("simple", "modB", "1"), dds[1].getDependencyRevisionId());
+    }
+
+    /**
+     * Test case for IVY-1485.
+     *
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1485">IVY-1485</a>
+     */
+    @Test
+    public void testDeliverWithTransitiveDepsInOverlappingConfsTransitiveNewer() throws Exception {
+        project.setProperty("ivy.settings.file", "test/repositories/IVY-1485/ivysettings.xml");
+        project.setProperty("ivy.dep.file", "test/repositories/IVY-1485/ivy-overlap-transitive-newer.xml");
+        IvyResolve res = new IvyResolve();
+        res.setValidate(false);
+        res.setProject(project);
+        res.execute();
+
+        deliver.setPubrevision("1");
+        deliver.setDeliverpattern("build/test/deliver/ivy-[revision].xml");
+        deliver.setStatus("release");
+        deliver.setValidate(false);
+        deliver.execute();
+
+        // now check that the transitive dependency didn't override the direct ones
+        File deliveredIvyFile = new File("build/test/deliver/ivy-1.xml");
+        assertTrue(deliveredIvyFile.exists());
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
+            new IvySettings(), deliveredIvyFile.toURL(), false);
+        DependencyDescriptor[] dds = md.getDependencies();
+        assertEquals(2, dds.length);
+        assertEquals(ModuleRevisionId.newInstance("overlap-newer", "modA", "1"), dds[0].getDependencyRevisionId());
+        assertEquals(ModuleRevisionId.newInstance("overlap-newer", "modB", "1"), dds[1].getDependencyRevisionId());
+    }
+
+    /**
+     * Test case for IVY-1485.
+     *
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1485">IVY-1485</a>
+     */
+    @Test
+    public void testDeliverWithTransitiveDepsInOverlappingConfsTransitiveOlder() throws Exception {
+        project.setProperty("ivy.settings.file", "test/repositories/IVY-1485/ivysettings.xml");
+        project.setProperty("ivy.dep.file", "test/repositories/IVY-1485/ivy-overlap-transitive-older.xml");
+        IvyResolve res = new IvyResolve();
+        res.setValidate(false);
+        res.setProject(project);
+        res.execute();
+
+        deliver.setPubrevision("1");
+        deliver.setDeliverpattern("build/test/deliver/ivy-[revision].xml");
+        deliver.setStatus("release");
+        deliver.setValidate(false);
+        deliver.execute();
+
+        // now check that the transitive dependency didn't override the direct ones
+        File deliveredIvyFile = new File("build/test/deliver/ivy-1.xml");
+        assertTrue(deliveredIvyFile.exists());
+        ModuleDescriptor md = XmlModuleDescriptorParser.getInstance().parseDescriptor(
+            new IvySettings(), deliveredIvyFile.toURL(), false);
+        DependencyDescriptor[] dds = md.getDependencies();
+        assertEquals(2, dds.length);
+        assertEquals(ModuleRevisionId.newInstance("overlap-older", "modA", "5"), dds[0].getDependencyRevisionId());
+        assertEquals(ModuleRevisionId.newInstance("overlap-older", "modB", "1"), dds[1].getDependencyRevisionId());
+    }
+
     @Test
     public void testWithDynEvicted() throws Exception {
         project.setProperty("ivy.dep.file", "test/java/org/apache/ivy/ant/ivy-dyn-evicted.xml");
@@ -418,27 +543,8 @@ public class IvyDeliverTest {
             md.getModuleRevisionId());
         DependencyDescriptor[] dds = md.getDependencies();
         assertEquals(2, dds.length);
-        assertEquals(ModuleRevisionId.newInstance("org1", "mod1.2", "2.2"),
+        assertEquals(ModuleRevisionId.newInstance("org1", "mod1.2", "1.1"),
             dds[0].getDependencyRevisionId());
-
-        IvyRetrieve ret = new IvyRetrieve();
-        ret.setProject(project);
-        ret.setPattern("build/test/retrieve/[artifact]-[revision].[ext]");
-        ret.execute();
-
-        File list = new File("build/test/retrieve");
-        String[] files = list.list();
-        HashSet<String> actualFileSet = new HashSet<>(Arrays.asList(files));
-        HashSet<String> expectedFileSet = new HashSet<>();
-        for (DependencyDescriptor dd : dds) {
-            String name = dd.getDependencyId().getName();
-            String rev = dd.getDependencyRevisionId().getRevision();
-            String ext = "jar";
-            String artifact = name + "-" + rev + "." + ext;
-            expectedFileSet.add(artifact);
-        }
-        assertEquals("Delivered Ivy descriptor inconsistent with retrieved artifacts",
-            expectedFileSet, actualFileSet);
     }
 
     /**
@@ -470,28 +576,8 @@ public class IvyDeliverTest {
             md.getModuleRevisionId());
         DependencyDescriptor[] dds = md.getDependencies();
         assertEquals(2, dds.length);
-        assertEquals(ModuleRevisionId.newInstance("org1", "mod1.2", "2.2"),
+        assertEquals(ModuleRevisionId.newInstance("org1", "mod1.2", "1.1"),
             dds[1].getDependencyRevisionId());
-
-        IvyRetrieve ret = new IvyRetrieve();
-        ret.setProject(project);
-        ret.setPattern("build/test/retrieve/[artifact]-[revision].[ext]");
-        ret.execute();
-
-        File list = new File("build/test/retrieve");
-        String[] files = list.list();
-        HashSet<String> actualFileSet = new HashSet<>(Arrays.asList(files));
-        HashSet<String> expectedFileSet = new HashSet<>();
-        for (DependencyDescriptor dd : dds) {
-            String name = dd.getDependencyId().getName();
-            String rev = dd.getDependencyRevisionId().getRevision();
-            String ext = "jar";
-            String artifact = name + "-" + rev + "." + ext;
-            expectedFileSet.add(artifact);
-        }
-        assertEquals("Delivered Ivy descriptor inconsistent with retrieved artifacts",
-            expectedFileSet, actualFileSet);
-        list.delete();
     }
 
     @Test

@@ -17,9 +17,13 @@
  */
 package org.apache.ivy.plugins.parser.xml;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -80,6 +84,7 @@ import org.apache.ivy.util.Message;
 import org.apache.ivy.util.XMLHelper;
 import org.apache.ivy.util.extendable.ExtendableItemHelper;
 import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import static org.apache.ivy.core.module.descriptor.Configuration.Visibility.getVisibility;
@@ -214,7 +219,9 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
         }
 
         protected static final List<String> ALLOWED_VERSIONS = Arrays.asList("1.0",
-                "1.1", "1.2", "1.3", "1.4", "2.0", "2.1", "2.2", "2.3", "2.4");
+                "1.1", "1.2", "1.3", "1.4", "2.0", "2.1", "2.2", "2.3", "2.4", "2.5", "2.6");
+
+        private static final String IVY_XSD_CONTENT;
 
         /* how and what do we have to parse */
         private ParserSettings settings;
@@ -248,6 +255,40 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
 
         private Stack<ExtraInfoHolder> extraInfoStack = new Stack<>();
 
+        static {
+            String ivyXSDContent = null;
+            final InputStream is = Parser.class.getResourceAsStream("ivy.xsd");
+            if (is != null) {
+                final StringBuilder sb = new StringBuilder();
+                try {
+                    try {
+                        final BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+                        String line = null;
+                        while ((line = reader.readLine()) != null) {
+                            if (sb.length() != 0) {
+                                sb.append("\n");
+                            }
+                            sb.append(line);
+                        }
+                    } catch (UnsupportedEncodingException e) {
+                        // ignore
+                        ivyXSDContent = null;
+                    } catch (IOException e) {
+                        // ignore
+                        ivyXSDContent = null;
+                    }
+                } finally {
+                    try {
+                        is.close();
+                    } catch (Exception e) {
+                        // ignore
+                    }
+                }
+                ivyXSDContent = sb.length() == 0 ? null : sb.toString();
+            }
+            IVY_XSD_CONTENT = ivyXSDContent;
+        }
+
         public Parser(ModuleDescriptorParser parser, ParserSettings ivySettings) {
             super(parser);
             settings = ivySettings;
@@ -268,10 +309,14 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
         public void parse() throws ParseException {
             try {
                 URL schemaURL = validate ? getSchemaURL() : null;
+                XMLHelper.ExternalResources e =
+                    validate && System.getProperty(XMLHelper.EXTERNAL_RESOURCES) == null
+                    ? XMLHelper.ExternalResources.IGNORE
+                    : XMLHelper.ExternalResources.fromSystemProperty();
                 if (descriptorURL != null) {
-                    XMLHelper.parse(descriptorURL, schemaURL, this);
+                    XMLHelper.parse(descriptorURL, schemaURL, this, null, e);
                 } else {
-                    XMLHelper.parse(descriptorInput, schemaURL, this, null);
+                    XMLHelper.parse(descriptorInput, schemaURL, this, null, e);
                 }
                 checkConfigurations();
                 replaceConfigurationWildcards();
@@ -294,6 +339,26 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
                 pe.initCause(ex);
                 throw pe;
             }
+        }
+
+        @Override
+        public InputSource resolveEntity(final String publicId, final String systemId)
+                throws IOException, SAXException {
+            if (isApacheOrgIvyXSDSystemId(systemId) && IVY_XSD_CONTENT != null) {
+                // redirect the schema location to local file based ivy.xsd whose content
+                // we have already read and is available in-memory.
+                final InputSource source = new InputSource(new StringReader(IVY_XSD_CONTENT));
+                return source;
+            }
+            return super.resolveEntity(publicId, systemId);
+        }
+
+        private static boolean isApacheOrgIvyXSDSystemId(final String systemId) {
+            if (systemId == null) {
+                return false;
+            }
+            return systemId.equals("http://ant.apache.org/ivy/schemas/ivy.xsd")
+                    || systemId.equals("https://ant.apache.org/ivy/schemas/ivy.xsd");
         }
 
         @Override

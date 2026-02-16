@@ -180,6 +180,7 @@ public class DefaultResolutionCacheManager implements ResolutionCacheManager, Iv
             IOException {
         ModuleRevisionId mrevId = md.getResolvedModuleRevisionId();
         File ivyFileInCache = getResolvedIvyFileInCache(mrevId);
+        assertInsideCache(ivyFileInCache);
         md.toIvyFile(ivyFileInCache);
 
         Properties paths = new Properties();
@@ -188,9 +189,19 @@ public class DefaultResolutionCacheManager implements ResolutionCacheManager, Iv
         if (!paths.isEmpty()) {
             File parentsFile = getResolvedIvyPropertiesInCache(ModuleRevisionId.newInstance(mrevId,
                 mrevId.getRevision() + "-parents"));
+            assertInsideCache(parentsFile);
             FileOutputStream out = new FileOutputStream(parentsFile);
             paths.store(out, null);
             out.close();
+        }
+    }
+
+    /**
+     * @throws IllegalArgumentException if the given path points outside of the cache.
+     */
+    public final void assertInsideCache(File fileInCache) {
+        if (!FileUtil.isLeadingPath(getResolutionCacheRoot(), fileInCache)) {
+            throw new IllegalArgumentException(fileInCache + " is outside of the cache");
         }
     }
 
@@ -206,6 +217,7 @@ public class DefaultResolutionCacheManager implements ResolutionCacheManager, Iv
             ModuleRevisionId pRevId = ModuleRevisionId.newInstance(baseMrevId,
                 baseMrevId.getRevision() + "-parent." + paths.size());
             File parentFile = getResolvedIvyFileInCache(pRevId);
+            assertInsideCache(parentFile);
             parentMd.toIvyFile(parentFile);
 
             paths.setProperty(mdFile.getName() + "|" + parent.getLocation(),

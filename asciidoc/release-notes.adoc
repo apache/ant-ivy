@@ -36,22 +36,13 @@ More information about the project can be found on the website link:https://ant.
 
 Key features of this 2.6.0 release are:
 
-    * Ivy now requires a minimum of Java 8 runtime.
-
-
 == List of Changes in this Release
 
 For details about the following changes, check our JIRA install at link:https://issues.apache.org/jira/browse/IVY[]
 
-*List of changes since Ivy 2.5.0:*
+*List of changes since Ivy 2.6.0:*
 
-- BREAKING: Removed old fr\jayasoft\ivy\ant\antlib.xml AntLib definition file (jira:IVY-1612[])
-- FIX:
-
-- IMPROVEMENT:
-
-- NEW:
-
+Note, if you have resolved dependencies with version of Ivy prior to 2.6.0, you may need to remove your Ivy cache for some fixes to have any effect.
 
 ////
  Samples :
@@ -60,6 +51,16 @@ For details about the following changes, check our JIRA install at link:https://
 - FIX: bla bla bla (jira:IVY-1234[]) (Thanks to Jane Doe)
 - DOCUMENTATION: bla bla bla (jira:IVY-1234[]) (Thanks to Jane Doe)
 ////
+
+- NEW: added a new `nearest` conflict manager, which handles conflicts in the same way that Maven does. (IVY-813) (Thanks to Eric Milles)
+- IMPROVEMENT: use Apache Commons Compress for pack200 handling to avoid issues on Java 14 and later. If pack200 is needed, make sure to add Apache Commons Compress to your classpath. (IVY-1652)
+- IMPROVEMENT: `ivy:retrieve` and the 'post resolve tasks' now support the `override` child element. (IVY-1664)
+- FIX: improved Maven dependencyManagement matching for dependencies with a non-default type or classifier (IVY-1654) (Thanks to Mark Kittisopikul)
+- FIX: the `ivy:retrieve` task failed when the retrieve pattern contained some text in parentheses before the first token, for instance: `/jobs/lib (JDK 17)/[artifact].[ext]` (IVY-1660)
+- FIX: when the `ivy:deliver` task is configured to replace dynamic revisions, it now replaces these revisions to the resolved revision before any conflict resolution was done, which was the original behavior before Ivy 2.3.0.
+This way, the delivered ivy.xml can be used to have reproducible dependency resolution, especially when multiple configurations are used.
+It also fixes issues where the dynamic revisions were replaced by versions from other configurations. (IVY-1485, IVY-1661)
+- FIX: the `ivy:deliver` task didn't replace dynamic revision from inherited dependencies. (IVY-1410) (Thanks to Eric Milles)
 
 == Committers and Contributors
 
@@ -78,6 +79,7 @@ Here is the list of people who have contributed source code and documentation up
 * Jaikiran Pai
 * Jon Schneider
 * Gilles Scokart
+* Stefan Bodewig
 
 *Contributors:*
 
@@ -87,6 +89,7 @@ Here is the list of people who have contributed source code and documentation up
 * Andreas Axelsson
 * St&eacute;phane Bailliez
 * Karl Baum
+* Moritz Baumann
 * Andrew Bernhagen
 * Mikkel Bjerg
 * Per Arnold Blaasmo
@@ -124,6 +127,7 @@ Here is the list of people who have contributed source code and documentation up
 * Mitch Gitman
 * Evgeny Goldin
 * Scott Goldstein
+* Jason A. Guild
 * Stephen Haberman
 * Aaron Hachez
 * Ben Hale
@@ -142,10 +146,12 @@ Here is the list of people who have contributed source code and documentation up
 * Matthias Kilian
 * Alexey Kiselev
 * Gregory Kisling
+* Mark Kittisopikul
 * Stepan Koltsov
 * Heschi Kreinick
 * Sebastian Krueger
 * Thomas Kurpick
+* Berno Langer
 * Costin Leau
 * Ilya Leoshkevich
 * Tat Leung
@@ -154,19 +160,21 @@ Here is the list of people who have contributed source code and documentation up
 * Andrey Lomakin
 * William Lyvers
 * Sakari Maaranen
+* David Maplesden
+* Glen Marchesani
 * Jan Materne
 * Markus M. May
+* Lewis John McGibbney
+* Phil Messenger
+* Steve Miller
+* Eric Milles
 * Abel Muino
 * J. Lewis Muir
+* Mathias Muller
 * Stephen Nesbitt
 * Joshua Nichols
 * Bernard Niset
 * Ales Nosek
-* David Maplesden
-* Glen Marchesani
-* Phil Messenger
-* Steve Miller
-* Mathias Muller
 * Randy Nott
 * Peter Oxenham
 * Douglas Palmer

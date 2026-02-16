@@ -21,6 +21,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -385,7 +387,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
     public File getArchiveFileInCache(Artifact artifact, ArtifactOrigin origin) {
         File archive = new File(getRepositoryCacheRoot(), getArchivePathInCache(artifact, origin));
         if (!archive.exists() && !ArtifactOrigin.isUnknown(origin) && origin.isLocal()) {
-            File original = Checks.checkAbsolute(origin.getLocation(), artifact
+            File original = Checks.checkAbsolute(parseArtifactOriginFilePath(origin), artifact
                     + " origin location");
             if (original.exists()) {
                 return original;
@@ -407,7 +409,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
      */
     private File getArchiveFileInCache(Artifact artifact, ArtifactOrigin origin, boolean useOrigin) {
         if (useOrigin && !ArtifactOrigin.isUnknown(origin) && origin.isLocal()) {
-            return Checks.checkAbsolute(origin.getLocation(), artifact + " origin location");
+            return Checks.checkAbsolute(parseArtifactOriginFilePath(origin), artifact + " origin location");
         }
         return new File(getRepositoryCacheRoot(), getArchivePathInCache(artifact, origin));
     }
@@ -681,8 +683,10 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
     }
 
     private PropertiesFile getCachedDataFile(ModuleRevisionId mRevId) {
-        return new PropertiesFile(new File(getRepositoryCacheRoot(), IvyPatternHelper.substitute(
-            getDataFilePattern(), mRevId)), "ivy cached data file for " + mRevId);
+        File file = new File(getRepositoryCacheRoot(), IvyPatternHelper.substitute(
+            getDataFilePattern(), mRevId));
+        assertInsideCache(file);
+        return new PropertiesFile(file, "ivy cached data file for " + mRevId);
     }
 
     /**
@@ -691,9 +695,10 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
      */
     private PropertiesFile getCachedDataFile(String resolverName, ModuleRevisionId mRevId) {
         // we append ".${resolverName} onto the end of the regular ivydata location
-        return new PropertiesFile(new File(getRepositoryCacheRoot(),
-                IvyPatternHelper.substitute(getDataFilePattern(), mRevId) + "." + resolverName),
-                "ivy cached data file for " + mRevId);
+        File file = new File(getRepositoryCacheRoot(),
+            IvyPatternHelper.substitute(getDataFilePattern(), mRevId) + "." + resolverName);
+        assertInsideCache(file);
+        return new PropertiesFile(file, "ivy cached data file for " + mRevId);
     }
 
     public ResolvedModuleRevision findModuleInCache(DependencyDescriptor dd,
@@ -1027,6 +1032,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
                                         + resourceResolver
                                         + "': pointing repository to ivy cache is forbidden !");
                             }
+                            assertInsideCache(archiveFile);
                             if (listener != null) {
                                 listener.startArtifactDownload(this, artifactRef, artifact, origin);
                             }
@@ -1145,6 +1151,7 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
                         }
 
                         // actual download
+                        assertInsideCache(archiveFile);
                         if (archiveFile.exists()) {
                             archiveFile.delete();
                         }
@@ -1530,6 +1537,49 @@ public class DefaultRepositoryCacheManager implements RepositoryCacheManager, Iv
         Message.debug("\t\tlockingStrategy: " + getLockStrategy().getName());
         Message.debug("\t\tchangingPattern: " + getChangingPattern());
         Message.debug("\t\tchangingMatcher: " + getChangingMatcherName());
+    }
+
+    /**
+     * @throws IllegalArgumentException if the given path points outside of the cache.
+     */
+    public final void assertInsideCache(File fileInCache) {
+        File root = getRepositoryCacheRoot();
+        if (root != null && !FileUtil.isLeadingPath(root, fileInCache)) {
+            throw new IllegalArgumentException(fileInCache + " is outside of the cache");
+        }
+    }
+
+    /**
+     * If the {@link ArtifactOrigin#getLocation() location of the artifact origin} is a
+     * {@code file:} scheme URI, then this method parses that URI and returns back the
+     * path of the file it represents. Else returns back {@link ArtifactOrigin#getLocation()}
+     * @param origin The artifact origin
+     * @return
+     */
+    private static String parseArtifactOriginFilePath(final ArtifactOrigin origin) {
+        if (origin == null || origin.getLocation() == null) {
+            return null;
+        }
+        final String location = origin.getLocation();
+        if (!location.startsWith("file:")) {
+            // no need to parse it into a URI, if it's not a "file" scheme URI
+            return location;
+        }
+        final URI uri;
+        try {
+            uri = new URI(location);
+        } catch (URISyntaxException e) {
+            return location;
+        }
+        if (!uri.isAbsolute()) {
+            // no scheme in URI, just return the original location
+            return location;
+        } else if (uri.getScheme().equals("file")) {
+            // return the file path
+            return uri.getPath();
+        }
+        // not a "file" scheme URI, just return back the original location
+        return location;
     }
 
     /**

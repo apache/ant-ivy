@@ -27,6 +27,10 @@ public interface PomDependencyMgt {
 
     String getArtifactId();
 
+    String getType();
+
+    String getClassifier();
+
     String getVersion();
 
     String getScope();

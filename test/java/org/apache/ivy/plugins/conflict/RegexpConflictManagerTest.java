@@ -22,24 +22,25 @@ import java.io.File;
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.util.FileUtil;
+
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 
 public class RegexpConflictManagerTest {
+
     private Ivy ivy;
 
     private File cache;
-
-    @Rule
-    public ExpectedException expExc = ExpectedException.none();
 
     @Before
     public void setUp() throws Exception {
         ivy = new Ivy();
         ivy.configure(RegexpConflictManagerTest.class.getResource("ivysettings-regexp-test.xml"));
+
         cache = new File("build/cache");
         cache.mkdirs();
     }
@@ -51,17 +52,13 @@ public class RegexpConflictManagerTest {
 
     @Test
     public void testNoApiConflictResolve() throws Exception {
-        ivy.resolve(RegexpConflictManagerTest.class.getResource("ivy-no-regexp-conflict.xml"),
-                getResolveOptions());
+        ivy.resolve(RegexpConflictManagerTest.class.getResource("ivy-no-regexp-conflict.xml"), getResolveOptions());
     }
 
     @Test
-    public void testConflictResolve() throws Exception {
-        expExc.expect(StrictConflictException.class);
-        expExc.expectMessage("org1#mod1.2;2.0.0:2.0 (needed by [apache#resolve-noconflict;1.0]) conflicts with org1#mod1.2;2.1.0:2.1 (needed by [apache#resolve-noconflict;1.0])");
-
-        ivy.resolve(RegexpConflictManagerTest.class.getResource("ivy-conflict.xml"),
-                getResolveOptions());
+    public void testConflictResolve() {
+        Exception exception = assertThrows(StrictConflictException.class, () -> ivy.resolve(RegexpConflictManagerTest.class.getResource("ivy-conflict.xml"), getResolveOptions()));
+        assertEquals("org1#mod1.2;2.0.0:2.0 (needed by [apache#resolve-noconflict;1.0]) conflicts with org1#mod1.2;2.1.0:2.1 (needed by [apache#resolve-noconflict;1.0])", exception.getMessage());
     }
 
     private ResolveOptions getResolveOptions() {

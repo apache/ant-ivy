@@ -37,6 +37,7 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.module.descriptor.Artifact;
@@ -47,14 +48,28 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.plugins.repository.BasicResource;
 import org.apache.ivy.util.FileUtil;
+import org.apache.ivy.util.XMLHelper;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 public class XmlModuleUpdaterTest {
 
+    // Java8 tries to load ivy.xsd mentioned in
+    // xsd:noNamespaceLocation via https bypassing our UriResolver so
+    // we must allow using http(s) (and thus all) and external entities
+    private final Properties p = (Properties) System.getProperties().clone();
+
+    @Before
+    public void setUp() {
+        System.setProperty(XMLHelper.ALLOW_DOCTYPE_PROCESSING, "true");
+        System.setProperty(XMLHelper.EXTERNAL_RESOURCES, "all");
+    }
+
     @After
     public void tearDown() {
         XmlModuleDescriptorUpdater.LINE_SEPARATOR = System.lineSeparator();
+        System.setProperties(p);
     }
 
     @Test

@@ -20,15 +20,13 @@ package org.apache.ivy.core.pack;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.ivy.plugins.pack.ArchivePacking;
+
 public class PackingRegistry {
 
     private Map<String, ArchivePacking> packings = new HashMap<>();
 
     public PackingRegistry() {
-        // register defaults
-        register(new ZipPacking());
-        register(new Pack200Packing());
-        register(new OsgiBundlePacking());
     }
 
     public void register(ArchivePacking packing) {

@@ -239,8 +239,9 @@ public class HttpClientHandler extends AbstractURLHandler implements TimeoutCons
             if (checkStatusCode(httpMethod, url, response)) {
                 final HttpEntity responseEntity = response.getEntity();
                 final Charset charSet = ContentType.getOrDefault(responseEntity).getCharset();
+                final String charSetName = charSet != null ? charSet.name() : null;
                 return new URLInfo(true, responseEntity == null ? 0 : responseEntity.getContentLength(),
-                        getLastModified(response), charSet.name());
+                        getLastModified(response), charSetName);
             }
         } catch (IOException | IllegalArgumentException e) {
             // IllegalArgumentException is thrown by HttpClient library to indicate the URL is not valid,

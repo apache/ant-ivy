@@ -56,6 +56,7 @@
 A default, defines a link:https://bintray.com/bintray/jcenter[JCenter] bintray resolver.
 In most circumstances you won't need any other resolvers as JCenter is already a super-set of many other repositories, including Maven Central.
 
+NOTE: Bintray and JCenter are being decommissioned by their service provider in the year 2021/2022. Once they are decommissioned, this resolver will no longer work. The original announcement can be read at https://jfrog.com/blog/into-the-sunset-bintray-jcenter-gocenter-and-chartcenter/
 
 '''
 

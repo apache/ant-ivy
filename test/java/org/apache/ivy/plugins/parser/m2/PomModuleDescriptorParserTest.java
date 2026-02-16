@@ -17,12 +17,6 @@
  */
 package org.apache.ivy.plugins.parser.m2;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -57,12 +51,20 @@ import org.apache.ivy.plugins.parser.xml.XmlModuleDescriptorParserTest;
 import org.apache.ivy.plugins.repository.url.URLResource;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.plugins.resolver.MockResolver;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParserTester {
 
@@ -84,9 +86,6 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
     private File dest = new File("build/test/test-write.xml");
 
     private MockResolver mockedResolver = new MockedDependencyResolver();
-
-    @Rule
-    public ExpectedException expExc = ExpectedException.none();
 
     @Rule
     public TemporaryFolder workDir = new TemporaryFolder();
@@ -219,12 +218,10 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
     }
 
     @Test
-    public void testParentNotFound() throws Exception {
-        expExc.expect(IOException.class);
-        expExc.expectMessage("Impossible to load parent");
-
-        PomModuleDescriptorParser.getInstance().parseDescriptor(new IvySettings(),
-                getClass().getResource("test-parent-not-found.pom"), false);
+    public void testParentNotFound() {
+        Exception exception = assertThrows(IOException.class, () ->
+            PomModuleDescriptorParser.getInstance().parseDescriptor(new IvySettings(), getClass().getResource("test-parent-not-found.pom"), false));
+        assertTrue(exception.getMessage().startsWith("Impossible to load parent"));
     }
 
     @Test
@@ -341,6 +338,94 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         dds = md2.getDependencies();
         assertEquals(1, dds[0].getAllDependencyArtifacts().length);
         assertEquals(extraAtt, dds[0].getAllDependencyArtifacts()[0].getExtraAttributes());
+    }
+
+    /**
+     * @see "https://issues.apache.org/jira/browse/IVY-1642"
+     */
+    @Test
+    public void testDependenciesWithAndWithoutClassifier() throws Exception {
+        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(settings,
+            getClass().getResource("test-dependencies-with-and-without-classifier.pom"), true);
+        assertNotNull(md);
+
+        assertEquals(ModuleRevisionId.newInstance("org.apache", "test", "1.0"),
+            md.getModuleRevisionId());
+
+        DependencyDescriptor[] dds = md.getDependencies();
+        assertNotNull(dds);
+        assertEquals(5, dds.length);
+        Map<String, String> extraAtt = Collections.singletonMap("classifier", "asl");
+        assertEquals(ModuleRevisionId.newInstance("commons-logging", "commons-logging", "1.0.4"),
+            dds[0].getDependencyRevisionId());
+        DependencyArtifactDescriptor[] dads = dds[0].getAllDependencyArtifacts();
+        assertEquals(2, dads.length);
+        assertEquals(Collections.emptyMap(), dads[0].getExtraAttributes());
+        assertEquals(extraAtt, dads[1].getExtraAttributes());
+
+        assertEquals(ModuleRevisionId.newInstance("commons-logging", "commons-logging2", "1.0.4"),
+            dds[1].getDependencyRevisionId());
+        dads = dds[1].getAllDependencyArtifacts();
+        assertEquals(2, dads.length);
+        assertEquals(Collections.emptyMap(), dads[1].getExtraAttributes());
+        assertEquals(extraAtt, dads[0].getExtraAttributes());
+
+        assertEquals(ModuleRevisionId.newInstance("commons-logging", "commons-logging3", "1.0.4"),
+            dds[2].getDependencyRevisionId());
+        dads = dds[2].getAllDependencyArtifacts();
+        assertEquals(2, dads.length);
+        assertEquals(extraAtt, dads[0].getExtraAttributes());
+        assertEquals(Collections.singletonMap("classifier", "foo"),
+                     dads[1].getExtraAttributes());
+
+        assertEquals(ModuleRevisionId.newInstance("commons-logging", "commons-logging4", "1.0.4"),
+            dds[3].getDependencyRevisionId());
+        dads = dds[3].getAllDependencyArtifacts();
+        assertEquals(2, dads.length);
+        assertEquals(Collections.emptyMap(), dads[0].getExtraAttributes());
+        assertEquals(extraAtt, dads[1].getExtraAttributes());
+        DependencyArtifactDescriptor[] providedDads = dds[3].getDependencyArtifacts("provided");
+        assertEquals(1, providedDads.length);
+        assertSame(dads[0], providedDads[0]);
+        DependencyArtifactDescriptor[] compileDads = dds[3].getDependencyArtifacts("compile");
+        assertEquals(1, compileDads.length);
+        assertSame(dads[1], compileDads[0]);
+
+        assertEquals(ModuleRevisionId.newInstance("commons-logging", "commons-logging5", "1.0.4"),
+            dds[4].getDependencyRevisionId());
+        dads = dds[4].getAllDependencyArtifacts();
+        assertEquals(2, dads.length);
+        assertEquals(extraAtt, dads[0].getExtraAttributes());
+        assertEquals(Collections.emptyMap(), dads[1].getExtraAttributes());
+        providedDads = dds[4].getDependencyArtifacts("provided");
+        assertEquals(1, providedDads.length);
+        assertSame(dads[1], providedDads[0]);
+        compileDads = dds[4].getDependencyArtifacts("compile");
+        assertEquals(1, compileDads.length);
+        assertSame(dads[0], compileDads[0]);
+
+        // now we verify the conversion to an Ivy file
+        PomModuleDescriptorParser.getInstance().toIvyFile(
+            getClass().getResource("test-dependencies-with-and-without-classifier.pom").openStream(),
+            new URLResource(getClass().getResource("test-dependencies-with-and-without-classifier.pom")), dest,
+            md);
+
+        assertTrue(dest.exists());
+
+        // the converted Ivy file should be parsable with validate=true
+        ModuleDescriptor md2 = XmlModuleDescriptorParser.getInstance().parseDescriptor(
+            new IvySettings(), dest.toURI().toURL(), true);
+
+        // and the parsed module descriptor should be similar to the original
+        assertNotNull(md2);
+        assertEquals(md.getModuleRevisionId(), md2.getModuleRevisionId());
+        dds = md2.getDependencies();
+        assertEquals(5, dds.length);
+        for (int i = 0; i < dds.length; i++) {
+            assertEquals(2, dds[i].getAllDependencyArtifacts().length);
+            int withExt = i == 0 || i == 3 ? 1 : 0;
+            assertEquals(extraAtt, dds[i].getAllDependencyArtifacts()[withExt].getExtraAttributes());
+        }
     }
 
     @Test
@@ -785,6 +870,44 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
     }
 
     @Test
+    public void testDependencyManagementWithClassifier() throws ParseException, IOException {
+        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(settings,
+                                                                                      getClass().getResource("test-dependencyMgt-with-classifier.pom"), false);
+        assertNotNull(md);
+        assertEquals(ModuleRevisionId.newInstance("org.apache", "test-depMgt", "1.1"),
+                     md.getModuleRevisionId());
+
+        DependencyDescriptor[] dds = md.getDependencies();
+        assertNotNull(dds);
+        assertEquals(1, dds.length);
+        assertEquals(ModuleRevisionId.newInstance("commons-logging", "commons-logging", "1.0.4"),
+                     dds[0].getDependencyRevisionId());
+        assertEquals(1, dds[0].getAllDependencyArtifacts().length);
+        assertEquals("jar", dds[0].getAllDependencyArtifacts()[0].getExt());
+        assertEquals("jar", dds[0].getAllDependencyArtifacts()[0].getType());
+        Map<String, String> extraAtt = Collections.singletonMap("classifier", "asl");
+        assertEquals(extraAtt, dds[0].getAllDependencyArtifacts()[0].getExtraAttributes());
+    }
+
+    @Test
+    public void testDependencyManagementWithType() throws ParseException, IOException {
+        ModuleDescriptor md = PomModuleDescriptorParser.getInstance().parseDescriptor(settings,
+                                                                                      getClass().getResource("test-dependencyMgt-with-type.pom"), false);
+        assertNotNull(md);
+        assertEquals(ModuleRevisionId.newInstance("org.apache", "test-depMgt", "1.1"),
+                     md.getModuleRevisionId());
+
+        DependencyDescriptor[] dds = md.getDependencies();
+        assertNotNull(dds);
+        assertEquals(1, dds.length);
+        assertEquals(ModuleRevisionId.newInstance("commons-logging", "commons-logging", "1.0.4"),
+                     dds[0].getDependencyRevisionId());
+        assertEquals(1, dds[0].getAllDependencyArtifacts().length);
+        assertEquals("dll", dds[0].getAllDependencyArtifacts()[0].getExt());
+        assertEquals("dll", dds[0].getAllDependencyArtifacts()[0].getType());
+    }
+
+    @Test
     public void testParentDependencyMgt() throws ParseException, IOException {
         settings.setDictatorResolver(new MockResolver() {
             public ResolvedModuleRevision getDependency(DependencyDescriptor dd, ResolveData data)
@@ -1158,17 +1281,14 @@ public class PomModuleDescriptorParserTest extends AbstractModuleDescriptorParse
         for (final String expectedPackagingType : packagingTypesToTest) {
             String sysPropToSet = null;
             switch (expectedPackagingType) {
-                case "bundle": {
+                case "bundle":
                     sysPropToSet = "PomModuleDescriptorParserTest.some-other-test-prop";
                     break;
-                }
-                case "jar": {
+                case "jar":
                     sysPropToSet = "PomModuleDescriptorParserTest.some-test-prop";
                     break;
-                }
-                default: {
+                default:
                     fail("Unexpected packaging type");
-                }
             }
             // activate the relevant profile, based on a system property
             System.setProperty(sysPropToSet, "foo");

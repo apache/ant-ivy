@@ -17,18 +17,8 @@
  */
 package org.apache.ivy;
 
-import org.apache.ivy.core.retrieve.RetrieveOptions;
-import org.apache.ivy.util.CacheCleaner;
-import org.apache.ivy.util.cli.CommandLine;
-import org.apache.ivy.util.cli.ParseException;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.rules.TemporaryFolder;
-
 import java.io.File;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -36,17 +26,26 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.ivy.core.retrieve.RetrieveOptions;
+import org.apache.ivy.util.CacheCleaner;
+import org.apache.ivy.util.cli.CommandLine;
+import org.apache.ivy.util.cli.ParseException;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 public class MainTest {
 
     private File cache;
-
-    @Rule
-    public ExpectedException expExc = ExpectedException.none();
 
     @Rule
     public TemporaryFolder tempDir = new TemporaryFolder();
@@ -64,51 +63,47 @@ public class MainTest {
 
     @Test
     public void testHelp() throws Exception {
-        run(new String[] {"-?"});
+        run("-?");
     }
 
     @Test
-    public void testBadOption() throws Exception {
-        expExc.expect(ParseException.class);
-        expExc.expectMessage("Unrecognized option: -bad");
-
-        run(new String[] {"-bad"});
+    public void testBadOption() {
+        Exception exception = assertThrows(ParseException.class, () -> run("-bad"));
+        assertEquals("Unrecognized option: -bad", exception.getMessage());
     }
 
     @Test
-    public void testMissingParameter() throws Exception {
-        expExc.expect(ParseException.class);
-        expExc.expectMessage("no argument for: ivy");
-
-        run(new String[] {"-ivy"});
+    public void testMissingParameter() {
+        Exception exception = assertThrows(ParseException.class, () -> run("-ivy"));
+        assertEquals("no argument for: ivy", exception.getMessage());
     }
 
     @Test
     public void testResolveSimple() throws Exception {
-        run(new String[] {"-settings", "test/repositories/ivysettings.xml", "-ivy",
-                "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml"});
+        run("-settings", "test/repositories/ivysettings.xml", "-ivy", "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml");
         assertTrue(new File("build/cache/org1/mod1.2/ivy-2.0.xml").exists());
     }
 
     @Test
     public void testResolveSimpleWithConfs() throws Exception {
-        run(new String[] {"-settings", "test/repositories/ivysettings.xml", "-ivy",
-                "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml", "-confs", "default"});
+        run("-settings", "test/repositories/ivysettings.xml", "-ivy", "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml", "-confs", "default");
         assertTrue(new File("build/cache/org1/mod1.2/ivy-2.0.xml").exists());
     }
 
     @Test
     public void testResolveSimpleWithConfs2() throws Exception {
-        run(new String[] {"-settings", "test/repositories/ivysettings.xml", "-confs", "default",
-                "-ivy", "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml"});
+        run("-settings", "test/repositories/ivysettings.xml", "-confs", "default", "-ivy", "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml");
         assertTrue(new File("build/cache/org1/mod1.2/ivy-2.0.xml").exists());
     }
 
     @Test
     public void testExtraParams1() throws Exception {
-        String[] params = new String[] {"-settings", "test/repositories/ivysettings.xml", "-confs",
-                "default", "-ivy", "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml", "foo1",
-                "foo2"};
+        String[] params = {
+            "-settings", "test/repositories/ivysettings.xml",
+            "-confs", "default",
+            "-ivy", "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml",
+            "foo1", "foo2"
+        };
         CommandLine line = Main.getParser().parse(params);
         String[] leftOver = line.getLeftOverArgs();
         assertNotNull(leftOver);
@@ -119,9 +114,12 @@ public class MainTest {
 
     @Test
     public void testExtraParams2() throws Exception {
-        String[] params = new String[] {"-settings", "test/repositories/ivysettings.xml", "-confs",
-                "default", "-ivy", "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml", "--",
-                "foo1", "foo2"};
+        String[] params = {
+            "-settings", "test/repositories/ivysettings.xml",
+            "-confs", "default",
+            "-ivy", "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml",
+            "--", "foo1", "foo2"
+        };
         CommandLine line = Main.getParser().parse(params);
         String[] leftOver = line.getLeftOverArgs();
         assertNotNull(leftOver);
@@ -132,8 +130,11 @@ public class MainTest {
 
     @Test
     public void testExtraParams3() throws Exception {
-        String[] params = new String[] {"-settings", "test/repositories/ivysettings.xml", "-confs",
-                "default", "-ivy", "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml"};
+        String[] params = {
+            "-settings", "test/repositories/ivysettings.xml",
+            "-confs", "default",
+            "-ivy", "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml"
+        };
         CommandLine line = Main.getParser().parse(params);
         String[] leftOver = line.getLeftOverArgs();
         assertNotNull(leftOver);
@@ -145,7 +146,6 @@ public class MainTest {
      * {@code types} argument to the command line must be parsed correctly when it's passed
      * more than one value for the argument.
      *
-     * @throws Exception if something goes wrong
      * @see <a href="https://issues.apache.org/jira/browse/IVY-1355">IVY-1355</a>
      */
     @Test
@@ -164,8 +164,6 @@ public class MainTest {
 
     /**
      * Tests that the {@code overwriteMode} passed for the retrieve command works as expected
-     *
-     * @throws Exception if something goes wrong
      */
     @Test
     public void testRetrieveOverwriteMode() throws Exception {
@@ -189,8 +187,6 @@ public class MainTest {
 
     /**
      * Tests that the {@code makepom} option works as expected
-     *
-     * @throws Exception if something goes wrong
      */
     @Test
     public void testMakePom() throws Exception {
@@ -206,7 +202,17 @@ public class MainTest {
         assertTrue("pom file hasn't been generated at " + pomFilePath, new File(pomFilePath).isFile());
     }
 
-    private void run(String[] args) throws Exception {
+    /**
+     * Tests that the ivy command can use a URL for the {@code -settings} option. See IVY-1615
+     */
+    @Test
+    public void testSettingsURL() throws Exception {
+        URL settingsURL = new File("test/repositories/ivysettings.xml").toURI().toURL();
+        run("-settings", settingsURL.toString(), "-ivy", "test/repositories/1/org1/mod1.1/ivys/ivy-1.0.xml");
+        assertTrue(new File("build/cache/org1/mod1.2/ivy-2.0.xml").exists());
+    }
+
+    private void run(String... args) throws Exception {
         Main.run(Main.getParser(), args);
     }
 }

@@ -23,6 +23,8 @@ In order to work as you want, Ivy sometimes needs some settings. Actually, Ivy c
 
 Settings are specified through an XML file, usually called `ivysettings.xml`. To configure Ivy from Ant, you just have to use the link:use/settings{outfilesuffix}[settings] datatype with the path of your settings file.
 
+In addition certain link:systemproperties{outfilesuffix}[Java system properties] affect the XML parsing behavior of Ivy.
+
 Here is an example of the settings file:
 
 [source, xml]

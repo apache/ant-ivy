@@ -47,6 +47,8 @@ For those familiar with XML schema, the schema used to validate Ivy files can be
 </ivy-module>
 ----
 
+Ivy expects to use the "no namespace" namespace, so you can't use an XML namespace to identify Ivy elements or attributes or use any namespace prefix for Ivy's built-in elements/attributes.
+
 == Dynamic and [[resolved]]resolved Ivy files
 
 A module descriptor (Ivy file) is needed both before and after the publication of each revision of the module. Depending on the case, a module descriptor can be either _dynamic_ or _resolved_.

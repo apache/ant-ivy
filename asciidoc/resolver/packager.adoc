@@ -82,8 +82,8 @@ Configure a resourceURL in situations where you don't want to rely on (or wait f
 [options="header"]
 |=======
 |Element|Description|Cardinality
-|ivy|Defines a pattern for ivy.xml files, using the pattern attribute|1..n
-|artifact|Defines a pattern for packager.xml files, using the pattern attribute|1..n
+|ivy|Defines a link:../concept{outfilesuffix}#patterns[pattern] for Ivy files, using the pattern attribute.|0..n
+|artifact|Defines a link:../concept{outfilesuffix}#patterns[pattern] for artifacts, using the pattern attribute.|1..n
 |=======
 
 

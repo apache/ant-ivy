@@ -17,17 +17,6 @@
  */
 package org.apache.ivy.util.url;
 
-import org.apache.ivy.TestHelper;
-import org.apache.ivy.core.settings.NamedTimeoutConstraint;
-import org.apache.ivy.core.settings.TimeoutConstraint;
-import org.apache.ivy.util.FileUtil;
-import org.apache.ivy.util.url.URLHandler.URLInfo;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -37,30 +26,31 @@ import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Random;
 
+import org.apache.ivy.TestHelper;
+import org.apache.ivy.core.settings.NamedTimeoutConstraint;
+import org.apache.ivy.core.settings.TimeoutConstraint;
+import org.apache.ivy.util.FileUtil;
+import org.apache.ivy.util.url.URLHandler.URLInfo;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
 import static org.apache.ivy.plugins.resolver.IBiblioResolver.DEFAULT_M2_ROOT;
-import static org.hamcrest.Matchers.endsWith;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
-/**
- * Test {@link HttpClientHandler}
- */
-public class HttpclientURLHandlerTest {
+public class HttpClientHandlerTest {
+
     // remote.test
     private File testDir;
 
     private HttpClientHandler handler;
 
-    private final TimeoutConstraint defaultTimeoutConstraint;
-
-    {
-        defaultTimeoutConstraint = new NamedTimeoutConstraint("default-http-client-handler-timeout");
-        ((NamedTimeoutConstraint) defaultTimeoutConstraint).setConnectionTimeout(5000);
-    }
-
-    @Rule
-    public ExpectedException expExc = ExpectedException.none();
+    private TimeoutConstraint defaultTimeoutConstraint;
 
     @Before
     public void setUp() {
@@ -68,14 +58,16 @@ public class HttpclientURLHandlerTest {
         testDir.mkdirs();
 
         handler = new HttpClientHandler();
+
+        defaultTimeoutConstraint = new NamedTimeoutConstraint("default-http-client-handler-timeout");
+        ((NamedTimeoutConstraint) defaultTimeoutConstraint).setConnectionTimeout(5000);
     }
 
     @After
     public void tearDown() {
         try {
             handler.close();
-        } catch (Exception e) {
-            // ignore
+        } catch (Exception ignore) {
         }
         FileUtil.forceDelete(testDir);
     }
@@ -91,7 +83,6 @@ public class HttpclientURLHandlerTest {
     /**
      * Test case for IVY-390.
      *
-     * @throws Exception if something goes wrong
      * @see <a href="https://issues.apache.org/jira/browse/IVY-390">IVY-390</a>
      */
     @SuppressWarnings({"resource", "deprecation"})
@@ -129,18 +120,10 @@ public class HttpclientURLHandlerTest {
      * {@link CredentialsStore Ivy credentials store} works as expected when it interacts
      * with a HTTP server which requires authentication for accessing resources.
      *
-     * @throws Exception if something goes wrong
      * @see <a href="https://issues.apache.org/jira/browse/IVY-1336">IVY-1336</a>
      */
     @Test
     public void testCredentials() throws Exception {
-        // we catch it and check for presence of 401 in the exception message.
-        // It's not exactly an contract that the IOException will have the 401 message
-        // but for now that's how it's implemented and it's fine to check for the presence
-        // of that message at the moment
-        expExc.expect(IOException.class);
-        expExc.expectMessage(endsWith("ivysettings.xml' 401 - 'Unauthorized"));
-
         final CredentialsStore credentialsStore = CredentialsStore.INSTANCE;
         final String realm = "test-http-client-handler-realm";
         final String host = "localhost";
@@ -153,7 +136,7 @@ public class HttpclientURLHandlerTest {
         final Path repoRoot = new File("test/repositories").toPath();
         assertTrue(repoRoot + " is not a directory", Files.isDirectory(repoRoot));
         // create a server backed by BASIC auth with the set of "allowed" credentials
-        try (final AutoCloseable server = TestHelper.createBasicAuthHttpServerBackedRepo(serverBindAddr,
+        try (AutoCloseable server = TestHelper.createBasicAuthHttpServerBackedRepo(serverBindAddr,
                 contextRoot, repoRoot, realm, Collections.singletonMap(userName, password))) {
 
             final File target = new File(testDir, "downloaded.xml");
@@ -167,7 +150,7 @@ public class HttpclientURLHandlerTest {
         // now create a server backed by BASIC auth with a set of credentials that do *not* match
         // with what the Ivy credentials store will return for a given realm+host combination, i.e.
         // Ivy credential store will return back invalid credentials and the server will reject them
-        try (final AutoCloseable server = TestHelper.createBasicAuthHttpServerBackedRepo(serverBindAddr,
+        try (AutoCloseable server = TestHelper.createBasicAuthHttpServerBackedRepo(serverBindAddr,
                 contextRoot, repoRoot, realm, Collections.singletonMap("other-" + userName, "other-" + password))) {
 
             final File target = new File(testDir, "should-not-have-been-downloaded.xml");
@@ -175,7 +158,12 @@ public class HttpclientURLHandlerTest {
             final URL src = new URL("http://localhost:" + serverBindAddr.getPort() + "/"
                     + contextRoot + "/ivysettings.xml");
             // download it (expected to fail)
-            handler.download(src, target, null, defaultTimeoutConstraint);
+            Exception exception = assertThrows(IOException.class, () -> handler.download(src, target, null, defaultTimeoutConstraint));
+            // we catch it and check for presence of 401 in the exception message.
+            // It's not exactly an contract that the IOException will have the 401 message
+            // but for now that's how it's implemented and it's fine to check for the presence
+            // of that message at the moment
+            assertTrue(exception.getMessage().endsWith("ivysettings.xml' 401 - 'Unauthorized"));
         }
     }
 

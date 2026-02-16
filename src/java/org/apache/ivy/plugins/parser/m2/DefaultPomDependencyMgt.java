@@ -26,16 +26,22 @@ public class DefaultPomDependencyMgt implements PomDependencyMgt {
 
     private String artifactId;
 
+    private String type;
+
+    private String classifier;
+
     private String version;
 
     private String scope;
 
     private List<ModuleId> excludedModules;
 
-    public DefaultPomDependencyMgt(String groupId, String artifactId, String version, String scope,
+    public DefaultPomDependencyMgt(String groupId, String artifactId, String type, String classifier, String version, String scope,
             List<ModuleId> excludedModules) {
         this.groupId = groupId;
         this.artifactId = artifactId;
+        this.type = type;
+        this.classifier = classifier;
         this.version = version;
         this.scope = scope;
         this.excludedModules = excludedModules;
@@ -51,6 +57,15 @@ public class DefaultPomDependencyMgt implements PomDependencyMgt {
 
     public String getArtifactId() {
         return artifactId;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    @Override
+    public String getClassifier() {
+        return classifier;
     }
 
     public String getVersion() {

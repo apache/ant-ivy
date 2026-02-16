@@ -19,6 +19,7 @@ package org.apache.ivy.util;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -71,13 +72,102 @@ public class IvyPatternHelperTest {
 
     @Test
     public void testTokenRoot() {
-        String pattern = "lib/[type]/[artifact].[ext]";
-        assertEquals("lib/", IvyPatternHelper.getTokenRoot(pattern));
+        assertEquals("lib/", IvyPatternHelper.getTokenRoot("lib/[type]/[artifact].[ext]"));
+        assertEquals("lib/", IvyPatternHelper.getTokenRoot("lib/([type]/)[artifact].[ext]"));
+        assertEquals("lib/", IvyPatternHelper.getTokenRoot("lib(/[type])/[artifact].[ext]"));
+        assertEquals("lib/", IvyPatternHelper.getTokenRoot("lib/(type-[type]/)[artifact].[ext]"));
+        assertEquals("lib/", IvyPatternHelper.getTokenRoot("lib(/type-[type])/[artifact].[ext]"));
+        assertEquals("lib/", IvyPatternHelper.getTokenRoot("lib/([type]/)"));
+        assertEquals("lib/lib (JDK 17)/", IvyPatternHelper.getTokenRoot("lib/lib (JDK 17)/[artifact].[ext]")); //IVY-1660
     }
 
-    @Test
-    public void testTokenRootWithOptionalFirstToken() {
-        String pattern = "lib/([type]/)[artifact].[ext]";
-        assertEquals("lib/", IvyPatternHelper.getTokenRoot(pattern));
+    @Test(expected = IllegalArgumentException.class)
+    public void rejectsPathTraversalInOrganisation() {
+        String pattern = "[organisation]/[artifact]-[revision].[ext]";
+        IvyPatternHelper.substitute(pattern, "../org", "module", "revision", "artifact", "type", "ext", "conf");
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void rejectsPathTraversalInOrganization() {
+        String pattern = "[organization]/[artifact]-[revision].[ext]";
+        IvyPatternHelper.substitute(pattern, "../org", "module", "revision", "artifact", "type", "ext", "conf");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void rejectsPathTraversalInModule() {
+        String pattern = "[module]/build/archives (x86)/[type]s/[artifact]-[revision].[ext]";
+        IvyPatternHelper.substitute(pattern, "org", "..\\module", "revision", "artifact", "type", "ext", "conf");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void rejectsPathTraversalInRevision() {
+        String pattern = "[type]s/[artifact]-[revision].[ext]";
+        IvyPatternHelper.substitute(pattern, "org", "module", "revision/..", "artifact", "type", "ext", "conf");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void rejectsPathTraversalInArtifact() {
+        String pattern = "[type]s/[artifact]-[revision].[ext]";
+        IvyPatternHelper.substitute(pattern, "org", "module", "revision", "artifact\\..", "type", "ext", "conf");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void rejectsPathTraversalInType() {
+        String pattern = "[type]s/[artifact]-[revision].[ext]";
+        IvyPatternHelper.substitute(pattern, "org", "module", "revision", "artifact", "ty/../pe", "ext", "conf");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void rejectsPathTraversalInExt() {
+        String pattern = "[type]s/[artifact]-[revision].[ext]";
+        IvyPatternHelper.substitute(pattern, "org", "module", "revision", "artifact", "type", "ex//..//t", "conf");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void rejectsPathTraversalInConf() {
+        String pattern = "[conf]/[artifact]-[revision].[ext]";
+        IvyPatternHelper.substitute(pattern, "org", "module", "revision", "artifact", "type", "ext", "co\\..\\nf");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void rejectsPathTraversalInModuleAttributes() {
+        String pattern = "[foo]/[artifact]-[revision].[ext]";
+        Map<String, String> a = new HashMap<String, String>() {{
+            put("foo", "..");
+        }};
+        IvyPatternHelper.substitute(pattern, "org", "module", "revision", "artifact", "type", "ext", "conf",
+            a, Collections.emptyMap());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void rejectsPathTraversalInArtifactAttributes() {
+        String pattern = "[foo]/[artifact]-[revision].[ext]";
+        Map<String, String> a = new HashMap<String, String>() {{
+            put("foo", "a/../b");
+        }};
+        IvyPatternHelper.substitute(pattern, "org", "module", "revision", "artifact", "type", "ext", "conf",
+            Collections.emptyMap(), a);
+    }
+
+
+    @Test
+    public void ignoresPathTraversalInCoordinatesNotUsedInPatern() {
+        String pattern = "abc";
+        Map<String, String> a = new HashMap<String, String>() {{
+            put("foo", "a/../b");
+        }};
+        assertEquals("abc",
+            IvyPatternHelper.substitute(pattern, "../org", "../module", "../revision", "../artifact", "../type", "../ext", "../conf",
+                a, a)
+        );
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void rejectsPathTraversalWithoutExplicitDoubleDot() {
+        String pattern = "root/[conf]/[artifact]-[revision].[ext]";
+        // forms revision/../ext after substitution
+        IvyPatternHelper.substitute(pattern, "org", "module", "revision/", "artifact", "type", "./ext", "conf");
+    }
+
+
 }

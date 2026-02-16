@@ -151,6 +151,11 @@
                       ]
                   },
                   {
+                      "id": "systemproperties",
+                      "title": "System Properties",
+                      "children": []
+                  },
+                  {
                     "id":"settings",
                     "title":"Settings Files",
                     "children": [

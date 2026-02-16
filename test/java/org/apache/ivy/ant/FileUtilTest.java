@@ -45,6 +45,7 @@ import static org.junit.Assert.assertTrue;
 public class FileUtilTest {
 
     private static boolean symlinkCapable = false;
+    private static final String PATH_SEP = System.getProperty("path.separator");
 
     @BeforeClass
     public static void beforeClass() {
@@ -151,4 +152,75 @@ public class FileUtilTest {
         Assert.assertTrue("Unexpected content in dest file " + destFile, Arrays.equals(fileContent, Files.readAllBytes(destFile)));
     }
 
+    /**
+     * @see "https://bz.apache.org/bugzilla/show_bug.cgi?id=62502"
+     */
+    @Test
+    public void isLeadingPathCannotBeFooledByTooManyDoubleDots() {
+        Assert.assertFalse(FileUtil.isLeadingPath(new File("/foo"), new File("/foo/../../bar")));
+        Assert.assertFalse(FileUtil.isLeadingPath(new File("c:\\foo"), new File("c:\\foo\\..\\..\\bar")));
+        Assert.assertFalse(FileUtil.isLeadingPath(new File("/foo"), new File("/foo/../..")));
+    }
+
+    /**
+     * @see "https://bz.apache.org/bugzilla/show_bug.cgi?id=62502"
+     */
+    @Test
+    public void isLeadingPathCanonicalVersionCannotBeFooledByTooManyDoubleDots() throws IOException {
+        Assert.assertFalse(FileUtil.isLeadingPath(new File("/foo"), new File("/foo/../../bar"), true));
+        Assert.assertFalse(FileUtil.isLeadingPath(new File("c:\\foo"), new File("c:\\foo\\..\\..\\bar"), true));
+        Assert.assertFalse(FileUtil.isLeadingPath(new File("/foo"), new File("/foo/../.."), true));
+    }
+
+    @Test
+    public void isLeadingPathCanonicalVersionWorksAsExpectedOnUnix() throws IOException {
+        Assume.assumeFalse("Test doesn't run on DOS", PATH_SEP.equals(";"));
+        Assert.assertTrue(FileUtil.isLeadingPath(new File("/foo"), new File("/foo/bar"), true));
+        Assert.assertTrue(FileUtil.isLeadingPath(new File("/foo"), new File("/foo/baz/../bar"), true));
+        Assert.assertTrue(FileUtil.isLeadingPath(new File("/foo"), new File("/foo/../foo/bar"), true));
+        Assert.assertFalse(FileUtil.isLeadingPath(new File("/foo"), new File("/foobar"), true));
+        Assert.assertFalse(FileUtil.isLeadingPath(new File("/foo"), new File("/bar"), true));
+    }
+
+    @Test
+    public void isLeadingPathAndTrailingSlashesOnUnix() throws IOException {
+        Assume.assumeFalse("Test doesn't run on DOS", PATH_SEP.equals(";"));
+        Assert.assertTrue(FileUtil.isLeadingPath(new File("/foo/"), new File("/foo/bar"), true));
+        Assert.assertTrue(FileUtil.isLeadingPath(new File("/foo/"), new File("/foo/bar/"), true));
+        Assert.assertTrue(FileUtil.isLeadingPath(new File("/foo/"), new File("/foo/"), true));
+        Assert.assertTrue(FileUtil.isLeadingPath(new File("/foo/"), new File("/foo"), true));
+        Assert.assertTrue(FileUtil.isLeadingPath(new File("/foo"), new File("/foo/"), true));
+
+        Assert.assertTrue(FileUtil.isLeadingPath(new File("/foo/"), new File("/foo/bar"), false));
+        Assert.assertTrue(FileUtil.isLeadingPath(new File("/foo/"), new File("/foo/bar/"), false));
+        Assert.assertTrue(FileUtil.isLeadingPath(new File("/foo/"), new File("/foo/"), false));
+        Assert.assertTrue(FileUtil.isLeadingPath(new File("/foo/"), new File("/foo"), false));
+        Assert.assertTrue(FileUtil.isLeadingPath(new File("/foo"), new File("/foo/"), false));
+    }
+
+    @Test
+    public void isLeadingPathCanonicalVersionWorksAsExpectedOnDos() throws IOException {
+        Assume.assumeTrue("Test only runs on DOS", PATH_SEP.equals(";"));
+        Assert.assertTrue(FileUtil.isLeadingPath(new File("C:\\foo"), new File("C:\\foo\\bar"), true));
+        Assert.assertTrue(FileUtil.isLeadingPath(new File("C:\\foo"), new File("C:\\foo\\baz\\..\\bar"), true));
+        Assert.assertTrue(FileUtil.isLeadingPath(new File("C:\\foo"), new File("C:\\foo\\..\\foo\\bar"), true));
+        Assert.assertFalse(FileUtil.isLeadingPath(new File("C:\\foo"), new File("C:\\foobar"), true));
+        Assert.assertFalse(FileUtil.isLeadingPath(new File("C:\\foo"), new File("C:\\bar"), true));
+    }
+
+    @Test
+    public void isLeadingPathAndTrailingSlashesOnDos() throws IOException {
+        Assume.assumeTrue("Test only runs on DOS", PATH_SEP.equals(";"));
+        Assert.assertTrue(FileUtil.isLeadingPath(new File("c:\\foo\\"), new File("c:\\foo\\bar"), true));
+        Assert.assertTrue(FileUtil.isLeadingPath(new File("c:\\foo\\"), new File("c:\\foo\\bar\\"), true));
+        Assert.assertTrue(FileUtil.isLeadingPath(new File("c:\\foo\\"), new File("c:\\foo\\"), true));
+        Assert.assertTrue(FileUtil.isLeadingPath(new File("c:\\foo\\"), new File("c:\\foo"), true));
+        Assert.assertTrue(FileUtil.isLeadingPath(new File("c:\\foo"), new File("c:\\foo\\"), true));
+
+        Assert.assertTrue(FileUtil.isLeadingPath(new File("c:\\foo\\"), new File("c:\\foo\\bar"), false));
+        Assert.assertTrue(FileUtil.isLeadingPath(new File("c:\\foo\\"), new File("c:\\foo\\bar\\"), false));
+        Assert.assertTrue(FileUtil.isLeadingPath(new File("c:\\foo\\"), new File("c:\\foo\\"), false));
+        Assert.assertTrue(FileUtil.isLeadingPath(new File("c:\\foo\\"), new File("c:\\foo"), false));
+        Assert.assertTrue(FileUtil.isLeadingPath(new File("c:\\foo"), new File("c:\\foo\\"), false));
+    }
 }
