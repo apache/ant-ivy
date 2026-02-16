@@ -28,6 +28,16 @@
   <!-- Items moved out of TreeWalker for new versions of Checkstyle -->
   <module name="FileLength"/>
   <module name="FileTabCharacter"/>
+  <module name="LineLength">
+    <property name="max" value="100"/>
+    <property name="ignorePattern" value="^ *\* *[^ ]+$"/>
+    <property name="tabWidth" value="4"/>
+  </module>
+
+  <module name="RegexpSingleline">
+    <!-- \s matches whitespace character, $ matches end of line. -->
+    <property name="format" value="\s+$"/>
+  </module>
 
   <module name="TreeWalker">
     <!-- Javadoc requirements -->
@@ -37,7 +47,7 @@
     <!--
     <module name="JavadocMethod">
       <property name="scope" value="protected"/>
-      <property name="allowUndeclaredRTE" value="true"/>
+      <!-- <property name="allowUndeclaredRTE" value="true"/> -->
     </module>
     <module name="JavadocVariable">
        <property name="scope" value="public"/>
@@ -62,13 +72,6 @@
     <module name="UnusedImports"/>
 
     <!-- size limits -->
-    <!--
-    <module name="LineLength">
-      <property name="max" value="100"/>
-      <property name="ignorePattern" value="^ *\* *[^ ]+$"/>
-      <property name="tabWidth" value="4"/>
-    </module>
-    -->
     <module name="MethodLength"/>
     <module name="ParameterNumber"/>
 
@@ -131,11 +134,11 @@
       <property name="message" value="Line has trailing spaces."/>
     </module>
     -->
-  </module>
-
-  <module name="RegexpSingleline">
-    <!-- \s matches whitespace character, $ matches end of line. -->
-    <property name="format" value="\s+$"/>
+    <module name="SuppressionCommentFilter">
+      <property name="offCommentFormat" value="CheckStyle\:([\w\|]+) *OFF"/>
+      <property name="onCommentFormat" value="CheckStyle\:([\w\|]+) *ON"/>
+      <property name="checkFormat" value="$1"/>
+    </module>
   </module>
 
   <!--
@@ -149,5 +152,4 @@
   <module name="SuppressionFilter">
     <property name="file" value="${checkstyle.src.dir}/checkstyle-suppress.xml"/>
   </module>
-
 </module>
