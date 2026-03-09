@@ -59,6 +59,7 @@ import org.apache.ivy.util.DateUtil;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.XMLHelper;
 import org.apache.ivy.util.extendable.ExtendableItemHelper;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -166,23 +167,19 @@ public final class XmlModuleDescriptorUpdater {
     private static class UpdaterHandler extends DefaultHandler implements LexicalHandler {
 
         /** standard attributes of ivy-module/info */
-        private static final Collection<String> STD_ATTS = Arrays.asList("organisation",
-                "module", "branch", "revision", "status", "publication", "namespace");
+        private static final Collection<String> STD_ATTS = Collections.unmodifiableList(Arrays.asList("organisation", "module", "branch", "revision", "status", "publication", "namespace"));
 
         /** elements that may appear inside ivy-module, in expected order */
-        private static final List<String> MODULE_ELEMENTS = Arrays.asList("info",
-                "configurations", "publications", "dependencies", "conflicts");
+        private static final List<String> MODULE_ELEMENTS = Collections.unmodifiableList(Arrays.asList("info", "configurations", "publications", "dependencies", "conflicts"));
 
         /** element position of "configurations" inside "ivy-module" */
-        private static final int CONFIGURATIONS_POSITION = MODULE_ELEMENTS
-                .indexOf("configurations");
+        private static final int CONFIGURATIONS_POSITION = MODULE_ELEMENTS.indexOf("configurations");
 
         /** element position of "dependencies" inside "ivy-module" */
         private static final int DEPENDENCIES_POSITION = MODULE_ELEMENTS.indexOf("dependencies");
 
         /** elements that may appear inside of ivy-module/info */
-        private static final Collection<String> INFO_ELEMENTS = Arrays.asList("extends",
-                "ivyauthor", "license", "repository", "description");
+        private static final Collection<String> INFO_ELEMENTS = Collections.unmodifiableList(Arrays.asList("extends", "ivyauthor", "license", "repository", "description"));
 
         private final ParserSettings settings;
 
@@ -212,7 +209,7 @@ public final class XmlModuleDescriptorUpdater {
 
         private final UpdateOptions options;
 
-        public UpdaterHandler(URL relativePathCtx, PrintWriter out, final UpdateOptions options) {
+        UpdaterHandler(URL relativePathCtx, PrintWriter out, final UpdateOptions options) {
             this.options = options;
             this.settings = options.getSettings();
             this.out = out;
@@ -291,8 +288,8 @@ public final class XmlModuleDescriptorUpdater {
             // according to ivy.xsd, all <dependency> elements must occur before
             // the <exclude>, <override> or <conflict> elements
             if (options.isMerge()
-                    && ("exclude".equals(localName) || "override".equals(localName) || "conflict"
-                            .equals(localName)) && "ivy-module/dependencies".equals(getContext())) {
+                    && "ivy-module/dependencies".equals(getContext())
+                    && ("exclude".equals(localName) || "override".equals(localName) || "conflict".equals(localName))) {
                 ModuleDescriptor merged = options.getMergedDescriptor();
                 writeInheritedDependencies(merged);
                 out.println();
@@ -547,6 +544,7 @@ public final class XmlModuleDescriptorUpdater {
             buffers.push(buffer);
             confAttributeBuffers.push(buffer);
             buffer.setDefaultPrint(isNullOrEmpty(attributes.getValue("conf")));
+
             write("<dependency");
             String org = substitute(settings, attributes.getValue("org"));
             if (org == null) {
@@ -575,12 +573,9 @@ public final class XmlModuleDescriptorUpdater {
 
             String revision = substitute(settings, attributes.getValue("rev"));
             String revisionConstraint = substitute(settings, attributes.getValue("revConstraint"));
-            Map<String, String> extraAttributes = ExtendableItemHelper.getExtraAttributes(settings, attributes,
-                XmlModuleDescriptorParser.DEPENDENCY_REGULAR_ATTRIBUTES);
-            ModuleRevisionId localMrid = ModuleRevisionId.newInstance(org, module, branch,
-                revision, extraAttributes);
-            ModuleRevisionId systemMrid = (ns == null) ? localMrid : ns.getToSystemTransformer()
-                    .transform(localMrid);
+            Map<String, String> extraAttributes = ExtendableItemHelper.getExtraAttributes(settings, attributes, XmlModuleDescriptorParser.DEPENDENCY_REGULAR_ATTRIBUTES);
+            ModuleRevisionId localMrid = ModuleRevisionId.newInstance(org, module, branch, revision, extraAttributes);
+            ModuleRevisionId systemMrid = (ns == null) ? localMrid : ns.getToSystemTransformer().transform(localMrid);
 
             String newBranch = resolvedBranches.get(systemMrid);
 
@@ -636,8 +631,7 @@ public final class XmlModuleDescriptorUpdater {
                         }
                         break;
                     default:
-                        write(" " + attName + "=\""
-                                + substitute(settings, attributes.getValue(attName)) + "\"");
+                        write(" " + attName + "=\"" + substitute(settings, attributes.getValue(attName)) + "\"");
                         break;
                 }
             }
@@ -985,8 +979,7 @@ public final class XmlModuleDescriptorUpdater {
             // we can add some useful comments
             PrintWriter out = getWriter();
 
-            Map<ModuleRevisionId, List<InheritableItem>> inheritedItems = collateInheritedItems(
-                merged, items);
+            Map<ModuleRevisionId, List<InheritableItem>> inheritedItems = collateInheritedItems(merged, items);
             boolean hasItems = !inheritedItems.isEmpty();
 
             if (hasItems && includeContainer) {
@@ -1005,8 +998,7 @@ public final class XmlModuleDescriptorUpdater {
                 justOpen = null;
             }
 
-            for (Map.Entry<ModuleRevisionId, List<InheritableItem>> entry : inheritedItems
-                    .entrySet()) {
+            for (Map.Entry<ModuleRevisionId, List<InheritableItem>> entry : inheritedItems.entrySet()) {
                 if (justOpen != null) {
                     out.println(">");
                     justOpen = null; // helps endElement() decide how to write close tags
@@ -1048,20 +1040,15 @@ public final class XmlModuleDescriptorUpdater {
          * @return maps parent ModuleRevisionId to a List of InheritedItems imported from that
          *         parent
          */
-        private Map<ModuleRevisionId, List<InheritableItem>> collateInheritedItems(
-                ModuleDescriptor merged, InheritableItem[] items) {
+        private Map<ModuleRevisionId, List<InheritableItem>> collateInheritedItems(ModuleDescriptor merged, InheritableItem[] items) {
             Map<ModuleRevisionId, List<InheritableItem>> inheritedItems = new LinkedHashMap<>();
             for (InheritableItem item : items) {
-                ModuleRevisionId source = item.getSourceModule();
                 // ignore items that are defined directly in the child descriptor
-                if (source != null
-                        && !source.getModuleId().equals(merged.getModuleRevisionId().getModuleId())) {
-                    List<InheritableItem> accum = inheritedItems.get(source);
-                    if (accum == null) {
-                        accum = new ArrayList<>();
-                        inheritedItems.put(source, accum);
-                    }
-                    accum.add(item);
+                ModuleRevisionId sourceModule = item.getSourceModule();
+                ModuleRevisionId mergedModule = merged.getModuleRevisionId();
+                if (sourceModule != null && !sourceModule.getModuleId().equals(mergedModule.getModuleId())) {
+                    List<InheritableItem> list = inheritedItems.computeIfAbsent(sourceModule, k -> new ArrayList<>());
+                    list.add(item);
                 }
             }
             return inheritedItems;
@@ -1081,8 +1068,7 @@ public final class XmlModuleDescriptorUpdater {
                         writer.println(">");
                     }
                     writeInheritanceComment("description", "parent");
-                    writer.println(getIndent() + "<description>" + XMLHelper.escape(description)
-                            + "</description>");
+                    writer.println(getIndent() + "<description>" + XMLHelper.escape(description) + "</description>");
                     // restore the indent that existed before we wrote the extra elements
                     writer.print(currentIndent);
                     justOpen = null;
@@ -1093,29 +1079,29 @@ public final class XmlModuleDescriptorUpdater {
         private void writeInheritedConfigurations(ModuleDescriptor merged) {
             if (!mergedConfigurations) {
                 mergedConfigurations = true;
-                writeInheritedItems(merged, merged.getConfigurations(),
-                    ConfigurationPrinter.INSTANCE, "configurations", false);
+                InheritableItem[] items = merged.getConfigurations();
+                writeInheritedItems(merged, items, ConfigurationPrinter.INSTANCE, "configurations", false);
             }
         }
 
         private void writeInheritedDependencies(ModuleDescriptor merged) {
             if (!mergedDependencies) {
                 mergedDependencies = true;
-                writeInheritedItems(merged, getDependencies(merged), DependencyPrinter.INSTANCE,
-                    "dependencies", false);
+                InheritableItem[] items = getDependencies(merged);
+                writeInheritedItems(merged, items, DependencyPrinter.INSTANCE, "dependencies", false);
             }
         }
 
         private DependencyDescriptor[] getDependencies(ModuleDescriptor merged) {
-          DependencyDescriptor[] dependencies = merged.getDependencies();
-          for (int i = 0; i < dependencies.length; i += 1) {
-            ModuleRevisionId mrid = dependencies[i].getDependencyRevisionId();
-            String rev = resolvedRevisions.get(mrid); // IVY-1410
-            if (rev != null && !rev.equals(mrid.getRevision())) {
-              dependencies[i] = dependencies[i].clone(ModuleRevisionId.newInstance(mrid, rev));
+            DependencyDescriptor[] dependencies = merged.getDependencies();
+            for (int i = 0; i < dependencies.length; i += 1) {
+                ModuleRevisionId mrid = dependencies[i].getDependencyRevisionId();
+                String rev = resolvedRevisions.get(mrid); // IVY-1410
+                if (rev != null && !rev.equals(mrid.getRevision())) {
+                    dependencies[i] = dependencies[i].clone(ModuleRevisionId.newInstance(mrid, rev));
+                }
             }
-          }
-          return dependencies;
+            return dependencies;
         }
 
         /**
@@ -1137,32 +1123,24 @@ public final class XmlModuleDescriptorUpdater {
          *            a descriptor element name, for example "configurations" or "info"
          */
         private void flushMergedElementsBefore(String moduleElement) {
-            if (options.isMerge() && context.size() == 1 && "ivy-module".equals(context.peek())
-                    && !(mergedConfigurations && mergedDependencies)) {
-
+            if (options.isMerge() && context.size() == 1 && "ivy-module".equals(context.peek()) && !(mergedConfigurations && mergedDependencies)) {
                 // calculate the position of the element in ivy-module
-                int position = (moduleElement == null) ? MODULE_ELEMENTS.size()
-                        : MODULE_ELEMENTS.indexOf(moduleElement);
-
+                int position = (moduleElement == null) ? MODULE_ELEMENTS.size() : MODULE_ELEMENTS.indexOf(moduleElement);
                 ModuleDescriptor merged = options.getMergedDescriptor();
+                InheritableItem[] items;
 
                 // see if we should write <configurations>
-                if (!mergedConfigurations && position > CONFIGURATIONS_POSITION
-                        && merged.getConfigurations().length > 0) {
-
+                items = merged.getConfigurations();
+                if (!mergedConfigurations && items.length > 0 && position > CONFIGURATIONS_POSITION) {
                     mergedConfigurations = true;
-                    writeInheritedItems(merged, merged.getConfigurations(),
-                        ConfigurationPrinter.INSTANCE, "configurations", true);
-
+                    writeInheritedItems(merged, items, ConfigurationPrinter.INSTANCE, "configurations", true);
                 }
+
                 // see if we should write <dependencies>
-                if (!mergedDependencies && position > DEPENDENCIES_POSITION
-                        && merged.getDependencies().length > 0) {
-
+                items = getDependencies(merged);
+                if (!mergedDependencies && items.length > 0 && position > DEPENDENCIES_POSITION) {
                     mergedDependencies = true;
-                    writeInheritedItems(merged, merged.getDependencies(),
-                        DependencyPrinter.INSTANCE, "dependencies", true);
-
+                    writeInheritedItems(merged, items, DependencyPrinter.INSTANCE, "dependencies", true);
                 }
             }
         }

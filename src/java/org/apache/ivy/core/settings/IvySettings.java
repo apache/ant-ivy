@@ -17,6 +17,25 @@
  */
 package org.apache.ivy.core.settings;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.security.AccessControlException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.NormalRelativeUrlResolver;
@@ -96,25 +115,6 @@ import org.apache.ivy.util.Message;
 import org.apache.ivy.util.StringUtils;
 import org.apache.ivy.util.filter.Filter;
 import org.apache.ivy.util.url.URLHandlerRegistry;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Field;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.security.AccessControlException;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 
 import static org.apache.ivy.util.StringUtils.splitToArray;
 
@@ -933,17 +933,16 @@ public class IvySettings implements SortEngineSettings, PublishEngineSettings, P
     }
 
     public synchronized DependencyResolver getResolver(String resolverName) {
-        DependencyResolver r = getDictatorResolver();
-        if (r != null) {
-            return r;
-        }
-        DependencyResolver resolver = resolversMap.get(resolverName);
+        DependencyResolver resolver = getDictatorResolver();
         if (resolver == null) {
-            Message.error("unknown resolver " + resolverName);
-        } else if (workspaceResolver != null && !(resolver instanceof WorkspaceChainResolver)) {
-            resolver = new WorkspaceChainResolver(this, resolver, workspaceResolver);
-            resolversMap.put(resolver.getName(), resolver);
-            resolversMap.put(resolverName, resolver);
+            resolver = resolversMap.get(resolverName);
+            if (resolver == null) {
+                Message.debug("unknown resolver " + resolverName);
+            } else if (workspaceResolver != null && !(resolver instanceof WorkspaceChainResolver)) {
+                resolver = new WorkspaceChainResolver(this, resolver, workspaceResolver);
+                resolversMap.put(resolver.getName(), resolver);
+                resolversMap.put(resolverName, resolver);
+            }
         }
         return resolver;
     }
