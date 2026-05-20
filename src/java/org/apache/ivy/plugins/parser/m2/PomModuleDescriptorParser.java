@@ -378,7 +378,14 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
 
         ModuleDescriptor md = mdBuilder.getModuleDescriptor();
         ModuleRevisionId mrid = md.getModuleRevisionId();
-        DependencyResolver resolver = ivySettings.getResolver(mrid);
+
+        // get the resolver configured on the engine and if none is configured then
+        // get the one configured in ivy settings
+        ResolveEngine engine = IvyContext.getContext().getIvy().getResolveEngine();
+        DependencyResolver resolver = engine.getDictatorResolver();
+        if (resolver == null) {
+            resolver = ivySettings.getResolver(mrid);
+        }
 
         if (resolver == null) {
             Message.debug(
@@ -442,15 +449,21 @@ public final class PomModuleDescriptorParser implements ModuleDescriptorParser {
         }
         try {
             DependencyDescriptor dd = new DefaultDependencyDescriptor(parentModRevID, true);
+            ResolveEngine engine = IvyContext.getContext().getIvy().getResolveEngine();
             ResolveData data = IvyContext.getContext().getResolveData();
             if (data == null) {
-                ResolveEngine engine = IvyContext.getContext().getIvy().getResolveEngine();
                 ResolveOptions options = new ResolveOptions();
                 options.setDownload(false);
                 data = new ResolveData(engine, options);
             }
 
-            DependencyResolver resolver = ivySettings.getResolver(parentModRevID);
+            // get the resolver configured on the engine and if none is configured then
+            // get the one configured in ivy settings
+            DependencyResolver resolver = engine.getDictatorResolver();
+            if (resolver == null) {
+                resolver = ivySettings.getResolver(parentModRevID);
+            }
+
             if (resolver == null) {
                 // TODO: Throw exception here?
                 return null;

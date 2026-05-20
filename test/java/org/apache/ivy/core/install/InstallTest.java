@@ -84,6 +84,32 @@ public class InstallTest {
     }
 
     @Test
+    public void testMavenParent() throws Exception {
+        Ivy ivy = Ivy.newInstance();
+        ivy.configure(new File("test/repositories/ivysettings.xml"));
+
+        @SuppressWarnings("unused")
+        ResolveReport rr = ivy.install(ModuleRevisionId.newInstance("org.apache", "test-parent", "1.0"),
+                                       ivy.getSettings().getDefaultResolver().getName(), "install", new InstallOptions());
+
+        assertTrue(new File("build/test/install/org.apache/test-parent/ivy-1.0.xml").exists());
+        assertTrue(new File("build/test/install/org.apache/test-parent/test-parent-1.0.jar").exists());
+    }
+
+    @Test
+    public void testMavenParentWithoutDefaultResolver() throws Exception {
+        Ivy ivy = Ivy.newInstance();
+        ivy.configure(new File("test/repositories/ivysettings-nodefaultresolver.xml"));
+
+        @SuppressWarnings("unused")
+        ResolveReport rr = ivy.install(ModuleRevisionId.newInstance("org.apache", "test-parent", "1.0"),
+                                       "test", "install", new InstallOptions());
+
+        assertTrue(new File("build/test/install/org.apache/test-parent/ivy-1.0.xml").exists());
+        assertTrue(new File("build/test/install/org.apache/test-parent/test-parent-1.0.jar").exists());
+    }
+
+    @Test
     public void testNoValidate() throws Exception {
         Ivy ivy = Ivy.newInstance();
         ivy.configure(new File("test/repositories/ivysettings.xml"));
