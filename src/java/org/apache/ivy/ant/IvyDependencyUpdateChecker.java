@@ -18,13 +18,16 @@
 package org.apache.ivy.ant;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ivy.core.module.descriptor.Configuration;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.report.ConfigurationResolveReport;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.resolve.ResolveOptions;
@@ -123,33 +126,40 @@ public class IvyDependencyUpdateChecker extends IvyPostResolveTask {
     }
 
     private void displayDependencyUpdates(ResolveReport originalReport, ResolveReport latestReport) {
-        log("Dependencies updates available :");
-        boolean dependencyUpdateDetected = false;
-        for (IvyNode latest : latestReport.getDependencies()) {
-            for (IvyNode originalDependency : originalReport.getDependencies()) {
-                if (originalDependency.getModuleId().equals(latest.getModuleId())) {
-                    if (!originalDependency.getResolvedId().getRevision()
-                            .equals(latest.getResolvedId().getRevision())) {
-                        // is this dependency a transitive or a direct dependency?
-                        // (unfortunately .isTransitive() methods do not have the same meaning)
-                        boolean isTransitiveDependency = latest.getDependencyDescriptor(latest
-                                .getRoot()) == null;
-                        if (!isTransitiveDependency || showTransitive) {
-                            log(String.format("\t%s#%s%s\t%s -> %s",
-                                    originalDependency.getResolvedId().getOrganisation(),
-                                    originalDependency.getResolvedId().getName(),
-                                    isTransitiveDependency ? " (transitive)" : "",
-                                    originalDependency.getResolvedId().getRevision(),
-                                    latest.getResolvedId().getRevision()));
-                            dependencyUpdateDetected = true;
-                        }
-                    }
+        Map<String, List<String>> updatesByConf = new LinkedHashMap<>();
 
+        for (String conf : latestReport.getConfigurations()) {
+            ConfigurationResolveReport newReport = latestReport.getConfigurationReport(conf);
+            ConfigurationResolveReport oldReport = originalReport.getConfigurationReport(conf);
+
+            // NOTE: getModuleRevisionIds() filters evicted and problem deps
+            for (ModuleRevisionId latest : newReport.getModuleRevisionIds()) {
+                Iterable<IvyNode> iter = oldReport.getNodes(latest.getModuleId());
+                if (iter == null) continue;
+                for (IvyNode node : iter) {
+                    boolean revisionNE = !node.getResolvedId().getRevision().equals(latest.getRevision());
+                    boolean transitive = (node.getDependencyDescriptor(node.getRoot()) == null);
+                    if (revisionNE && (!transitive || showTransitive)) {
+                        String update = String.format("\t%s#%s%s\t%s -> %s",
+                            node.getResolvedId().getOrganisation(),
+                            node.getResolvedId().getName(),
+                            transitive ? " (transitive)" : "",
+                            node.getResolvedId().getRevision(),
+                            latest.getRevision());
+                        updatesByConf.computeIfAbsent(conf, k -> new ArrayList<>()).add(update);
+                    }
                 }
             }
         }
-        if (!dependencyUpdateDetected) {
-            log("\tAll dependencies are up to date");
+
+        log("Dependencies updates available :");
+        if (updatesByConf.isEmpty()) {
+            log("All dependencies are up to date");
+        } else {
+            updatesByConf.forEach((conf, updates) -> {
+                log("\tconf: " + conf);
+                updates.forEach(this::log);
+            });
         }
     }
 
