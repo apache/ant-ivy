@@ -22,7 +22,6 @@ body  {
     background-color: #5a7418;
 }
 #body  {
-    display: table;
     margin: 8px auto;
     padding: 0;
     width: 98%;
