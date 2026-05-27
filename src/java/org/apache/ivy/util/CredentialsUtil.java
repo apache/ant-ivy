@@ -17,6 +17,12 @@
  */
 package org.apache.ivy.util;
 
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -25,16 +31,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
-
-import javax.swing.ImageIcon;
-import javax.swing.JCheckBox;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
-
-import org.apache.ivy.Ivy;
 
 public final class CredentialsUtil {
 
@@ -103,7 +99,7 @@ public final class CredentialsUtil {
         }
         CredentialPanel credentialPanel = new CredentialPanel(c, passfile);
         if (JOptionPane.showOptionDialog(null, credentialPanel, c.getHost() + " credentials",
-            JOptionPane.OK_CANCEL_OPTION, 0, new ImageIcon(Ivy.class.getResource("logo.png")),
+            JOptionPane.OK_CANCEL_OPTION, 0, new IvyLogo(),
             null, JOptionPane.OK_OPTION) == JOptionPane.OK_OPTION) {
             String username = credentialPanel.userNameField.getText();
             String passwd = credentialPanel.passwordField.getText();
