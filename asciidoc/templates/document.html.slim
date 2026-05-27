@@ -28,7 +28,7 @@ html lang=(attr :lang, 'en' unless attr? :nolang)
     link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css"
     script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js" type="text/javascript"
     javascript:
-      $(document).ready(function(){$("#treemenu").Treeview({speed: "fast",store: true});});
+      $(document).ready(function(){$("#treemenu").Treeview({speed: "fast",store: true});$("#xooki-" + $(location).attr('pathname').split('/').slice(-1 - ($("#xooki-index a").attr('href').match(/\.\./g) || []).length).join('--').replace(/\.html$/, '') + ' > a').css('color', '#9ebf47')});
       hljs.initHighlightingOnLoad();
   body
     div id="body"

@@ -59,7 +59,7 @@ module IvyDocHelpers
 
         def relativeRoot()
             p = ''
-            (self.id.split("/").length-1).times do |e|
+            (self.id.split("/").length - 1).times do |e|
                 p += '../'
             end
             return p
@@ -97,7 +97,7 @@ module IvyDocHelpers
         def innermenu(page)
             m = '<ul id="treemenu" class="treeview">' + "\n"
             page.children.each do |p|
-                m += '<li id="xooki-' + (p.id || "undefined") + '"'
+                m += '<li id="xooki-' + (p.id.gsub(/\//, '--') || "undefined") + '"'
                 if p.children.length > 0
                     m += ' class="submenu"'
                 end
