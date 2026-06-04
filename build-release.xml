@@ -471,6 +471,8 @@
                         asciiarmor="true">
             <fileset dir="${distrib.dir}">
                 <include name="**/*.pom"/>
+                <include name="**/*-cyclonedx.json"/>
+                <include name="**/*-cyclonedx.xml"/>
                 <include name="**/*.jar"/>
                 <include name="**/*.zip"/>
                 <include name="**/*.gz"/>
