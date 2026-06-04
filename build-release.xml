@@ -556,6 +556,8 @@
             <artifact name="ivy" ext="pom" type="ivy"/>
             <artifact name="ivy" ext="jar" type="sources" classifier="sources"/>
             <artifact name="ivy" ext="jar" type="javadoc" classifier="javadoc"/>
+            <artifact name="ivy" ext="xml" type="cyclonedx.xml" classifier="cyclonedx"/>
+            <artifact name="ivy" ext="json" type="cyclonedx.json" classifier="cyclonedx"/>
         </ivy2:publish>
     </target>
 
@@ -567,7 +569,7 @@
             description="used for nightly and integration builds"/>
 
     <target name="release"
-            depends="release-version,/localivy,clean-ivy-home,clean,clean-lib,rat,snapshot"
+            depends="release-version,/localivy,clean-ivy-home,clean,clean-lib,rat,sbom,snapshot"
             description="make a new release of Ivy"/>
 
     <target name="tagsdoc" depends="generate-doc"
@@ -637,4 +639,291 @@
         </generate-tagsdoc>
     </target>
 
+  <target name="define-cyclonedx-components" depends="jar">
+    <ivy:cachepath organisation="org.apache.ant"
+                   module="ant-cyclonedx"
+                   revision="${ant-cyclonedx.version}"
+                   inline="true" conf="default"
+                   pathid="cyclonedx.classpath"
+                   log="download-only"/>
+    <typedef uri="antlib:org.apache.ant.cyclonedx"
+             resource="org/apache/ant/cyclonedx/antlib.xml"
+             classpathref="cyclonedx.classpath"/>
+
+    <!-- common definitions for SBOMs -->
+    <cdx:organization
+        name="Apache Ant Project Management Committee"
+        id="ant-pmc"
+        xmlns:cdx="antlib:org.apache.ant.cyclonedx">
+      <url url="https://ant.apache.org/"/>
+    </cdx:organization>
+    <cdx:license
+        licenseId="Apache-2.0"
+        id="apache-2"
+        xmlns:cdx="antlib:org.apache.ant.cyclonedx">
+      <url url="https://www.apache.org/licenses/LICENSE-2.0.txt"/>
+    </cdx:license>
+    <cdx:externalreferenceset
+        id="ant-common-refs"
+        xmlns:cdx="antlib:org.apache.ant.cyclonedx">
+      <externalReference
+          type="LICENSE"
+          url="https://www.apache.org/licenses/LICENSE-2.0.txt"/>
+      <externalReference
+          type="SECURITY_CONTACT"
+          url="https://www.apache.org/security/"/>
+    </cdx:externalreferenceset>
+    <cdx:externalreferenceset
+        id="ivy-ext-refs"
+        xmlns:cdx="antlib:org.apache.ant.cyclonedx">
+      <externalReference
+          type="MAILING_LIST"
+          url="https://ant.apache.org/ivy/mailing-lists.html"/>
+      <externalReference
+          type="VCS"
+          url="https://gitbox.apache.org/repos/asf/ant-ivy.git"/>
+      <externalReference
+          type="BUILD_SYSTEM"
+          url="https://ci-builds.apache.org/job/Ant/job/Ivy/"/>
+      <externalReference
+          type="ISSUE_TRACKER"
+          url="http://issues.apache.org/jira/browse/IVY"/>
+      <externalReference
+          type="WEBSITE"
+          url="https://ant.apache.org/ivy/"/>
+      <externalReference
+          type="DISTRIBUTION"
+          url="https://ant.apache.org/ivy/download.cgi"/>
+      <externalReference
+          type="SOURCE_DISTRIBUTION"
+          url="https://ant.apache.org/ivy/download.cgi"/>
+      <externalReference
+          type="ADVISORIES"
+          url="https://ant.apache.org/ivy/security.html"/>
+    </cdx:externalreferenceset>
+    <cdx:externalreferenceset
+        id="ant-ext-refs"
+        xmlns:cdx="antlib:org.apache.ant.cyclonedx">
+      <externalReference
+          type="MAILING_LIST"
+          url="https://ant.apache.org/mail.html"/>
+      <externalReference
+          type="VCS"
+          url="https://gitbox.apache.org/repos/asf/ant.git"/>
+      <externalReference
+          type="BUILD_SYSTEM"
+          url="https://ci-builds.apache.org/job/Ant/"/>
+      <externalReference
+          type="ISSUE_TRACKER"
+          url="https://bz.apache.org/bugzilla/buglist.cgi?product=Ant"/>
+      <externalReference
+          type="WEBSITE"
+          url="https://ant.apache.org/"/>
+      <externalReference
+          type="DISTRIBUTION"
+          url="https://ant.apache.org/bindownload.cgi"/>
+      <externalReference
+          type="SOURCE_DISTRIBUTION"
+          url="https://ant.apache.org/srcdownload.cgi"/>
+      <externalReference
+          type="ADVISORIES"
+          url="https://ant.apache.org/security.html#Apache%20Ant%20Security%20Vulnerabilities"/>
+      <externalReference
+          type="DOCUMENTATION"
+          url="https://ant.apache.org/manual/"/>
+    </cdx:externalreferenceset>
+  </target>
+
+  <target name="sbom" depends="define-cyclonedx-components,snapshot-maven2">
+    <cdx:componentbom
+        bomName="ivy-${build.version}-cyclonedx"
+        outputdirectory="${m2.distrib.dir}"
+        format="all"
+        useComponentSupplier="true"
+        useComponentManufacturer="true"
+        xmlns:cdx="antlib:org.apache.ant.cyclonedx">
+      <component
+          name="ivy"
+          group="org.apache.ivy"
+          version="${build.version}"
+          description="Apache Ivy"
+          publisher="The Apache Software Foundation"
+          supplierIsManufacturer="true">
+        <file file="${m2.distrib.dir}/ivy-${build.version}.jar"/>
+        <supplier refid="ant-pmc"/>
+        <license refid="apache-2"/>
+        <externalReferenceSet refid="ant-common-refs"/>
+        <externalReferenceSet refid="ivy-ext-refs"/>
+        <dependency componentRef="cdx-ant"/>
+        <dependency componentRef="cdx-httpclient"/>
+        <dependency componentRef="cdx-commons-compress"/>
+        <dependency componentRef="cdx-commons-vfs2"/>
+        <dependency componentRef="cdx-apache-oro"/>
+        <dependency componentRef="cdx-jsch"/>
+        <dependency componentRef="cdx-jsch.agentproxy"/>
+        <dependency componentRef="cdx-jsch.agentproxy.connector-factory"/>
+        <dependency componentRef="cdx-jsch.agentproxy.jsch"/>
+        <dependency componentRef="cdx-bcpg-jdk15on"/>
+        <dependency componentRef="cdx-bcprov-jdk15on"/>
+        <dependency componentRef="cdx-commons-codec"/>
+      </component>
+      <license refid="apache-2"/>
+      <additionalComponent
+          name="ant"
+          group="org.apache.ant"
+          version="${apache-ant.version}"
+          isExternal="true"
+          id="cdx-ant">
+        <supplier refid="ant-pmc"/>
+        <license refid="apache-2"/>
+        <externalReferenceSet refid="ant-common-refs"/>
+        <externalReferenceSet refid="ant-ext-refs"/>
+        <dependency componentRef="cdx-ant-launcher"/>
+      </additionalComponent>
+      <additionalComponent
+          name="ant-launcher"
+          group="org.apache.ant"
+          version="${apache-ant.version}"
+          isExternal="true"
+          id="cdx-ant-launcher">
+        <supplier refid="ant-pmc"/>
+        <license refid="apache-2"/>
+        <externalReferenceSet refid="ant-common-refs"/>
+        <externalReferenceSet refid="ant-ext-refs"/>
+      </additionalComponent>
+      <additionalComponent
+          id="cdx-httpclient"
+          name="httpclient"
+          group="org.apache.httpcomponents"
+          version="${httpclient.version}"
+          xmlns:cdx="antlib:org.apache.ant.cyclonedx">
+        <license refid="apache-2"/>
+        <dependency componentRef="cdx-commons-codec"/>
+        <dependency componentRef="cdx-commons-logging"/>
+      </additionalComponent>
+      <additionalComponent
+          id="cdx-commons-logging"
+          name="commons-logging"
+          group="org.apache.commons"
+          version="1.2"
+          unknownDependencies="true"
+          xmlns:cdx="antlib:org.apache.ant.cyclonedx">
+        <license refid="apache-2"/>
+      </additionalComponent>
+      <additionalComponent
+          id="cdx-commons-compress"
+          name="commons-compress"
+          group="org.apache.commons"
+          version="${commons-compress.version}"
+          unknownDependencies="true"
+          xmlns:cdx="antlib:org.apache.ant.cyclonedx">
+        <license refid="apache-2"/>
+      </additionalComponent>
+      <additionalComponent
+          id="cdx-commons-vfs2"
+          name="commons-vfs2"
+          group="org.apache.commons"
+          version="${commons-vfs2.version}"
+          unknownDependencies="true"
+          xmlns:cdx="antlib:org.apache.ant.cyclonedx">
+        <license refid="apache-2"/>
+      </additionalComponent>
+      <additionalComponent
+          id="cdx-apache-oro"
+          name="oro"
+          group="oro"
+          version="${oro.version}"
+          unknownDependencies="true"
+          xmlns:cdx="antlib:org.apache.ant.cyclonedx">
+        <license refid="apache-2"/>
+      </additionalComponent>
+      <additionalComponent
+          id="cdx-jsch"
+          name="jsch"
+          group="com.jcraft"
+          description="JSch is a pure Java implementation of SSH2"
+          version="${jsch.version}"
+          xmlns:cdx="antlib:org.apache.ant.cyclonedx">
+        <externalReference
+            type="WEBSITE"
+            url="http://www.jcraft.com/"/>
+        <license name="Revised BSD">
+          <url url="http://www.jcraft.com/jsch/LICENSE.txt"/>
+        </license>
+      </additionalComponent>
+      <additionalComponent
+          id="cdx-jsch.agentproxy"
+          name="jsch.agentproxy"
+          group="com.jcraft"
+          description="a proxy to ssh-agent and Pageant in Java "
+          version="${jsch.agentproxy.version}"
+          xmlns:cdx="antlib:org.apache.ant.cyclonedx">
+        <externalReference
+            type="WEBSITE"
+            url="http://www.jcraft.com/"/>
+        <license name="Revised BSD">
+          <url url="http://www.jcraft.com/jsch/LICENSE.txt"/>
+        </license>
+      </additionalComponent>
+      <additionalComponent
+          id="cdx-jsch.agentproxy.connector-factory"
+          name="jsch.agentproxy.connector-factory"
+          group="com.jcraft"
+          description="a connector factory"
+          version="${jsch.agentproxy.version}"
+          unknownDependencies="true"
+          xmlns:cdx="antlib:org.apache.ant.cyclonedx">
+        <externalReference
+            type="WEBSITE"
+            url="http://www.jcraft.com/"/>
+        <license name="Revised BSD">
+          <url url="http://www.jcraft.com/jsch/LICENSE.txt"/>
+        </license>
+      </additionalComponent>
+      <additionalComponent
+          id="cdx-jsch.agentproxy.jsch"
+          name="jsch.agentproxy.jsch"
+          group="com.jcraft"
+          description="a library to use jsch-agent-proxy with JSch"
+          version="${jsch.agentproxy.version}"
+          unknownDependencies="true"
+          xmlns:cdx="antlib:org.apache.ant.cyclonedx">
+        <externalReference
+            type="WEBSITE"
+            url="http://www.jcraft.com/"/>
+        <license name="Revised BSD">
+          <url url="http://www.jcraft.com/jsch/LICENSE.txt"/>
+        </license>
+      </additionalComponent>
+      <additionalComponent
+          id="cdx-commons-codec"
+          name="commons-codec"
+          group="org.apache.commons"
+          version="${commons-codec.version}"
+          xmlns:cdx="antlib:org.apache.ant.cyclonedx">
+        <license refid="apache-2"/>
+      </additionalComponent>
+      <additionalComponent
+          id="cdx-bcpg-jdk15on"
+          name="bcpg-jdk15on"
+          group="org.bouncycastle"
+          version="${bouncycastle.version}"
+          xmlns:cdx="antlib:org.apache.ant.cyclonedx">
+        <license name="Bouncy Castle Licence">
+          <url url="https://www.bouncycastle.org/licence.html"/>
+        </license>
+        <dependency componentRef="cdx-bcprov-jdk15on"/>
+      </additionalComponent>
+      <additionalComponent
+          id="cdx-bcprov-jdk15on"
+          name="bcprov-jdk15on"
+          group="org.bouncycastle"
+          version="${bouncycastle.version}"
+          xmlns:cdx="antlib:org.apache.ant.cyclonedx">
+        <license name="Bouncy Castle Licence">
+          <url url="https://www.bouncycastle.org/licence.html"/>
+        </license>
+      </additionalComponent>
+    </cdx:componentbom>
+  </target>
 </project>
