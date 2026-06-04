@@ -42,7 +42,7 @@ You can either get the sources from a release, or get them directly from Git:
 
 [source,shell]
 ----
-git clone git://git.apache.org/ant-ivy.git
+git clone https://gitbox.apache.org/repos/asf/ant-ivy.git
 ----
 
 ==== Build
