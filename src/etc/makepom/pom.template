@@ -32,9 +32,9 @@
   <name>Apache Ivy</name>
   <url>${ivy.pom.url}</url>
   <scm>
-    <connection>scm:svn:https://svn.apache.org/repos/asf/ant/ivy/core/trunk/</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/ant/ivy/core/trunk</developerConnection>
-    <url>https://svn.apache.org/repos/asf/ant/ivy/core/trunk</url>
+    <connection>scm:git:https://gitbox.apache.org/repos/asf/ant-ivy.git</connection>
+    <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/ant-ivy.git</developerConnection>
+    <url>https://gitbox.apache.org/repos/asf?p=ant-ivy.git</url>
   </scm>
   <mailingLists>
     <mailingList>
@@ -42,14 +42,14 @@
       <subscribe>dev-subscribe@ant.apache.org</subscribe>
       <unsubscribe>dev-unsubscribe@ant.apache.org</unsubscribe>
       <post>dev@ant.apache.org</post>
-      <archive>https://mail-archives.apache.org/mod_mbox/ant-dev</archive>
+      <archive>https://lists.apache.org/list.html?dev@ant.apache.org</archive>
     </mailingList>
     <mailingList>
       <name>Ivy Users List</name>
       <subscribe>ivy-user-subscribe@ant.apache.org</subscribe>
       <unsubscribe>ivy-user-unsubscribe@ant.apache.org</unsubscribe>
       <post>ivy-user@ant.apache.org</post>
-      <archive>https://mail-archives.apache.org/mod_mbox/ant-ivy-user</archive>
+      <archive>https://lists.apache.org/list.html?ivy-user@ant.apache.org</archive>
     </mailingList>
   </mailingLists>
   <issueManagement>
