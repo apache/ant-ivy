@@ -655,7 +655,7 @@
         </generate-tagsdoc>
     </target>
 
-  <target name="define-cyclonedx-components" depends="jar">
+  <target name="define-cyclonedx-components">
     <ivy:cachepath organisation="org.apache.ant"
                    module="ant-cyclonedx"
                    revision="${ant-cyclonedx.version}"
