@@ -400,8 +400,8 @@
                 <include name="*.jar"/>
                 <include name="*.zip"/>
                 <include name="*.gz"/>
-                <include name="*-cyclonedx.json"/>
-                <include name="*-cyclonedx.xml"/>
+                <include name="*.cyclonedx.json"/>
+                <include name="*.cyclonedx.xml"/>
             </fileset>
         </checksum>
         <checksum algorithm="sha-512" fileext=".sha512">
@@ -410,8 +410,8 @@
                 <include name="*.jar"/>
                 <include name="*.zip"/>
                 <include name="*.gz"/>
-                <include name="*-cyclonedx.json"/>
-                <include name="*-cyclonedx.xml"/>
+                <include name="*.cyclonedx.json"/>
+                <include name="*.cyclonedx.xml"/>
             </fileset>
         </checksum>
     </target>
@@ -581,7 +581,7 @@
             depends="/localivy,clean-ivy-home,clean,clean-lib,snapshot-version,install,clean-examples,test-report"/>
 
     <target name="snapshot"
-            depends="prepare-snapshot,snapshot-src,snapshot-bin,snapshot-maven2,snapshot-checksums"
+            depends="prepare-snapshot,snapshot-src,snapshot-bin,snapshot-maven2,sboms,snapshot-checksums"
             description="used for nightly and integration builds"/>
 
     <target name="release"
@@ -942,4 +942,111 @@
       </additionalComponent>
     </cdx:componentbom>
   </target>
+
+  <target name="prepare-distribution-sboms" depends="define-cyclonedx-components">
+    <property name="ant.auto.tmpdir" value="${ant.tmpdir}"
+              unless:set="ant.auto.tmpdir" xmlns:unless="ant:unless"
+              if:set="ant.tmpdir" xmlns:if="ant:if"/>
+    <property name="ant.auto.tmpdir" value="${java.io.tmpdir}"
+              unless:set="ant.auto.tmpdir" xmlns:unless="ant:unless"/>
+
+    <macrodef name="create-tarball-bom">
+      <attribute name="binsrc"/>
+      <attribute name="binarysource"/>
+      <attribute name="ext"/>
+      <element name="archiveContent"/>
+      <element name="moreComponentChildren" optional="true"/>
+      <sequential
+        xmlns:cdx="antlib:org.apache.ant.cyclonedx">
+        <cdx:componentbom
+            bomName="${snapshot.full.name}-@{binsrc}.@{ext}.cyclonedx"
+            outputdirectory="${distrib.dir}/dist/${build.version}"
+            format="all"
+            useComponentManufacturer="true"
+            useComponentSupplier="true">
+          <component
+              version="${build.version}"
+              purl="https://archive.apache.org/dist/ant/ivy/${build.version}/${snapshot.full.name}-@{binsrc}.@{ext}"
+              name="https://archive.apache.org/dist/ant/ivy/${build.version}/${snapshot.full.name}-@{binsrc}.@{ext}"
+              description="Apache Ivy @{binarysource}"
+              publisher="The Apache Software Foundation"
+              type="file"
+              supplierIsManufacturer="true">
+            <file file="${distrib.dir}/dist/${build.version}/${snapshot.full.name}-@{binsrc}.@{ext}"/>
+            <supplier refid="ant-pmc"/>
+            <license refid="apache-2"/>
+            <externalReferenceSet refid="ant-common-refs"/>
+            <externalReferenceSet refid="ivy-ext-refs"/>
+            <moreComponentChildren/>
+          </component>
+          <pureFileComponents>
+            <archiveContent/>
+          </pureFileComponents>
+          <license refid="apache-2"/>
+        </cdx:componentbom>
+      </sequential>
+    </macrodef>
+    <macrodef name="create-tarball-boms">
+      <attribute name="binsrc"/>
+      <attribute name="binarysource"/>
+      <element name="componentChildren" implicit="true" optional="true"/>
+      <sequential>
+        <mkdir dir="${ant.auto.tmpdir}/@{binsrc}"/>
+        <unzip dest="${ant.auto.tmpdir}/@{binsrc}"
+               src="${distrib.dir}/dist/${build.version}/${snapshot.full.name}-@{binsrc}.zip"/>
+        <create-tarball-bom
+            binsrc="@{binsrc}"
+            binarysource="@{binarysource}"
+            ext="tar.gz">
+          <moreComponentChildren>
+            <componentChildren/>
+          </moreComponentChildren>
+          <archiveContent>
+            <fileset dir="${ant.auto.tmpdir}/@{binsrc}" defaultexcludes="no"/>
+          </archiveContent>
+        </create-tarball-bom>
+        <create-tarball-bom
+            binsrc="@{binsrc}"
+            binarysource="@{binarysource}"
+            ext="zip">
+          <moreComponentChildren>
+            <componentChildren/>
+          </moreComponentChildren>
+          <archiveContent>
+            <fileset dir="${ant.auto.tmpdir}/@{binsrc}" defaultexcludes="no"/>
+          </archiveContent>
+        </create-tarball-bom>
+        <delete dir="${ant.auto.tmpdir}/@{binsrc}"/>
+      </sequential>
+    </macrodef>
+  </target>
+
+  <target name="src-tarball-sboms"
+          depends="prepare-distribution-sboms,snapshot-src">
+    <create-tarball-boms binsrc="src" binarysource="Source Distribution"/>
+  </target>
+
+  <target name="bin-tarball-sboms"
+          depends="prepare-distribution-sboms,snapshot-bin">
+    <create-tarball-boms binsrc="bin"
+                         binarysource="Binary Distribution">
+      <component>
+        <sbomLink>
+          <file file="${artifacts.build.dir}/jars/ivy-${build.version}-cyclonedx.json"/>
+        </sbomLink>
+        <file file="${artifacts.build.dir}/jars/${final.name}"/>
+      </component>
+    </create-tarball-boms>
+    <create-tarball-boms binsrc="bin-with-deps"
+                         binarysource="Binary Distribution with Dependencies">
+      <component>
+        <sbomLink>
+          <file file="${artifacts.build.dir}/jars/ivy-${build.version}-cyclonedx.json"/>
+        </sbomLink>
+        <file file="${artifacts.build.dir}/jars/${final.name}"/>
+      </component>
+    </create-tarball-boms>
+  </target>
+
+  <target name="sboms" depends="src-tarball-sboms,bin-tarball-sboms"/>
 </project>
