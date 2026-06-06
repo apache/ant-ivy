@@ -29,7 +29,10 @@ Requirements for making a release are similar to the requirements for building f
 
 On the master, check that files which require update for the release are up to date.
 This includes particularly:
-`asciidoc/release-notes.adoc`
+
+- `asciidoc/release-notes.adoc`
+- `version.properties` (`target.ivy.bundle.version.qualifier` shoud be `final`)
+- `ivy.xml` (`status` should be `release`)
 
 ==== 2. Check out a clean copy of the branch
 
