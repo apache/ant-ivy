@@ -42,6 +42,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeTrue;
 
 public class HttpClientHandlerTest {
 
@@ -98,6 +99,7 @@ public class HttpClientHandlerTest {
 
     @Test
     public void testContentEncoding() throws Exception {
+        assumeTrue(handler.isReachable(new URL("http://carsten.codimi.de/"), 5000));
         assertDownloadOK(new URL("http://carsten.codimi.de/gzip.yaws/daniels.html"), new File(
                 testDir, "gzip.txt"));
         assertDownloadOK(new URL(
