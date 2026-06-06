@@ -288,15 +288,15 @@
         </exec>
         <mkdir dir="${distrib.dir}/dist/${build.version}"/>
         <zip destfile="${distrib.dir}/dist/${build.version}/${snapshot.full.name}-src.zip" defaultexcludes="no">
-            <zipfileset dir="${build.dir}/snapshot-src" prefix="${snapshot.full.name}" defaultexcludes="no" excludes=".git/**"/>
+            <zipfileset dir="${build.dir}/snapshot-src" prefix="${snapshot.full.name}" defaultexcludes="no" excludes=".git/**" id="dist.sources"/>
         </zip>
         <tar destfile="${distrib.dir}/dist/${build.version}/${snapshot.full.name}-src.tar.gz"
              compression="gzip" longfile="gnu" defaultexcludes="no">
-            <zipfileset dir="${build.dir}/snapshot-src" prefix="${snapshot.full.name}" defaultexcludes="no" excludes=".git/**"/>
+            <zipfileset refid="dist.sources"/>
         </tar>
     </target>
 
-    <target name="snapshot-bin-without-dependencies" depends="snapshot-metadata,jar,all-doc">
+    <target name="snapshot-bin-without-dependencies" depends="snapshot-metadata,jar,jar-sbom,all-doc">
         <mkdir dir="${distrib.dir}/dist/${build.version}"/>
         <zip destfile="${distrib.dir}/dist/${build.version}/${snapshot.full.name}-bin.zip">
             <zipfileset dir="${doc.build.dir}" prefix="${snapshot.full.name}/doc" excludes="**/reports/coverage/**,**/reports/test/**"/>
@@ -311,6 +311,7 @@
             <zipfileset dir="${basedir}" includes="build-for-bin-distrib.xml" fullpath="${snapshot.full.name}/build.xml"/>
 
             <zipfileset dir="${artifacts.build.dir}/jars" includes="${final.name}" fullpath="${snapshot.full.name}/ivy-${build.version}.jar"/>
+            <zipfileset dir="${artifacts.build.dir}/jars" includes="ivy-${build.version}-cyclonedx.*" prefix="${snapshot.full.name}"/>
         </zip>
         <tar destfile="${distrib.dir}/dist/${build.version}/${snapshot.full.name}-bin.tar.gz"
              compression="gzip" longfile="gnu">
@@ -318,7 +319,7 @@
         </tar>
     </target>
 
-    <target name="snapshot-bin-with-dependencies" depends="snapshot-metadata,jar,all-doc">
+    <target name="snapshot-bin-with-dependencies" depends="snapshot-metadata,jar,jar-sbom,all-doc">
         <mkdir dir="${distrib.dir}/dist/${build.version}"/>
         <delete dir="${build.dir}/lib"/>
         <ivy:retrieve conf="default" pattern="${build.dir}/lib/[artifact]-[revision].[ext]"/>
@@ -334,6 +335,7 @@
             <zipfileset dir="${artifacts.build.dir}" includes="ivy.xml" fullpath="${snapshot.full.name}/ivy.xml"/>
 
             <zipfileset dir="${artifacts.build.dir}/jars" includes="${final.name}" fullpath="${snapshot.full.name}/ivy-${build.version}.jar"/>
+            <zipfileset dir="${artifacts.build.dir}/jars" includes="ivy-${build.version}-cyclonedx.*" prefix="${snapshot.full.name}"/>
 
             <zipfileset dir="${build.dir}/lib" prefix="${snapshot.full.name}/lib" excludes="ant-*.jar,bcpg-*.jar,bcprov*.jar"/>
         </zip>
@@ -361,6 +363,10 @@
         </ivy:makepom>
         <copy file="${artifacts.build.dir}/jars/${final.name}"
               tofile="${m2.distrib.dir}/ivy-${build.version}.jar"/>
+        <!-- SBOMs -->
+        <copy todir="${m2.distrib.dir}">
+          <fileset dir="${artifacts.build.dir}/jars" includes="ivy-${build.version}-cyclonedx.*"/>
+        </copy>
         <!-- jar javadocs -->
         <jar destfile="${m2.distrib.dir}/ivy-${build.version}-javadoc.jar">
             <fileset dir="${javadoc.build.dir}"/>
@@ -373,12 +379,16 @@
             <fileset dir="${m2.distrib.dir}">
                 <include name="*.pom"/>
                 <include name="*.jar"/>
+                <include name="*-cyclonedx.json"/>
+                <include name="*-cyclonedx.xml"/>
             </fileset>
         </checksum>
         <checksum algorithm="sha-512" fileext=".sha512">
             <fileset dir="${m2.distrib.dir}">
                 <include name="*.pom"/>
                 <include name="*.jar"/>
+                <include name="*-cyclonedx.json"/>
+                <include name="*-cyclonedx.xml"/>
             </fileset>
         </checksum>
     </target>
@@ -390,6 +400,8 @@
                 <include name="*.jar"/>
                 <include name="*.zip"/>
                 <include name="*.gz"/>
+                <include name="*-cyclonedx.json"/>
+                <include name="*-cyclonedx.xml"/>
             </fileset>
         </checksum>
         <checksum algorithm="sha-512" fileext=".sha512">
@@ -398,6 +410,8 @@
                 <include name="*.jar"/>
                 <include name="*.zip"/>
                 <include name="*.gz"/>
+                <include name="*-cyclonedx.json"/>
+                <include name="*-cyclonedx.xml"/>
             </fileset>
         </checksum>
     </target>
@@ -571,7 +585,7 @@
             description="used for nightly and integration builds"/>
 
     <target name="release"
-            depends="release-version,/localivy,clean-ivy-home,clean,clean-lib,rat,sbom,snapshot"
+            depends="release-version,/localivy,clean-ivy-home,clean,clean-lib,rat,snapshot"
             description="make a new release of Ivy"/>
 
     <target name="tagsdoc" depends="generate-doc"
@@ -736,10 +750,10 @@
     </cdx:externalreferenceset>
   </target>
 
-  <target name="sbom" depends="define-cyclonedx-components,snapshot-maven2">
+  <target name="jar-sbom" depends="define-cyclonedx-components,jar">
     <cdx:componentbom
         bomName="ivy-${build.version}-cyclonedx"
-        outputdirectory="${m2.distrib.dir}"
+        outputdirectory="${artifacts.build.dir}/jars"
         format="all"
         useComponentSupplier="true"
         useComponentManufacturer="true"
@@ -751,7 +765,7 @@
           description="Apache Ivy"
           publisher="The Apache Software Foundation"
           supplierIsManufacturer="true">
-        <file file="${m2.distrib.dir}/ivy-${build.version}.jar"/>
+        <file file="${artifacts.build.dir}/jars/${final.name}"/>
         <supplier refid="ant-pmc"/>
         <license refid="apache-2"/>
         <externalReferenceSet refid="ant-common-refs"/>
