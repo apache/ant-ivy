@@ -944,12 +944,6 @@
   </target>
 
   <target name="prepare-distribution-sboms" depends="define-cyclonedx-components">
-    <property name="ant.auto.tmpdir" value="${ant.tmpdir}"
-              unless:set="ant.auto.tmpdir" xmlns:unless="ant:unless"
-              if:set="ant.tmpdir" xmlns:if="ant:if"/>
-    <property name="ant.auto.tmpdir" value="${java.io.tmpdir}"
-              unless:set="ant.auto.tmpdir" xmlns:unless="ant:unless"/>
-
     <macrodef name="create-tarball-bom">
       <attribute name="binsrc"/>
       <attribute name="binarysource"/>
@@ -991,8 +985,8 @@
       <attribute name="binarysource"/>
       <element name="componentChildren" implicit="true" optional="true"/>
       <sequential>
-        <mkdir dir="${ant.auto.tmpdir}/@{binsrc}"/>
-        <unzip dest="${ant.auto.tmpdir}/@{binsrc}"
+        <mkdir dir="${build.dir}/sbom/@{binsrc}"/>
+        <unzip dest="${build.dir}/sbom/@{binsrc}"
                src="${distrib.dir}/dist/${build.version}/${snapshot.full.name}-@{binsrc}.zip"/>
         <create-tarball-bom
             binsrc="@{binsrc}"
@@ -1002,7 +996,7 @@
             <componentChildren/>
           </moreComponentChildren>
           <archiveContent>
-            <fileset dir="${ant.auto.tmpdir}/@{binsrc}" defaultexcludes="no"/>
+            <fileset dir="${build.dir}/sbom/@{binsrc}" defaultexcludes="no"/>
           </archiveContent>
         </create-tarball-bom>
         <create-tarball-bom
@@ -1013,10 +1007,10 @@
             <componentChildren/>
           </moreComponentChildren>
           <archiveContent>
-            <fileset dir="${ant.auto.tmpdir}/@{binsrc}" defaultexcludes="no"/>
+            <fileset dir="${build.dir}/sbom/@{binsrc}" defaultexcludes="no"/>
           </archiveContent>
         </create-tarball-bom>
-        <delete dir="${ant.auto.tmpdir}/@{binsrc}"/>
+        <delete dir="${build.dir}/sbom/@{binsrc}"/>
       </sequential>
     </macrodef>
   </target>
