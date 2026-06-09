@@ -316,6 +316,11 @@ table.tableblock .valign-middle {
     padding-left: 22px;
     margin-bottom: 3px;
 }
+.treeview a.active-menu-item {
+    background-color: #eef4e0;
+    border-left: 3px solid #7a9438;
+    padding-left: 4px;
+}
 .treeview li.submenu {
     background: white url(../images/closed.gif) no-repeat left 1px;
 }
