@@ -220,6 +220,26 @@ public class IvyDependencyUpdateCheckerTest extends AntTaskTestCase {
         assertLogContaining("org1#mod1.2\t2.0 -> 2.2");
     }
 
+    /**
+     * Test case for IVY-1665.
+     *
+     * @see <a href="https://issues.apache.org/jira/browse/IVY-1665">IVY-1665</a>
+     */
+    @Test
+    public void testLatestRelease() {
+        dependencyUpdateChecker.getProject().setProperty("ivy.settings.file", "test/repositories/IVY-1665/ivysettings.xml");
+        dependencyUpdateChecker.setRevisionToCheck("latest.release"); // exclude milestone (2.0-M1)
+        dependencyUpdateChecker.setOrganisation("bar");
+        dependencyUpdateChecker.setModule("foo");
+        dependencyUpdateChecker.setRevision("2.0-M1");
+        dependencyUpdateChecker.setInline(true);
+        dependencyUpdateChecker.execute();
+
+        assertLogNotContaining("bar#foo\t2.0-M1 -> 1.0");
+        // expect listing for 2.0 when it comes available
+        assertLogContaining("All dependencies are up to date");
+    }
+
     @Test
     public void testSimpleExtends() {
         dependencyUpdateChecker.setFile(new File("test/java/org/apache/ivy/ant/ivy-extends-multiconf.xml"));

@@ -127,9 +127,9 @@ public class IvyDependencyUpdateChecker extends IvyPostResolveTask {
         boolean dependencyUpdateDetected = false;
         for (IvyNode latest : latestReport.getDependencies()) {
             for (IvyNode originalDependency : originalReport.getDependencies()) {
-                if (originalDependency.getModuleId().equals(latest.getModuleId())) {
-                    if (!originalDependency.getResolvedId().getRevision()
-                            .equals(latest.getResolvedId().getRevision())) {
+                if (latest.getModuleId().equals(originalDependency.getModuleId())) {
+                    if (isGreater(latest.getResolvedId().getRevision(),
+                                originalDependency.getResolvedId().getRevision())) {
                         // is this dependency a transitive or a direct dependency?
                         // (unfortunately .isTransitive() methods do not have the same meaning)
                         boolean isTransitiveDependency = latest.getDependencyDescriptor(latest
@@ -194,5 +194,43 @@ public class IvyDependencyUpdateChecker extends IvyPostResolveTask {
                 log("\t" + moduleRevisionId.toString());
             }
         }
+    }
+
+    //--------------------------------------------------------------------------
+
+    private static boolean isGreater(String string1, String string2) {
+        String[] tokens1 = string1.split("[\\._\\-\\+]");
+        String[] tokens2 = string2.split("[\\._\\-\\+]");
+        int i = 0;
+        for (final int n = Math.min(tokens1.length, tokens2.length); i < n; i += 1) {
+            if (!tokens1[i].equals(tokens2[i])) {
+                boolean is1Number = isNumeric(tokens1[i]);
+                boolean is2Number = isNumeric(tokens2[i]);
+                if (is1Number && is2Number) {
+                    return Long.valueOf(tokens1[i]).compareTo(Long.valueOf(tokens2[i])) > 0;
+                } else if (is1Number && !is2Number) {
+                    return true;
+                } else if (!is1Number && is2Number) {
+                    return false;
+                }
+                return true; // special meanings accounted for by resolve
+            }
+        }
+        if (i < tokens1.length) {
+            return isNumeric(tokens1[i]);
+        }
+        if (i < tokens2.length) {
+            return !isNumeric(tokens2[i]);
+        }
+        return false;
+    }
+
+    private static boolean isNumeric(String string) {
+        for (int i = 0, n = string.length(); i < n; ++i) {
+            if (!Character.isDigit(string.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
     }
 }
