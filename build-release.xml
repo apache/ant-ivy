@@ -288,15 +288,15 @@
         </exec>
         <mkdir dir="${distrib.dir}/dist/${build.version}"/>
         <zip destfile="${distrib.dir}/dist/${build.version}/${snapshot.full.name}-src.zip" defaultexcludes="no">
-            <zipfileset dir="${build.dir}/snapshot-src" prefix="${snapshot.full.name}" defaultexcludes="no" excludes=".git/**"/>
+            <zipfileset dir="${build.dir}/snapshot-src" prefix="${snapshot.full.name}" defaultexcludes="no" excludes=".git/**" id="dist.sources"/>
         </zip>
         <tar destfile="${distrib.dir}/dist/${build.version}/${snapshot.full.name}-src.tar.gz"
              compression="gzip" longfile="gnu" defaultexcludes="no">
-            <zipfileset dir="${build.dir}/snapshot-src" prefix="${snapshot.full.name}" defaultexcludes="no" excludes=".git/**"/>
+            <zipfileset refid="dist.sources"/>
         </tar>
     </target>
 
-    <target name="snapshot-bin-without-dependencies" depends="snapshot-metadata,jar,all-doc">
+    <target name="snapshot-bin-without-dependencies" depends="snapshot-metadata,jar,jar-sbom,all-doc">
         <mkdir dir="${distrib.dir}/dist/${build.version}"/>
         <zip destfile="${distrib.dir}/dist/${build.version}/${snapshot.full.name}-bin.zip">
             <zipfileset dir="${doc.build.dir}" prefix="${snapshot.full.name}/doc" excludes="**/reports/coverage/**,**/reports/test/**"/>
@@ -311,6 +311,7 @@
             <zipfileset dir="${basedir}" includes="build-for-bin-distrib.xml" fullpath="${snapshot.full.name}/build.xml"/>
 
             <zipfileset dir="${artifacts.build.dir}/jars" includes="${final.name}" fullpath="${snapshot.full.name}/ivy-${build.version}.jar"/>
+            <zipfileset dir="${artifacts.build.dir}/jars" includes="ivy-${build.version}-cyclonedx.*" prefix="${snapshot.full.name}"/>
         </zip>
         <tar destfile="${distrib.dir}/dist/${build.version}/${snapshot.full.name}-bin.tar.gz"
              compression="gzip" longfile="gnu">
@@ -318,7 +319,7 @@
         </tar>
     </target>
 
-    <target name="snapshot-bin-with-dependencies" depends="snapshot-metadata,jar,all-doc">
+    <target name="snapshot-bin-with-dependencies" depends="snapshot-metadata,jar,jar-sbom,all-doc">
         <mkdir dir="${distrib.dir}/dist/${build.version}"/>
         <delete dir="${build.dir}/lib"/>
         <ivy:retrieve conf="default" pattern="${build.dir}/lib/[artifact]-[revision].[ext]"/>
@@ -334,6 +335,7 @@
             <zipfileset dir="${artifacts.build.dir}" includes="ivy.xml" fullpath="${snapshot.full.name}/ivy.xml"/>
 
             <zipfileset dir="${artifacts.build.dir}/jars" includes="${final.name}" fullpath="${snapshot.full.name}/ivy-${build.version}.jar"/>
+            <zipfileset dir="${artifacts.build.dir}/jars" includes="ivy-${build.version}-cyclonedx.*" prefix="${snapshot.full.name}"/>
 
             <zipfileset dir="${build.dir}/lib" prefix="${snapshot.full.name}/lib" excludes="ant-*.jar,bcpg-*.jar,bcprov*.jar"/>
         </zip>
@@ -361,6 +363,10 @@
         </ivy:makepom>
         <copy file="${artifacts.build.dir}/jars/${final.name}"
               tofile="${m2.distrib.dir}/ivy-${build.version}.jar"/>
+        <!-- SBOMs -->
+        <copy todir="${m2.distrib.dir}">
+          <fileset dir="${artifacts.build.dir}/jars" includes="ivy-${build.version}-cyclonedx.*"/>
+        </copy>
         <!-- jar javadocs -->
         <jar destfile="${m2.distrib.dir}/ivy-${build.version}-javadoc.jar">
             <fileset dir="${javadoc.build.dir}"/>
@@ -373,12 +379,16 @@
             <fileset dir="${m2.distrib.dir}">
                 <include name="*.pom"/>
                 <include name="*.jar"/>
+                <include name="*-cyclonedx.json"/>
+                <include name="*-cyclonedx.xml"/>
             </fileset>
         </checksum>
         <checksum algorithm="sha-512" fileext=".sha512">
             <fileset dir="${m2.distrib.dir}">
                 <include name="*.pom"/>
                 <include name="*.jar"/>
+                <include name="*-cyclonedx.json"/>
+                <include name="*-cyclonedx.xml"/>
             </fileset>
         </checksum>
     </target>
@@ -390,6 +400,8 @@
                 <include name="*.jar"/>
                 <include name="*.zip"/>
                 <include name="*.gz"/>
+                <include name="*.cyclonedx.json"/>
+                <include name="*.cyclonedx.xml"/>
             </fileset>
         </checksum>
         <checksum algorithm="sha-512" fileext=".sha512">
@@ -398,6 +410,8 @@
                 <include name="*.jar"/>
                 <include name="*.zip"/>
                 <include name="*.gz"/>
+                <include name="*.cyclonedx.json"/>
+                <include name="*.cyclonedx.xml"/>
             </fileset>
         </checksum>
     </target>
@@ -471,6 +485,8 @@
                         asciiarmor="true">
             <fileset dir="${distrib.dir}">
                 <include name="**/*.pom"/>
+                <include name="**/*-cyclonedx.json"/>
+                <include name="**/*-cyclonedx.xml"/>
                 <include name="**/*.jar"/>
                 <include name="**/*.zip"/>
                 <include name="**/*.gz"/>
@@ -556,6 +572,8 @@
             <artifact name="ivy" ext="pom" type="ivy"/>
             <artifact name="ivy" ext="jar" type="sources" classifier="sources"/>
             <artifact name="ivy" ext="jar" type="javadoc" classifier="javadoc"/>
+            <artifact name="ivy" ext="xml" type="cyclonedx.xml" classifier="cyclonedx"/>
+            <artifact name="ivy" ext="json" type="cyclonedx.json" classifier="cyclonedx"/>
         </ivy2:publish>
     </target>
 
@@ -563,7 +581,7 @@
             depends="/localivy,clean-ivy-home,clean,clean-lib,snapshot-version,install,clean-examples,test-report"/>
 
     <target name="snapshot"
-            depends="prepare-snapshot,snapshot-src,snapshot-bin,snapshot-maven2,snapshot-checksums"
+            depends="prepare-snapshot,snapshot-src,snapshot-bin,snapshot-maven2,sboms,snapshot-checksums"
             description="used for nightly and integration builds"/>
 
     <target name="release"
@@ -637,4 +655,392 @@
         </generate-tagsdoc>
     </target>
 
+  <target name="define-cyclonedx-components">
+    <ivy:cachepath organisation="org.apache.ant"
+                   module="ant-cyclonedx"
+                   revision="${ant-cyclonedx.version}"
+                   inline="true" conf="default"
+                   pathid="cyclonedx.classpath"
+                   log="download-only"/>
+    <typedef uri="antlib:org.apache.ant.cyclonedx"
+             resource="org/apache/ant/cyclonedx/antlib.xml"
+             classpathref="cyclonedx.classpath"/>
+
+    <!-- common definitions for SBOMs -->
+    <cdx:organization
+        name="Apache Ant Project Management Committee"
+        id="ant-pmc"
+        xmlns:cdx="antlib:org.apache.ant.cyclonedx">
+      <url url="https://ant.apache.org/"/>
+    </cdx:organization>
+    <cdx:license
+        licenseId="Apache-2.0"
+        id="apache-2"
+        xmlns:cdx="antlib:org.apache.ant.cyclonedx">
+      <url url="https://www.apache.org/licenses/LICENSE-2.0.txt"/>
+    </cdx:license>
+    <cdx:externalreferenceset
+        id="ant-common-refs"
+        xmlns:cdx="antlib:org.apache.ant.cyclonedx">
+      <externalReference
+          type="LICENSE"
+          url="https://www.apache.org/licenses/LICENSE-2.0.txt"/>
+      <externalReference
+          type="SECURITY_CONTACT"
+          url="https://www.apache.org/security/"/>
+    </cdx:externalreferenceset>
+    <cdx:externalreferenceset
+        id="ivy-ext-refs"
+        xmlns:cdx="antlib:org.apache.ant.cyclonedx">
+      <externalReference
+          type="MAILING_LIST"
+          url="https://ant.apache.org/ivy/mailing-lists.html"/>
+      <externalReference
+          type="VCS"
+          url="https://gitbox.apache.org/repos/asf/ant-ivy.git"/>
+      <externalReference
+          type="BUILD_SYSTEM"
+          url="https://ci-builds.apache.org/job/Ant/job/Ivy/"/>
+      <externalReference
+          type="ISSUE_TRACKER"
+          url="http://issues.apache.org/jira/browse/IVY"/>
+      <externalReference
+          type="WEBSITE"
+          url="https://ant.apache.org/ivy/"/>
+      <externalReference
+          type="DISTRIBUTION"
+          url="https://ant.apache.org/ivy/download.cgi"/>
+      <externalReference
+          type="SOURCE_DISTRIBUTION"
+          url="https://ant.apache.org/ivy/download.cgi"/>
+      <externalReference
+          type="ADVISORIES"
+          url="https://ant.apache.org/ivy/security.html"/>
+    </cdx:externalreferenceset>
+    <cdx:externalreferenceset
+        id="ant-ext-refs"
+        xmlns:cdx="antlib:org.apache.ant.cyclonedx">
+      <externalReference
+          type="MAILING_LIST"
+          url="https://ant.apache.org/mail.html"/>
+      <externalReference
+          type="VCS"
+          url="https://gitbox.apache.org/repos/asf/ant.git"/>
+      <externalReference
+          type="BUILD_SYSTEM"
+          url="https://ci-builds.apache.org/job/Ant/"/>
+      <externalReference
+          type="ISSUE_TRACKER"
+          url="https://bz.apache.org/bugzilla/buglist.cgi?product=Ant"/>
+      <externalReference
+          type="WEBSITE"
+          url="https://ant.apache.org/"/>
+      <externalReference
+          type="DISTRIBUTION"
+          url="https://ant.apache.org/bindownload.cgi"/>
+      <externalReference
+          type="SOURCE_DISTRIBUTION"
+          url="https://ant.apache.org/srcdownload.cgi"/>
+      <externalReference
+          type="ADVISORIES"
+          url="https://ant.apache.org/security.html#Apache%20Ant%20Security%20Vulnerabilities"/>
+      <externalReference
+          type="DOCUMENTATION"
+          url="https://ant.apache.org/manual/"/>
+    </cdx:externalreferenceset>
+  </target>
+
+  <target name="jar-sbom" depends="define-cyclonedx-components,jar">
+    <cdx:componentbom
+        bomName="ivy-${build.version}-cyclonedx"
+        outputdirectory="${artifacts.build.dir}/jars"
+        format="all"
+        useComponentSupplier="true"
+        useComponentManufacturer="true"
+        xmlns:cdx="antlib:org.apache.ant.cyclonedx">
+      <component
+          name="ivy"
+          group="org.apache.ivy"
+          version="${build.version}"
+          description="Apache Ivy"
+          publisher="The Apache Software Foundation"
+          supplierIsManufacturer="true">
+        <file file="${artifacts.build.dir}/jars/${final.name}"/>
+        <supplier refid="ant-pmc"/>
+        <license refid="apache-2"/>
+        <externalReferenceSet refid="ant-common-refs"/>
+        <externalReferenceSet refid="ivy-ext-refs"/>
+        <dependency componentRef="cdx-ant"/>
+        <dependency componentRef="cdx-httpclient"/>
+        <dependency componentRef="cdx-commons-compress"/>
+        <dependency componentRef="cdx-commons-vfs2"/>
+        <dependency componentRef="cdx-apache-oro"/>
+        <dependency componentRef="cdx-jsch"/>
+        <dependency componentRef="cdx-jsch.agentproxy"/>
+        <dependency componentRef="cdx-jsch.agentproxy.connector-factory"/>
+        <dependency componentRef="cdx-jsch.agentproxy.jsch"/>
+        <dependency componentRef="cdx-bcpg-jdk15on"/>
+        <dependency componentRef="cdx-bcprov-jdk15on"/>
+        <dependency componentRef="cdx-commons-codec"/>
+      </component>
+      <license refid="apache-2"/>
+      <additionalComponent
+          name="ant"
+          group="org.apache.ant"
+          version="${apache-ant.version}"
+          isExternal="true"
+          id="cdx-ant">
+        <supplier refid="ant-pmc"/>
+        <license refid="apache-2"/>
+        <externalReferenceSet refid="ant-common-refs"/>
+        <externalReferenceSet refid="ant-ext-refs"/>
+        <dependency componentRef="cdx-ant-launcher"/>
+      </additionalComponent>
+      <additionalComponent
+          name="ant-launcher"
+          group="org.apache.ant"
+          version="${apache-ant.version}"
+          isExternal="true"
+          id="cdx-ant-launcher">
+        <supplier refid="ant-pmc"/>
+        <license refid="apache-2"/>
+        <externalReferenceSet refid="ant-common-refs"/>
+        <externalReferenceSet refid="ant-ext-refs"/>
+      </additionalComponent>
+      <additionalComponent
+          id="cdx-httpclient"
+          name="httpclient"
+          group="org.apache.httpcomponents"
+          version="${httpclient.version}"
+          xmlns:cdx="antlib:org.apache.ant.cyclonedx">
+        <license refid="apache-2"/>
+        <dependency componentRef="cdx-commons-codec"/>
+        <dependency componentRef="cdx-commons-logging"/>
+      </additionalComponent>
+      <additionalComponent
+          id="cdx-commons-logging"
+          name="commons-logging"
+          group="org.apache.commons"
+          version="1.2"
+          unknownDependencies="true"
+          xmlns:cdx="antlib:org.apache.ant.cyclonedx">
+        <license refid="apache-2"/>
+      </additionalComponent>
+      <additionalComponent
+          id="cdx-commons-compress"
+          name="commons-compress"
+          group="org.apache.commons"
+          version="${commons-compress.version}"
+          unknownDependencies="true"
+          xmlns:cdx="antlib:org.apache.ant.cyclonedx">
+        <license refid="apache-2"/>
+      </additionalComponent>
+      <additionalComponent
+          id="cdx-commons-vfs2"
+          name="commons-vfs2"
+          group="org.apache.commons"
+          version="${commons-vfs2.version}"
+          unknownDependencies="true"
+          xmlns:cdx="antlib:org.apache.ant.cyclonedx">
+        <license refid="apache-2"/>
+      </additionalComponent>
+      <additionalComponent
+          id="cdx-apache-oro"
+          name="oro"
+          group="oro"
+          version="${oro.version}"
+          unknownDependencies="true"
+          xmlns:cdx="antlib:org.apache.ant.cyclonedx">
+        <license refid="apache-2"/>
+      </additionalComponent>
+      <additionalComponent
+          id="cdx-jsch"
+          name="jsch"
+          group="com.jcraft"
+          description="JSch is a pure Java implementation of SSH2"
+          version="${jsch.version}"
+          xmlns:cdx="antlib:org.apache.ant.cyclonedx">
+        <externalReference
+            type="WEBSITE"
+            url="http://www.jcraft.com/"/>
+        <license name="Revised BSD">
+          <url url="http://www.jcraft.com/jsch/LICENSE.txt"/>
+        </license>
+      </additionalComponent>
+      <additionalComponent
+          id="cdx-jsch.agentproxy"
+          name="jsch.agentproxy"
+          group="com.jcraft"
+          description="a proxy to ssh-agent and Pageant in Java "
+          version="${jsch.agentproxy.version}"
+          xmlns:cdx="antlib:org.apache.ant.cyclonedx">
+        <externalReference
+            type="WEBSITE"
+            url="http://www.jcraft.com/"/>
+        <license name="Revised BSD">
+          <url url="http://www.jcraft.com/jsch/LICENSE.txt"/>
+        </license>
+      </additionalComponent>
+      <additionalComponent
+          id="cdx-jsch.agentproxy.connector-factory"
+          name="jsch.agentproxy.connector-factory"
+          group="com.jcraft"
+          description="a connector factory"
+          version="${jsch.agentproxy.version}"
+          unknownDependencies="true"
+          xmlns:cdx="antlib:org.apache.ant.cyclonedx">
+        <externalReference
+            type="WEBSITE"
+            url="http://www.jcraft.com/"/>
+        <license name="Revised BSD">
+          <url url="http://www.jcraft.com/jsch/LICENSE.txt"/>
+        </license>
+      </additionalComponent>
+      <additionalComponent
+          id="cdx-jsch.agentproxy.jsch"
+          name="jsch.agentproxy.jsch"
+          group="com.jcraft"
+          description="a library to use jsch-agent-proxy with JSch"
+          version="${jsch.agentproxy.version}"
+          unknownDependencies="true"
+          xmlns:cdx="antlib:org.apache.ant.cyclonedx">
+        <externalReference
+            type="WEBSITE"
+            url="http://www.jcraft.com/"/>
+        <license name="Revised BSD">
+          <url url="http://www.jcraft.com/jsch/LICENSE.txt"/>
+        </license>
+      </additionalComponent>
+      <additionalComponent
+          id="cdx-commons-codec"
+          name="commons-codec"
+          group="org.apache.commons"
+          version="${commons-codec.version}"
+          xmlns:cdx="antlib:org.apache.ant.cyclonedx">
+        <license refid="apache-2"/>
+      </additionalComponent>
+      <additionalComponent
+          id="cdx-bcpg-jdk15on"
+          name="bcpg-jdk15on"
+          group="org.bouncycastle"
+          version="${bouncycastle.version}"
+          xmlns:cdx="antlib:org.apache.ant.cyclonedx">
+        <license name="Bouncy Castle Licence">
+          <url url="https://www.bouncycastle.org/licence.html"/>
+        </license>
+        <dependency componentRef="cdx-bcprov-jdk15on"/>
+      </additionalComponent>
+      <additionalComponent
+          id="cdx-bcprov-jdk15on"
+          name="bcprov-jdk15on"
+          group="org.bouncycastle"
+          version="${bouncycastle.version}"
+          xmlns:cdx="antlib:org.apache.ant.cyclonedx">
+        <license name="Bouncy Castle Licence">
+          <url url="https://www.bouncycastle.org/licence.html"/>
+        </license>
+      </additionalComponent>
+    </cdx:componentbom>
+  </target>
+
+  <target name="prepare-distribution-sboms" depends="define-cyclonedx-components">
+    <macrodef name="create-tarball-bom">
+      <attribute name="binsrc"/>
+      <attribute name="binarysource"/>
+      <attribute name="ext"/>
+      <element name="archiveContent"/>
+      <element name="moreComponentChildren" optional="true"/>
+      <sequential
+        xmlns:cdx="antlib:org.apache.ant.cyclonedx">
+        <cdx:componentbom
+            bomName="${snapshot.full.name}-@{binsrc}.@{ext}.cyclonedx"
+            outputdirectory="${distrib.dir}/dist/${build.version}"
+            format="all"
+            useComponentManufacturer="true"
+            useComponentSupplier="true">
+          <component
+              version="${build.version}"
+              purl="https://archive.apache.org/dist/ant/ivy/${build.version}/${snapshot.full.name}-@{binsrc}.@{ext}"
+              name="https://archive.apache.org/dist/ant/ivy/${build.version}/${snapshot.full.name}-@{binsrc}.@{ext}"
+              description="Apache Ivy @{binarysource}"
+              publisher="The Apache Software Foundation"
+              type="file"
+              supplierIsManufacturer="true">
+            <file file="${distrib.dir}/dist/${build.version}/${snapshot.full.name}-@{binsrc}.@{ext}"/>
+            <supplier refid="ant-pmc"/>
+            <license refid="apache-2"/>
+            <externalReferenceSet refid="ant-common-refs"/>
+            <externalReferenceSet refid="ivy-ext-refs"/>
+            <moreComponentChildren/>
+          </component>
+          <pureFileComponents>
+            <archiveContent/>
+          </pureFileComponents>
+          <license refid="apache-2"/>
+        </cdx:componentbom>
+      </sequential>
+    </macrodef>
+    <macrodef name="create-tarball-boms">
+      <attribute name="binsrc"/>
+      <attribute name="binarysource"/>
+      <element name="componentChildren" implicit="true" optional="true"/>
+      <sequential>
+        <mkdir dir="${build.dir}/sbom/@{binsrc}"/>
+        <unzip dest="${build.dir}/sbom/@{binsrc}"
+               src="${distrib.dir}/dist/${build.version}/${snapshot.full.name}-@{binsrc}.zip"/>
+        <create-tarball-bom
+            binsrc="@{binsrc}"
+            binarysource="@{binarysource}"
+            ext="tar.gz">
+          <moreComponentChildren>
+            <componentChildren/>
+          </moreComponentChildren>
+          <archiveContent>
+            <fileset dir="${build.dir}/sbom/@{binsrc}" defaultexcludes="no"/>
+          </archiveContent>
+        </create-tarball-bom>
+        <create-tarball-bom
+            binsrc="@{binsrc}"
+            binarysource="@{binarysource}"
+            ext="zip">
+          <moreComponentChildren>
+            <componentChildren/>
+          </moreComponentChildren>
+          <archiveContent>
+            <fileset dir="${build.dir}/sbom/@{binsrc}" defaultexcludes="no"/>
+          </archiveContent>
+        </create-tarball-bom>
+        <delete dir="${build.dir}/sbom/@{binsrc}"/>
+      </sequential>
+    </macrodef>
+  </target>
+
+  <target name="src-tarball-sboms"
+          depends="prepare-distribution-sboms,snapshot-src">
+    <create-tarball-boms binsrc="src" binarysource="Source Distribution"/>
+  </target>
+
+  <target name="bin-tarball-sboms"
+          depends="prepare-distribution-sboms,snapshot-bin">
+    <create-tarball-boms binsrc="bin"
+                         binarysource="Binary Distribution">
+      <component>
+        <sbomLink>
+          <file file="${artifacts.build.dir}/jars/ivy-${build.version}-cyclonedx.json"/>
+        </sbomLink>
+        <file file="${artifacts.build.dir}/jars/${final.name}"/>
+      </component>
+    </create-tarball-boms>
+    <create-tarball-boms binsrc="bin-with-deps"
+                         binarysource="Binary Distribution with Dependencies">
+      <component>
+        <sbomLink>
+          <file file="${artifacts.build.dir}/jars/ivy-${build.version}-cyclonedx.json"/>
+        </sbomLink>
+        <file file="${artifacts.build.dir}/jars/${final.name}"/>
+      </component>
+    </create-tarball-boms>
+  </target>
+
+  <target name="sboms" depends="src-tarball-sboms,bin-tarball-sboms"/>
 </project>

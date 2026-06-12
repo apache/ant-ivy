@@ -1,0 +1,627 @@
+{
+  "bomFormat" : "CycloneDX",
+  "specVersion" : "1.6",
+  "serialNumber" : "urn:uuid:7d194c03-c1c2-4ff0-ae46-2d792d78444a",
+  "version" : 1,
+  "metadata" : {
+    "timestamp" : "2026-06-06T16:42:37Z",
+    "lifecycles" : [
+      {
+        "phase" : "build"
+      }
+    ],
+    "tools" : {
+      "components" : [
+        {
+          "type" : "library",
+          "supplier" : {
+            "name" : "Apache Ant Project Management Committee",
+            "url" : [
+              "https://ant.apache.org/"
+            ]
+          },
+          "manufacturer" : {
+            "name" : "Apache Ant Project Management Committee",
+            "url" : [
+              "https://ant.apache.org/"
+            ]
+          },
+          "publisher" : "The Apache Software Foundation",
+          "group" : "org.apache.ant",
+          "name" : "ant-cyclonedx",
+          "version" : "0.1",
+          "description" : "Apache CycloneDX Antlib",
+          "licenses" : [
+            {
+              "license" : {
+                "id" : "Apache-2.0",
+                "url" : "https://www.apache.org/licenses/LICENSE-2.0.txt"
+              }
+            }
+          ],
+          "purl" : "pkg:maven/org.apache.ant/ant-cyclonedx@0.1?type=jar",
+          "externalReferences" : [
+            {
+              "type" : "vcs",
+              "url" : "https://gitbox.apache.org/repos/asf/ant-antlibs-cyclonedx.git"
+            },
+            {
+              "type" : "license",
+              "url" : "https://www.apache.org/licenses/LICENSE-2.0.txt"
+            },
+            {
+              "type" : "build-system",
+              "url" : "https://ci-builds.apache.org/job/Ant/job/CycloneDX%20Antlib/"
+            },
+            {
+              "type" : "mailing-list",
+              "url" : "https://ant.apache.org/mail.html"
+            },
+            {
+              "type" : "issue-tracker",
+              "url" : "https://bz.apache.org/bugzilla/buglist.cgi?component=CycloneDX%20Antlib&product=Ant"
+            },
+            {
+              "type" : "website",
+              "url" : "https://ant.apache.org/antlibs/cyclonedx/"
+            },
+            {
+              "type" : "distribution",
+              "url" : "https://ant.apache.org/antlibs/bindownload.cgi"
+            },
+            {
+              "type" : "source-distribution",
+              "url" : "https://ant.apache.org/antlibs/srcdownload.cgi"
+            },
+            {
+              "type" : "security-contact",
+              "url" : "https://www.apache.org/security/"
+            }
+          ]
+        }
+      ]
+    },
+    "component" : {
+      "type" : "library",
+      "bom-ref" : "pkg:maven/org.apache.ivy/ivy@2.6.0?type=jar",
+      "supplier" : {
+        "name" : "Apache Ant Project Management Committee",
+        "url" : [
+          "https://ant.apache.org/"
+        ]
+      },
+      "manufacturer" : {
+        "name" : "Apache Ant Project Management Committee",
+        "url" : [
+          "https://ant.apache.org/"
+        ]
+      },
+      "publisher" : "The Apache Software Foundation",
+      "group" : "org.apache.ivy",
+      "name" : "ivy",
+      "version" : "2.6.0",
+      "description" : "Apache Ivy",
+      "hashes" : [
+        {
+          "alg" : "MD5",
+          "content" : "6e19d72c37ac0da229c702add274a648"
+        },
+        {
+          "alg" : "SHA-1",
+          "content" : "49b9e007786b827fdd86b02b8125acb6d0f54801"
+        },
+        {
+          "alg" : "SHA-256",
+          "content" : "af70c4189d6a371f798245a58304e7de10e63fda4e14375882e610fed5c55464"
+        },
+        {
+          "alg" : "SHA-512",
+          "content" : "89e11d7c4ef8c0aaf6bed8a52b837fcf5155e6efe63b9d6ab712a63db781e1f5e604dfc7a9e0381d3c1b0e934f5989027b96fab391d8cc4cef1b42e3e0f446b8"
+        },
+        {
+          "alg" : "SHA3-256",
+          "content" : "e67efa3e80440683b299f4c0bb4900ec433f31e33f53e2705e372ca66e9a0235"
+        },
+        {
+          "alg" : "SHA3-512",
+          "content" : "781e8169d8a894224d4c54ad600fce71592058ecbe2a982059e79ec3b72933292cefff574ed848823e7c22629ddbc59b0102a38730b16aef39e0463a819efa6b"
+        },
+        {
+          "alg" : "SHA-384",
+          "content" : "73db2f2125e7e6cf963174d244472844a57615cb942b2197d4dd092d1fe090010eb4644ba2c17ac0002abba15508513e"
+        },
+        {
+          "alg" : "SHA3-384",
+          "content" : "8917d0a675261d96e412a2a9dbe14242c12d346c60f0565ce949266036fac9f417263cedc3c62aaa9e62f455f9129497"
+        }
+      ],
+      "licenses" : [
+        {
+          "license" : {
+            "id" : "Apache-2.0",
+            "url" : "https://www.apache.org/licenses/LICENSE-2.0.txt"
+          }
+        }
+      ],
+      "purl" : "pkg:maven/org.apache.ivy/ivy@2.6.0?type=jar",
+      "externalReferences" : [
+        {
+          "type" : "license",
+          "url" : "https://www.apache.org/licenses/LICENSE-2.0.txt"
+        },
+        {
+          "type" : "security-contact",
+          "url" : "https://www.apache.org/security/"
+        },
+        {
+          "type" : "mailing-list",
+          "url" : "https://ant.apache.org/ivy/mailing-lists.html"
+        },
+        {
+          "type" : "vcs",
+          "url" : "https://gitbox.apache.org/repos/asf/ant-ivy.git"
+        },
+        {
+          "type" : "build-system",
+          "url" : "https://ci-builds.apache.org/job/Ant/job/Ivy/"
+        },
+        {
+          "type" : "issue-tracker",
+          "url" : "http://issues.apache.org/jira/browse/IVY"
+        },
+        {
+          "type" : "website",
+          "url" : "https://ant.apache.org/ivy/"
+        },
+        {
+          "type" : "distribution",
+          "url" : "https://ant.apache.org/ivy/download.cgi"
+        },
+        {
+          "type" : "source-distribution",
+          "url" : "https://ant.apache.org/ivy/download.cgi"
+        },
+        {
+          "type" : "advisories",
+          "url" : "https://ant.apache.org/ivy/security.html"
+        }
+      ]
+    },
+    "manufacturer" : {
+      "name" : "Apache Ant Project Management Committee",
+      "url" : [
+        "https://ant.apache.org/"
+      ]
+    },
+    "supplier" : {
+      "name" : "Apache Ant Project Management Committee",
+      "url" : [
+        "https://ant.apache.org/"
+      ]
+    },
+    "licenses" : [
+      {
+        "license" : {
+          "id" : "Apache-2.0",
+          "url" : "https://www.apache.org/licenses/LICENSE-2.0.txt"
+        }
+      }
+    ]
+  },
+  "components" : [
+    {
+      "type" : "library",
+      "bom-ref" : "pkg:maven/org.apache.ant/ant@1.9.16?type=jar",
+      "supplier" : {
+        "name" : "Apache Ant Project Management Committee",
+        "url" : [
+          "https://ant.apache.org/"
+        ]
+      },
+      "group" : "org.apache.ant",
+      "name" : "ant",
+      "version" : "1.9.16",
+      "licenses" : [
+        {
+          "license" : {
+            "id" : "Apache-2.0",
+            "url" : "https://www.apache.org/licenses/LICENSE-2.0.txt"
+          }
+        }
+      ],
+      "purl" : "pkg:maven/org.apache.ant/ant@1.9.16?type=jar",
+      "externalReferences" : [
+        {
+          "type" : "license",
+          "url" : "https://www.apache.org/licenses/LICENSE-2.0.txt"
+        },
+        {
+          "type" : "security-contact",
+          "url" : "https://www.apache.org/security/"
+        },
+        {
+          "type" : "mailing-list",
+          "url" : "https://ant.apache.org/mail.html"
+        },
+        {
+          "type" : "vcs",
+          "url" : "https://gitbox.apache.org/repos/asf/ant.git"
+        },
+        {
+          "type" : "build-system",
+          "url" : "https://ci-builds.apache.org/job/Ant/"
+        },
+        {
+          "type" : "issue-tracker",
+          "url" : "https://bz.apache.org/bugzilla/buglist.cgi?product=Ant"
+        },
+        {
+          "type" : "website",
+          "url" : "https://ant.apache.org/"
+        },
+        {
+          "type" : "distribution",
+          "url" : "https://ant.apache.org/bindownload.cgi"
+        },
+        {
+          "type" : "source-distribution",
+          "url" : "https://ant.apache.org/srcdownload.cgi"
+        },
+        {
+          "type" : "advisories",
+          "url" : "https://ant.apache.org/security.html#Apache%20Ant%20Security%20Vulnerabilities"
+        },
+        {
+          "type" : "documentation",
+          "url" : "https://ant.apache.org/manual/"
+        }
+      ]
+    },
+    {
+      "type" : "library",
+      "bom-ref" : "pkg:maven/org.apache.ant/ant-launcher@1.9.16?type=jar",
+      "supplier" : {
+        "name" : "Apache Ant Project Management Committee",
+        "url" : [
+          "https://ant.apache.org/"
+        ]
+      },
+      "group" : "org.apache.ant",
+      "name" : "ant-launcher",
+      "version" : "1.9.16",
+      "licenses" : [
+        {
+          "license" : {
+            "id" : "Apache-2.0",
+            "url" : "https://www.apache.org/licenses/LICENSE-2.0.txt"
+          }
+        }
+      ],
+      "purl" : "pkg:maven/org.apache.ant/ant-launcher@1.9.16?type=jar",
+      "externalReferences" : [
+        {
+          "type" : "license",
+          "url" : "https://www.apache.org/licenses/LICENSE-2.0.txt"
+        },
+        {
+          "type" : "security-contact",
+          "url" : "https://www.apache.org/security/"
+        },
+        {
+          "type" : "mailing-list",
+          "url" : "https://ant.apache.org/mail.html"
+        },
+        {
+          "type" : "vcs",
+          "url" : "https://gitbox.apache.org/repos/asf/ant.git"
+        },
+        {
+          "type" : "build-system",
+          "url" : "https://ci-builds.apache.org/job/Ant/"
+        },
+        {
+          "type" : "issue-tracker",
+          "url" : "https://bz.apache.org/bugzilla/buglist.cgi?product=Ant"
+        },
+        {
+          "type" : "website",
+          "url" : "https://ant.apache.org/"
+        },
+        {
+          "type" : "distribution",
+          "url" : "https://ant.apache.org/bindownload.cgi"
+        },
+        {
+          "type" : "source-distribution",
+          "url" : "https://ant.apache.org/srcdownload.cgi"
+        },
+        {
+          "type" : "advisories",
+          "url" : "https://ant.apache.org/security.html#Apache%20Ant%20Security%20Vulnerabilities"
+        },
+        {
+          "type" : "documentation",
+          "url" : "https://ant.apache.org/manual/"
+        }
+      ]
+    },
+    {
+      "type" : "library",
+      "bom-ref" : "pkg:maven/org.apache.httpcomponents/httpclient@4.5.13?type=jar",
+      "group" : "org.apache.httpcomponents",
+      "name" : "httpclient",
+      "version" : "4.5.13",
+      "licenses" : [
+        {
+          "license" : {
+            "id" : "Apache-2.0",
+            "url" : "https://www.apache.org/licenses/LICENSE-2.0.txt"
+          }
+        }
+      ],
+      "purl" : "pkg:maven/org.apache.httpcomponents/httpclient@4.5.13?type=jar"
+    },
+    {
+      "type" : "library",
+      "bom-ref" : "pkg:maven/org.apache.commons/commons-logging@1.2?type=jar",
+      "group" : "org.apache.commons",
+      "name" : "commons-logging",
+      "version" : "1.2",
+      "licenses" : [
+        {
+          "license" : {
+            "id" : "Apache-2.0",
+            "url" : "https://www.apache.org/licenses/LICENSE-2.0.txt"
+          }
+        }
+      ],
+      "purl" : "pkg:maven/org.apache.commons/commons-logging@1.2?type=jar"
+    },
+    {
+      "type" : "library",
+      "bom-ref" : "pkg:maven/org.apache.commons/commons-compress@1.27.1?type=jar",
+      "group" : "org.apache.commons",
+      "name" : "commons-compress",
+      "version" : "1.27.1",
+      "licenses" : [
+        {
+          "license" : {
+            "id" : "Apache-2.0",
+            "url" : "https://www.apache.org/licenses/LICENSE-2.0.txt"
+          }
+        }
+      ],
+      "purl" : "pkg:maven/org.apache.commons/commons-compress@1.27.1?type=jar"
+    },
+    {
+      "type" : "library",
+      "bom-ref" : "pkg:maven/org.apache.commons/commons-vfs2@2.2?type=jar",
+      "group" : "org.apache.commons",
+      "name" : "commons-vfs2",
+      "version" : "2.2",
+      "licenses" : [
+        {
+          "license" : {
+            "id" : "Apache-2.0",
+            "url" : "https://www.apache.org/licenses/LICENSE-2.0.txt"
+          }
+        }
+      ],
+      "purl" : "pkg:maven/org.apache.commons/commons-vfs2@2.2?type=jar"
+    },
+    {
+      "type" : "library",
+      "bom-ref" : "pkg:maven/oro/oro@2.0.8?type=jar",
+      "group" : "oro",
+      "name" : "oro",
+      "version" : "2.0.8",
+      "licenses" : [
+        {
+          "license" : {
+            "id" : "Apache-2.0",
+            "url" : "https://www.apache.org/licenses/LICENSE-2.0.txt"
+          }
+        }
+      ],
+      "purl" : "pkg:maven/oro/oro@2.0.8?type=jar"
+    },
+    {
+      "type" : "library",
+      "bom-ref" : "pkg:maven/com.jcraft/jsch@0.1.55?type=jar",
+      "group" : "com.jcraft",
+      "name" : "jsch",
+      "version" : "0.1.55",
+      "description" : "JSch is a pure Java implementation of SSH2",
+      "licenses" : [
+        {
+          "license" : {
+            "name" : "Revised BSD",
+            "url" : "http://www.jcraft.com/jsch/LICENSE.txt"
+          }
+        }
+      ],
+      "purl" : "pkg:maven/com.jcraft/jsch@0.1.55?type=jar",
+      "externalReferences" : [
+        {
+          "type" : "website",
+          "url" : "http://www.jcraft.com/"
+        }
+      ]
+    },
+    {
+      "type" : "library",
+      "bom-ref" : "pkg:maven/com.jcraft/jsch.agentproxy@0.0.9?type=jar",
+      "group" : "com.jcraft",
+      "name" : "jsch.agentproxy",
+      "version" : "0.0.9",
+      "description" : "a proxy to ssh-agent and Pageant in Java",
+      "licenses" : [
+        {
+          "license" : {
+            "name" : "Revised BSD",
+            "url" : "http://www.jcraft.com/jsch/LICENSE.txt"
+          }
+        }
+      ],
+      "purl" : "pkg:maven/com.jcraft/jsch.agentproxy@0.0.9?type=jar",
+      "externalReferences" : [
+        {
+          "type" : "website",
+          "url" : "http://www.jcraft.com/"
+        }
+      ]
+    },
+    {
+      "type" : "library",
+      "bom-ref" : "pkg:maven/com.jcraft/jsch.agentproxy.connector-factory@0.0.9?type=jar",
+      "group" : "com.jcraft",
+      "name" : "jsch.agentproxy.connector-factory",
+      "version" : "0.0.9",
+      "description" : "a connector factory",
+      "licenses" : [
+        {
+          "license" : {
+            "name" : "Revised BSD",
+            "url" : "http://www.jcraft.com/jsch/LICENSE.txt"
+          }
+        }
+      ],
+      "purl" : "pkg:maven/com.jcraft/jsch.agentproxy.connector-factory@0.0.9?type=jar",
+      "externalReferences" : [
+        {
+          "type" : "website",
+          "url" : "http://www.jcraft.com/"
+        }
+      ]
+    },
+    {
+      "type" : "library",
+      "bom-ref" : "pkg:maven/com.jcraft/jsch.agentproxy.jsch@0.0.9?type=jar",
+      "group" : "com.jcraft",
+      "name" : "jsch.agentproxy.jsch",
+      "version" : "0.0.9",
+      "description" : "a library to use jsch-agent-proxy with JSch",
+      "licenses" : [
+        {
+          "license" : {
+            "name" : "Revised BSD",
+            "url" : "http://www.jcraft.com/jsch/LICENSE.txt"
+          }
+        }
+      ],
+      "purl" : "pkg:maven/com.jcraft/jsch.agentproxy.jsch@0.0.9?type=jar",
+      "externalReferences" : [
+        {
+          "type" : "website",
+          "url" : "http://www.jcraft.com/"
+        }
+      ]
+    },
+    {
+      "type" : "library",
+      "bom-ref" : "pkg:maven/org.apache.commons/commons-codec@1.18.0?type=jar",
+      "group" : "org.apache.commons",
+      "name" : "commons-codec",
+      "version" : "1.18.0",
+      "licenses" : [
+        {
+          "license" : {
+            "id" : "Apache-2.0",
+            "url" : "https://www.apache.org/licenses/LICENSE-2.0.txt"
+          }
+        }
+      ],
+      "purl" : "pkg:maven/org.apache.commons/commons-codec@1.18.0?type=jar"
+    },
+    {
+      "type" : "library",
+      "bom-ref" : "pkg:maven/org.bouncycastle/bcpg-jdk15on@1.70?type=jar",
+      "group" : "org.bouncycastle",
+      "name" : "bcpg-jdk15on",
+      "version" : "1.70",
+      "licenses" : [
+        {
+          "license" : {
+            "name" : "Bouncy Castle Licence",
+            "url" : "https://www.bouncycastle.org/licence.html"
+          }
+        }
+      ],
+      "purl" : "pkg:maven/org.bouncycastle/bcpg-jdk15on@1.70?type=jar"
+    },
+    {
+      "type" : "library",
+      "bom-ref" : "pkg:maven/org.bouncycastle/bcprov-jdk15on@1.70?type=jar",
+      "group" : "org.bouncycastle",
+      "name" : "bcprov-jdk15on",
+      "version" : "1.70",
+      "licenses" : [
+        {
+          "license" : {
+            "name" : "Bouncy Castle Licence",
+            "url" : "https://www.bouncycastle.org/licence.html"
+          }
+        }
+      ],
+      "purl" : "pkg:maven/org.bouncycastle/bcprov-jdk15on@1.70?type=jar"
+    }
+  ],
+  "dependencies" : [
+    {
+      "ref" : "pkg:maven/org.apache.ivy/ivy@2.6.0?type=jar",
+      "dependsOn" : [
+        "pkg:maven/org.apache.ant/ant@1.9.16?type=jar",
+        "pkg:maven/org.apache.httpcomponents/httpclient@4.5.13?type=jar",
+        "pkg:maven/org.apache.commons/commons-compress@1.27.1?type=jar",
+        "pkg:maven/org.apache.commons/commons-vfs2@2.2?type=jar",
+        "pkg:maven/oro/oro@2.0.8?type=jar",
+        "pkg:maven/com.jcraft/jsch@0.1.55?type=jar",
+        "pkg:maven/com.jcraft/jsch.agentproxy@0.0.9?type=jar",
+        "pkg:maven/com.jcraft/jsch.agentproxy.connector-factory@0.0.9?type=jar",
+        "pkg:maven/com.jcraft/jsch.agentproxy.jsch@0.0.9?type=jar",
+        "pkg:maven/org.bouncycastle/bcpg-jdk15on@1.70?type=jar",
+        "pkg:maven/org.bouncycastle/bcprov-jdk15on@1.70?type=jar",
+        "pkg:maven/org.apache.commons/commons-codec@1.18.0?type=jar"
+      ]
+    },
+    {
+      "ref" : "pkg:maven/org.apache.ant/ant@1.9.16?type=jar",
+      "dependsOn" : [
+        "pkg:maven/org.apache.ant/ant-launcher@1.9.16?type=jar"
+      ]
+    },
+    {
+      "ref" : "pkg:maven/org.apache.ant/ant-launcher@1.9.16?type=jar",
+      "dependsOn" : [ ]
+    },
+    {
+      "ref" : "pkg:maven/org.apache.httpcomponents/httpclient@4.5.13?type=jar",
+      "dependsOn" : [
+        "pkg:maven/org.apache.commons/commons-codec@1.18.0?type=jar",
+        "pkg:maven/org.apache.commons/commons-logging@1.2?type=jar"
+      ]
+    },
+    {
+      "ref" : "pkg:maven/com.jcraft/jsch@0.1.55?type=jar",
+      "dependsOn" : [ ]
+    },
+    {
+      "ref" : "pkg:maven/com.jcraft/jsch.agentproxy@0.0.9?type=jar",
+      "dependsOn" : [ ]
+    },
+    {
+      "ref" : "pkg:maven/org.apache.commons/commons-codec@1.18.0?type=jar",
+      "dependsOn" : [ ]
+    },
+    {
+      "ref" : "pkg:maven/org.bouncycastle/bcpg-jdk15on@1.70?type=jar",
+      "dependsOn" : [
+        "pkg:maven/org.bouncycastle/bcprov-jdk15on@1.70?type=jar"
+      ]
+    },
+    {
+      "ref" : "pkg:maven/org.bouncycastle/bcprov-jdk15on@1.70?type=jar",
+      "dependsOn" : [ ]
+    }
+  ]
+}
