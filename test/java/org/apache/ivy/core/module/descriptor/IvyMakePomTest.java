@@ -253,6 +253,100 @@ public class IvyMakePomTest {
         assertEquals(String.join(System.lineSeparator(), expect), readFileToString(pomFile, "UTF-8"));
     }
 
+    /**
+     * Test case for <a href="https://issues.apache.org/jira/browse/IVY-1667">IVY-1667</a>.
+     */
+    @Test
+    public void testMakePomWithTemplate1667_2() throws Exception {
+        File ivyFile = workdir.newFile("ivy.xml");
+        writeLines(ivyFile, "UTF-8", Arrays.asList(
+            "<ivy-module version='2.0'>",
+            "  <info module='name' organisation='org' revision='1.0.0-SNAPSHOT' />",
+            "  <configurations>",
+            "    <conf name='default' />",
+            "  </configurations>",
+            "  <dependencies defaultconf='default' defaultconfmapping='*->master,runtime()'>",
+            "    <dependency org='org.springframework' name='spring-core' rev='6.2.9' />",
+            "  </dependencies>",
+            "</ivy-module>"
+        ));
+
+        File pomFile = workdir.newFile("ivy.pom");
+
+        File templateFile = workdir.newFile("the.pom");
+        writeLines(templateFile, "UTF-8", Arrays.asList(
+            "<project>",
+            "   <groupId>${ivy.pom.groupId}</groupId>",
+            "   <artifactId>${ivy.pom.artifactId}</artifactId>",
+            "   <version>${ivy.pom.version}</version>",
+            "   <dependencyManagement>",
+            "      <dependencies>",
+            "         <dependency>",
+            "            <groupId>org.aspectj</groupId>",
+            "            <artifactId>aspectjrt</artifactId>",
+            "            <version>1.9.24</version>",
+            "         </dependency>",
+            "      </dependencies>",
+            "   </dependencyManagement>",
+            "   <dependencies>",
+            "      <dependency>",
+            "         <groupId>org.springframework</groupId>",
+            "         <artifactId>spring-aop</artifactId>",
+            "         <version>6.2.9</version>",
+            "         <scope>compile</scope>",
+            "      </dependency>",
+            "   </dependencies>",
+            "</project>"
+        ));
+
+        IvyMakePom task = new IvyMakePom();
+        task.setIvyFile(ivyFile);
+        task.setPomFile(pomFile);
+        task.setPrintIvyInfo(false);
+        task.setProject(project);
+        task.setTemplateFile(templateFile);
+
+        IvyMakePom.Mapping mapping = task.createMapping();
+        mapping.setConf("default");
+        mapping.setScope("compile");
+
+        task.execute();
+
+        String[] expect = {
+            "<project>",
+            "   <groupId>org</groupId>",
+            "   <artifactId>name</artifactId>",
+            "   <version>1.0.0-SNAPSHOT</version>",
+            "   <dependencyManagement>",
+            "      <dependencies>",
+            "         <dependency>",
+            "            <groupId>org.aspectj</groupId>",
+            "            <artifactId>aspectjrt</artifactId>",
+            "            <version>1.9.24</version>",
+            "         </dependency>",
+            "      </dependencies>",
+            "   </dependencyManagement>",
+            "   <dependencies>",
+            "      <dependency>",
+            "         <groupId>org.springframework</groupId>",
+            "         <artifactId>spring-aop</artifactId>",
+            "         <version>6.2.9</version>",
+            "         <scope>compile</scope>",
+            "      </dependency>",
+            "      <dependency>",
+            "         <groupId>org.springframework</groupId>",
+            "         <artifactId>spring-core</artifactId>",
+            "         <version>6.2.9</version>",
+            "         <scope>compile</scope>",
+            "      </dependency>",
+            "   </dependencies>",
+            "</project>",
+            ""
+        };
+
+        assertEquals(String.join(System.lineSeparator(), expect), readFileToString(pomFile, "UTF-8"));
+    }
+
     //--------------------------------------------------------------------------
 
     private static final class PomDependency {
