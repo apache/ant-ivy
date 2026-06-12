@@ -15,15 +15,10 @@
  *  limitations under the License.
  *
  */
-
 package org.apache.ivy.core.module.descriptor;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import java.io.File;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -32,59 +27,61 @@ import javax.xml.xpath.XPathConstants;
 import org.apache.ivy.TestHelper;
 import org.apache.ivy.ant.IvyMakePom;
 import org.apache.ivy.util.TestXmlHelper;
+
 import org.apache.tools.ant.Project;
-import org.junit.Before;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import static org.apache.commons.io.FileUtils.readFileToString;
+import static org.apache.commons.io.FileUtils.writeLines;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 /**
- * Tests {@link IvyMakePom}
+ * Tests {@link IvyMakePom}.
  */
 public class IvyMakePomTest {
 
-    private Project project;
+    private Project project = TestHelper.newProject();
 
     @Rule
     public TemporaryFolder workdir = new TemporaryFolder();
 
-    @Before
-    public void beforeTest() {
-        this.project = TestHelper.newProject();
-    }
-
     /**
-     * Test case for IVY-1528. An Ivy file containing a <code>classifier</code> extra attribute in
-     * its dependency, must retain the <code>classifier</code> in the generated POM when converted
-     * to a POM file through {@link IvyMakePom}.
-     *
-     * @throws Exception if something goes wrong
-     * @see <a href="https://issues.apache.org/jira/browse/IVY-1528">IVY-1528</a>
+     * Test case for <a href="https://issues.apache.org/jira/browse/IVY-1528">IVY-1528</a>.
+     * <p>
+     * An Ivy file containing a <code>classifier</code> extra attribute in its
+     * dependency, must retain the <code>classifier</code> in the generated POM
+     * when converted to a POM file through {@link IvyMakePom}.
      */
     @Test
-    public void testClassifier() throws Exception {
-        final File ivyFile = new File(IvyMakePomTest.class.getResource("ivy-to-pom-classifier.xml").toURI());
+    public void testMakePom1528() throws Exception {
+        File ivyFile = new File(IvyMakePomTest.class.getResource("ivy-to-pom-classifier.xml").toURI());
         assertTrue(ivyFile + " is either missing or not a file", ivyFile.isFile());
-        final IvyMakePom makepom = new IvyMakePom();
-        makepom.setProject(project);
-        final File generatedPomFile = workdir.newFile("test-ivy-to-pom-classifier.pom");
-        makepom.setPomFile(generatedPomFile);
-        makepom.setIvyFile(ivyFile);
-        // run the task
-        makepom.execute();
+        File pomFile = workdir.newFile("test-ivy-to-pom-classifier.pom");
 
-        // read the generated pom
-        final NodeList dependencies = (NodeList) TestXmlHelper.evaluateXPathExpr(generatedPomFile, "/project/dependencies/dependency", XPathConstants.NODESET);
+        IvyMakePom task = new IvyMakePom();
+        task.setIvyFile(ivyFile);
+        task.setPomFile(pomFile);
+        task.setProject(project);
+        task.execute();
+
+        NodeList dependencies = (NodeList) TestXmlHelper.evaluateXPathExpr(pomFile, "/project/dependencies/dependency", XPathConstants.NODESET);
         assertNotNull("Dependencies element wasn't found in the generated POM file", dependencies);
         assertEquals("Unexpected number of dependencies in the generated POM file", 2, dependencies.getLength());
 
-        final Set<String> expectedPomArtifactIds = new HashSet<>();
+        Set<String> expectedPomArtifactIds = new HashSet<>();
         expectedPomArtifactIds.add("foo");
         expectedPomArtifactIds.add("bar");
         for (int i = 0; i < dependencies.getLength(); i++) {
-            final PomDependency pomDependency = PomDependency.parse(dependencies.item(i));
+            PomDependency pomDependency = PomDependency.parse(dependencies.item(i));
             assertNotNull("Dependency generated was null", pomDependency);
             assertTrue("Unexpected dependency " + pomDependency, expectedPomArtifactIds.contains(pomDependency.artifactId));
             // we no longer expect this, so remove it
@@ -102,6 +99,225 @@ public class IvyMakePomTest {
         }
         assertTrue("Some expected dependencies " + expectedPomArtifactIds + " were not found in the generated POM file", expectedPomArtifactIds.isEmpty());
     }
+
+    /**
+     * Test case for <a href="https://issues.apache.org/jira/browse/IVY-1653">IVY-1653</a>.
+     */
+    @Test
+    public void testMakePom1653() throws Exception {
+        File ivyFile = workdir.newFile("ivy-1653.xml");
+        writeLines(ivyFile, "UTF-8", Arrays.asList(
+            "<ivy-module version='2.0'>",
+            "  <info module='name' organisation='org' revision='1.0.0-SNAPSHOT' />",
+            "  <configurations>",
+            "    <conf name='default' />",
+            "  </configurations>",
+            "  <dependencies defaultconf='default' defaultconfmapping='*->master,runtime()'>",
+            "    <dependency org='org.springframework' name='spring-aop' rev='6.2.9' />",
+            "    <override org='org.aspectj' module='aspectjrt' rev='1.9.24' />",
+            "  </dependencies>",
+            "</ivy-module>"
+        ));
+
+        File pomFile = workdir.newFile("ivy-1653.pom");
+
+        IvyMakePom task = new IvyMakePom();
+        task.setIvyFile(ivyFile);
+        task.setPomFile(pomFile);
+        task.setPrintIvyInfo(false);
+        task.setProject(project);
+
+        IvyMakePom.Mapping mapping = task.createMapping();
+        mapping.setConf("default");
+        mapping.setScope("compile");
+
+        task.execute();
+
+        String[] expect = {
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+            "<project xmlns=\"http://maven.apache.org/POM/4.0.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"",
+            "    xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\">",
+            "",
+            "  <modelVersion>4.0.0</modelVersion>",
+            "  <groupId>org</groupId>",
+            "  <artifactId>name</artifactId>",
+            "  <packaging>jar</packaging>",
+            "  <version>1.0.0-SNAPSHOT</version>",
+            "  <dependencies>",
+            "    <dependency>",
+            "      <groupId>org.springframework</groupId>",
+            "      <artifactId>spring-aop</artifactId>",
+            "      <version>6.2.9</version>",
+            "      <scope>compile</scope>",
+            "    </dependency>",
+            "  </dependencies>",
+            "  <dependencyManagement>",
+            "    <dependencies>",
+            "      <dependency>",
+            "        <groupId>org.aspectj</groupId>",
+            "        <artifactId>aspectjrt</artifactId>",
+            "        <version>1.9.24</version>",
+            "      </dependency>",
+            "    </dependencies>",
+            "  </dependencyManagement>",
+            "</project>",
+            ""
+        };
+
+        assertEquals(String.join(System.lineSeparator(), expect), readFileToString(pomFile, "UTF-8"));
+    }
+
+    @Test
+    public void testMakePomWithTemplate() throws Exception {
+        File ivyFile = workdir.newFile("ivy.xml");
+        writeLines(ivyFile, "UTF-8", Arrays.asList(
+            "<ivy-module version='2.0'>",
+            "  <info module='name' organisation='org' revision='1.0.0-SNAPSHOT' />",
+            "  <configurations>",
+            "    <conf name='default' />",
+            "  </configurations>",
+            "  <dependencies defaultconf='default' defaultconfmapping='*->master,runtime()'>",
+            "    <dependency org='org.springframework' name='spring-aop' rev='6.2.9' />",
+            "  </dependencies>",
+            "</ivy-module>"
+        ));
+
+        File pomFile = workdir.newFile("ivy.pom");
+
+        File templateFile = workdir.newFile("the.pom");
+        writeLines(templateFile, "UTF-8", Arrays.asList(
+            "<project>",
+            "   <groupId>${ivy.pom.groupId}</groupId>",
+            "   <artifactId>${ivy.pom.artifactId}</artifactId>",
+            "   <version>${ivy.pom.version}</version>",
+            "   <dependencies>",
+            "      <dependency>",
+            "         <groupId>org.springframework</groupId>",
+            "         <artifactId>spring-core</artifactId>",
+            "         <version>6.2.9</version>",
+            "         <scope>compile</scope>",
+            "      </dependency>",
+            "   </dependencies>",
+            "</project>"
+        ));
+
+        IvyMakePom task = new IvyMakePom();
+        task.setIvyFile(ivyFile);
+        task.setPomFile(pomFile);
+        task.setPrintIvyInfo(false);
+        task.setProject(project);
+        task.setTemplateFile(templateFile);
+
+        IvyMakePom.Mapping mapping = task.createMapping();
+        mapping.setConf("default");
+        mapping.setScope("compile");
+
+        task.execute();
+
+        String[] expect = {
+            "<project>",
+            "   <groupId>org</groupId>",
+            "   <artifactId>name</artifactId>",
+            "   <version>1.0.0-SNAPSHOT</version>",
+            "   <dependencies>",
+            "      <dependency>",
+            "         <groupId>org.springframework</groupId>",
+            "         <artifactId>spring-core</artifactId>",
+            "         <version>6.2.9</version>",
+            "         <scope>compile</scope>",
+            "      </dependency>",
+            "      <dependency>",
+            "         <groupId>org.springframework</groupId>",
+            "         <artifactId>spring-aop</artifactId>",
+            "         <version>6.2.9</version>",
+            "         <scope>compile</scope>",
+            "      </dependency>",
+            "   </dependencies>",
+            "</project>",
+            ""
+        };
+
+        assertEquals(String.join(System.lineSeparator(), expect), readFileToString(pomFile, "UTF-8"));
+    }
+
+    @Test
+    public void testMakePomWithTemplate2() throws Exception {
+        File ivyFile = workdir.newFile("ivy.xml");
+        writeLines(ivyFile, "UTF-8", Arrays.asList(
+            "<ivy-module version='2.0'>",
+            "  <info module='name' organisation='org' revision='1.0.0-SNAPSHOT' />",
+            "  <configurations>",
+            "    <conf name='default' />",
+            "  </configurations>",
+            "  <dependencies defaultconf='default' defaultconfmapping='*->master,runtime()'>",
+            "    <dependency org='org.springframework' name='spring-aop' rev='6.2.9' />",
+            "  </dependencies>",
+            "</ivy-module>"
+        ));
+
+        File pomFile = workdir.newFile("ivy.pom");
+
+        File templateFile = workdir.newFile("the.pom");
+        writeLines(templateFile, "UTF-8", Arrays.asList(
+            "<project>",
+            "   <groupId>${ivy.pom.groupId}</groupId>",
+            "   <artifactId>${ivy.pom.artifactId}</artifactId>",
+            "   <version>${ivy.pom.version}</version>",
+            "   <dependencyManagement>",
+            "      <dependencies>",
+            "         <dependency>",
+            "            <groupId>org.aspectj</groupId>",
+            "            <artifactId>aspectjrt</artifactId>",
+            "            <version>1.9.24</version>",
+            "         </dependency>",
+            "      </dependencies>",
+            "   </dependencyManagement>",
+            "</project>"
+        ));
+
+        IvyMakePom task = new IvyMakePom();
+        task.setIvyFile(ivyFile);
+        task.setPomFile(pomFile);
+        task.setPrintIvyInfo(false);
+        task.setProject(project);
+        task.setTemplateFile(templateFile);
+
+        IvyMakePom.Mapping mapping = task.createMapping();
+        mapping.setConf("default");
+        mapping.setScope("compile");
+
+        task.execute();
+
+        String[] expect = {
+            "<project>",
+            "   <groupId>org</groupId>",
+            "   <artifactId>name</artifactId>",
+            "   <version>1.0.0-SNAPSHOT</version>",
+            "   <dependencyManagement>",
+            "      <dependencies>",
+            "         <dependency>",
+            "            <groupId>org.aspectj</groupId>",
+            "            <artifactId>aspectjrt</artifactId>",
+            "            <version>1.9.24</version>",
+            "         </dependency>",
+            "      </dependencies>",
+            "   </dependencyManagement>",
+            "   <dependencies>",
+            "      <dependency>",
+            "         <groupId>org.springframework</groupId>",
+            "         <artifactId>spring-aop</artifactId>",
+            "         <version>6.2.9</version>",
+            "         <scope>compile</scope>",
+            "      </dependency>",
+            "   </dependencies>",
+            "</project>",
+            ""
+        };
+
+        assertEquals(String.join(System.lineSeparator(), expect), readFileToString(pomFile, "UTF-8"));
+    }
+
+    //--------------------------------------------------------------------------
 
     private static final class PomDependency {
         private final String groupId;
