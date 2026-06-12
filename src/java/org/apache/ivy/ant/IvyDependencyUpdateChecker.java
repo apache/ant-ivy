@@ -29,6 +29,9 @@ import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.plugins.latest.ArtifactInfo;
+import org.apache.ivy.plugins.latest.LatestStrategy;
+import org.apache.ivy.plugins.resolver.DependencyResolver;
+import org.apache.ivy.plugins.resolver.util.HasLatestStrategy;
 
 import org.apache.tools.ant.BuildException;
 
@@ -131,7 +134,7 @@ public class IvyDependencyUpdateChecker extends IvyPostResolveTask {
                 if (latest.getModuleId().equals(originalDependency.getModuleId())) {
                     ArtifactInfo in1 = toArtifactInfo(latest);
                     ArtifactInfo in2 = toArtifactInfo(originalDependency);
-                    ArtifactInfo out = getSettings().getDefaultLatestStrategy().findLatest(new ArtifactInfo[]{in1, in2}, null);
+                    ArtifactInfo out = getLatestStrategy(originalDependency).findLatest(new ArtifactInfo[]{in1, in2}, null);
                     if (out == in1) {
                         // is this dependency a transitive or a direct dependency?
                         // (unfortunately .isTransitive() methods do not have the same meaning)
@@ -199,6 +202,14 @@ public class IvyDependencyUpdateChecker extends IvyPostResolveTask {
     }
 
     //--------------------------------------------------------------------------
+
+    private LatestStrategy getLatestStrategy(IvyNode node) {
+        DependencyResolver resolver = getSettings().getResolver(node.getResolvedId());
+        if (resolver instanceof HasLatestStrategy) {
+            return ((HasLatestStrategy) resolver).getLatestStrategy();
+        }
+        return getSettings().getDefaultLatestStrategy();
+    }
 
     private static ArtifactInfo toArtifactInfo(IvyNode node) {
         return new ArtifactInfo() {
