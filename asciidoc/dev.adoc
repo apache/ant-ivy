@@ -34,6 +34,9 @@ _We recommend the latest version of Ant_
 * a link:http://www.oracle.com/technetwork/java/javase/downloads/index.html[JDK] 7 or greater +
 _Build instructions have been successfully tested with OpenJDK 8 and 11_
 
+Some of the targets used during the release process generate CycloneDX
+SBOMs and require Java 9 or greater in order to build.
+
 === Procedure
 
 ==== Get the source
