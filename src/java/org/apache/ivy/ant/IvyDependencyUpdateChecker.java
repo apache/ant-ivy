@@ -28,6 +28,7 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.resolve.ResolveOptions;
+import org.apache.ivy.plugins.latest.ArtifactInfo;
 
 import org.apache.tools.ant.BuildException;
 
@@ -128,8 +129,10 @@ public class IvyDependencyUpdateChecker extends IvyPostResolveTask {
         for (IvyNode latest : latestReport.getDependencies()) {
             for (IvyNode originalDependency : originalReport.getDependencies()) {
                 if (latest.getModuleId().equals(originalDependency.getModuleId())) {
-                    if (isGreater(latest.getResolvedId().getRevision(),
-                                originalDependency.getResolvedId().getRevision())) {
+                    ArtifactInfo in1 = toArtifactInfo(latest);
+                    ArtifactInfo in2 = toArtifactInfo(originalDependency);
+                    ArtifactInfo out = getSettings().getDefaultLatestStrategy().findLatest(new ArtifactInfo[]{in1, in2}, null);
+                    if (out == in1) {
                         // is this dependency a transitive or a direct dependency?
                         // (unfortunately .isTransitive() methods do not have the same meaning)
                         boolean isTransitiveDependency = latest.getDependencyDescriptor(latest
@@ -144,7 +147,6 @@ public class IvyDependencyUpdateChecker extends IvyPostResolveTask {
                             dependencyUpdateDetected = true;
                         }
                     }
-
                 }
             }
         }
@@ -198,39 +200,16 @@ public class IvyDependencyUpdateChecker extends IvyPostResolveTask {
 
     //--------------------------------------------------------------------------
 
-    private static boolean isGreater(String string1, String string2) {
-        String[] tokens1 = string1.split("[\\._\\-\\+]");
-        String[] tokens2 = string2.split("[\\._\\-\\+]");
-        int i = 0;
-        for (final int n = Math.min(tokens1.length, tokens2.length); i < n; i += 1) {
-            if (!tokens1[i].equals(tokens2[i])) {
-                boolean is1Number = isNumeric(tokens1[i]);
-                boolean is2Number = isNumeric(tokens2[i]);
-                if (is1Number && is2Number) {
-                    return Long.valueOf(tokens1[i]).compareTo(Long.valueOf(tokens2[i])) > 0;
-                } else if (is1Number && !is2Number) {
-                    return true;
-                } else if (!is1Number && is2Number) {
-                    return false;
-                }
-                return true; // special meanings accounted for by resolve
+    private static ArtifactInfo toArtifactInfo(IvyNode node) {
+        return new ArtifactInfo() {
+            @Override
+            public String getRevision() {
+                return node.getResolvedId().getRevision();
             }
-        }
-        if (i < tokens1.length) {
-            return isNumeric(tokens1[i]);
-        }
-        if (i < tokens2.length) {
-            return !isNumeric(tokens2[i]);
-        }
-        return false;
-    }
-
-    private static boolean isNumeric(String string) {
-        for (int i = 0, n = string.length(); i < n; ++i) {
-            if (!Character.isDigit(string.charAt(i))) {
-                return false;
+            @Override
+            public long getLastModified() {
+                return node.getLastModified();
             }
-        }
-        return true;
+        };
     }
 }
