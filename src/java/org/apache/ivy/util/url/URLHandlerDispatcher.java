@@ -179,6 +179,15 @@ public class URLHandlerDispatcher implements TimeoutConstrainedURLHandler {
         }
     }
 
+    public void setPreemptiveAuth(boolean preemptive) {
+        ((TimeoutConstrainedURLHandler) defaultHandler).setPreemptiveAuth(preemptive);
+        for (URLHandler handler : handlers.values()) {
+            if (handler instanceof TimeoutConstrainedURLHandler) {
+                ((TimeoutConstrainedURLHandler) handler).setPreemptiveAuth(preemptive);
+            }
+        }
+    }
+
     @SuppressWarnings("deprecation")
     public void setDownloader(String protocol, URLHandler downloader) {
         handlers.put(protocol, downloader);
