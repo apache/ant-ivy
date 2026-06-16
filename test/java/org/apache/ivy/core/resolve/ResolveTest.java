@@ -5670,7 +5670,7 @@ public final class ResolveTest {
     }
 
     /**
-     * Second test case for IVY-745.¨
+     * Second test case for IVY-745.
      * Now we disable consistency checking, everything must work fine.
      *
      * @throws Exception if something goes wrong

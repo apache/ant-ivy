@@ -24,6 +24,14 @@
 
     <property name="final.name" value="ivy.jar"/>
 
+    <presetdef name="compile">
+        <javac debug="${debug.mode}"
+               encoding="US-ASCII"
+               source="${ivy.minimum.javaversion}"
+               target="${ivy.minimum.javaversion}">
+        </javac>
+    </presetdef>
+
     <target name="init-ivy-user-home" unless="ivy.use.local.home">
         <condition property="ivy.home" value="${env.IVY_HOME}">
             <isset property="env.IVY_HOME"/>
@@ -182,16 +190,13 @@
     </target>
 
     <target name="compile-core" depends="prepare">
-        <javac srcdir="${src.dir}"
+        <compile srcdir="${src.dir}"
                destdir="${core.classes.build.dir}"
                sourcepath=""
-               source="${ivy.minimum.javaversion}"
-               target="${ivy.minimum.javaversion}"
-               debug="${debug.mode}"
                includeantruntime="no">
             <excludesfile name="ant.patterns"/>
             <excludesfile name="optional.patterns"/>
-        </javac>
+        </compile>
         <copy todir="${core.classes.build.dir}" includeEmptyDirs="false">
             <fileset dir="${src.dir}">
                 <exclude name="**/*.java"/>
@@ -217,16 +222,13 @@
 
     <!-- Build the Ant tasks with the current Ant runtime -->
     <target name="compile-bootstrap" depends="compile-core">
-        <javac srcdir="${src.dir}"
+        <compile srcdir="${src.dir}"
                destdir="${bootstrap.classes.build.dir}"
                sourcepath=""
                classpathref="build.bootstrap.classpath"
-               source="${ivy.minimum.javaversion}"
-               target="${ivy.minimum.javaversion}"
-               debug="${debug.mode}"
                includeantruntime="yes">
             <includesfile name="ant.patterns"/>
-        </javac>
+        </compile>
         <copy todir="${bootstrap.classes.build.dir}" includeEmptyDirs="false">
             <fileset dir="${src.dir}">
                 <includesfile name="ant.patterns"/>
@@ -237,16 +239,13 @@
 
     <!-- Build the Ant tasks with the minimal Ant runtime -->
     <target name="compile-ant" depends="compile-core,resolve">
-        <javac srcdir="${src.dir}"
+        <compile srcdir="${src.dir}"
                destdir="${ant.classes.build.dir}"
                sourcepath=""
                classpathref="build.ant.classpath"
-               source="${ivy.minimum.javaversion}"
-               target="${ivy.minimum.javaversion}"
-               debug="${debug.mode}"
                includeantruntime="no">
             <includesfile name="ant.patterns"/>
-        </javac>
+        </compile>
         <copy todir="${ant.classes.build.dir}" includeEmptyDirs="false">
             <fileset dir="${src.dir}">
                 <includesfile name="ant.patterns"/>
@@ -256,17 +255,14 @@
     </target>
 
     <target name="compile-optional" depends="compile-ant">
-        <javac srcdir="${src.dir}"
+        <compile srcdir="${src.dir}"
                destdir="${optional.classes.build.dir}"
                sourcepath=""
                classpathref="build.optional.classpath"
-               source="${ivy.minimum.javaversion}"
-               target="${ivy.minimum.javaversion}"
-               debug="${debug.mode}"
                includeantruntime="no">
             <includesfile name="optional.patterns"/>
             <includesfile name="ant.patterns"/>
-        </javac>
+        </compile>
         <copy todir="${core.classes.build.dir}" includeEmptyDirs="false">
             <fileset dir="${src.dir}">
                 <includesfile name="optional.patterns"/>
@@ -368,13 +364,9 @@
          TESTS
          ================================================================= -->
     <target name="build-test" depends="jar">
-        <javac srcdir="${test.dir}"
+        <compile srcdir="${test.dir}"
                destdir="${test.build.dir}"
                classpathref="run.classpath"
-               source="${ivy.minimum.javaversion}"
-               target="${ivy.minimum.javaversion}"
-               debug="${debug.mode}"
-               encoding="UTF-8"
                includeantruntime="no"/>
         <copy todir="${test.build.dir}">
             <fileset dir="${test.dir}">
@@ -385,12 +377,9 @@
 
     <target name="build-custom-resolver-jar" depends="jar">
         <mkdir dir="${build.dir}/custom-classpath"/>
-        <javac srcdir="${basedir}/test/custom-classpath"
+        <compile srcdir="${basedir}/test/custom-classpath"
                destdir="${build.dir}/custom-classpath"
                classpathref="run.classpath"
-               source="${ivy.minimum.javaversion}"
-               target="${ivy.minimum.javaversion}"
-               debug="${debug.mode}"
                includeantruntime="no"/>
         <jar destfile="${test.dir}/org/apache/ivy/core/settings/custom-resolver.jar"
              basedir="${build.dir}/custom-classpath"/>
