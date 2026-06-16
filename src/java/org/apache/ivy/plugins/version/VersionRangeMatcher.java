@@ -98,31 +98,14 @@ public class VersionRangeMatcher extends AbstractVersionMatcher {
     private static final Pattern ALL_RANGE = Pattern.compile(FINITE_PATTERN + "|"
             + LOWER_INFINITE_PATTERN + "|" + UPPER_INFINITE_PATTERN);
 
-    private final class MRIDArtifactInfo implements ArtifactInfo {
-        private ModuleRevisionId mrid;
-
-        public MRIDArtifactInfo(ModuleRevisionId id) {
-            mrid = id;
-        }
-
-        public long getLastModified() {
-            return 0;
-        }
-
-        public String getRevision() {
-            return mrid.getRevision();
-        }
-    }
-
     private final Comparator<ModuleRevisionId> comparator = new Comparator<ModuleRevisionId>() {
         public int compare(ModuleRevisionId o1, ModuleRevisionId o2) {
             if (o1.equals(o2)) {
                 return 0;
             }
-            ArtifactInfo art1 = new MRIDArtifactInfo(o1);
-            ArtifactInfo art2 = new MRIDArtifactInfo(o2);
-            ArtifactInfo art = getLatestStrategy().findLatest(new ArtifactInfo[] {art1, art2},
-                null);
+            ArtifactInfo art1 = o1::getRevision;
+            ArtifactInfo art2 = o2::getRevision;
+            ArtifactInfo art = getLatestStrategy().findLatest(new ArtifactInfo[] {art1, art2}, null);
             return art == art1 ? -1 : 1;
         }
     };

@@ -17,8 +17,12 @@
  */
 package org.apache.ivy.plugins.latest;
 
+@FunctionalInterface
 public interface ArtifactInfo {
+
     String getRevision();
 
-    long getLastModified();
+    default long getLastModified() {
+        return 0;
+    }
 }
