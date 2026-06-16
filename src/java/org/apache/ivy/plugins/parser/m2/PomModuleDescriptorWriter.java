@@ -38,11 +38,15 @@ import org.apache.ivy.core.IvyPatternHelper;
 import org.apache.ivy.core.module.descriptor.Artifact;
 import org.apache.ivy.core.module.descriptor.DependencyArtifactDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
+import org.apache.ivy.core.module.descriptor.DependencyDescriptorMediator;
 import org.apache.ivy.core.module.descriptor.ExcludeRule;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.core.module.descriptor.OverrideDependencyDescriptorMediator;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.module.id.ModuleRules;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.core.settings.IvyVariableContainer;
+import org.apache.ivy.plugins.matcher.MapMatcher;
 import org.apache.ivy.plugins.parser.m2.PomWriterOptions.ConfigurationScopeMapping;
 import org.apache.ivy.plugins.parser.m2.PomWriterOptions.ExtraDependency;
 import org.apache.ivy.util.ConfigurationUtils;
@@ -112,6 +116,7 @@ public final class PomModuleDescriptorWriter {
 
             boolean dependencyManagement = false;
             boolean dependenciesPrinted = false;
+            boolean overridesPrinted = false;
 
             int lastIndent = 0;
             int indent = 0;
@@ -135,14 +140,26 @@ public final class PomModuleDescriptorWriter {
                         dependencyManagement = false;
                     }
 
-                    if (line.contains("</dependencies>") && !dependenciesPrinted && !dependencyManagement) {
-                        printDependencies(md, out, options, indent, false);
-                        dependenciesPrinted = true;
+                    if (line.contains("</dependencies>")) {
+                        if (!dependenciesPrinted && !dependencyManagement) {
+                            printDependencies(md, out, options, indent, false);
+                            dependenciesPrinted = true;
+                        }
+                        if (!overridesPrinted && dependencyManagement) {
+                            printOverrides(md, out, indent, false);
+                            overridesPrinted = true;
+                        }
                     }
 
-                    if (line.contains("</project>") && !dependenciesPrinted) {
-                        printDependencies(md, out, options, lastIndent, true);
-                        dependenciesPrinted = true;
+                    if (line.contains("</project>")) {
+                        if (!dependenciesPrinted) {
+                            printDependencies(md, out, options, lastIndent, true);
+                            dependenciesPrinted = true;
+                        }
+                        if (!overridesPrinted) {
+                            printOverrides(md, out, lastIndent, true);
+                            overridesPrinted = true;
+                        }
                     }
                 }
                 out.println(line);
@@ -342,8 +359,51 @@ public final class PomModuleDescriptorWriter {
         out.println("</exclusions>");
     }
 
-    private static DependencyDescriptor[] getDependencies(ModuleDescriptor md,
-            PomWriterOptions options) {
+    private static void printOverrides(ModuleDescriptor md, PrintWriter out, int indent, boolean container) {
+        ModuleRules<DependencyDescriptorMediator> mr = md.getAllDependencyDescriptorMediators();
+        if (mr.getAllRules().isEmpty()) {
+            return;
+        }
+
+        if (container) {
+            indent(out, indent);
+            out.println("<dependencyManagement>");
+            indent(out, indent * 2);
+            out.println("<dependencies>");
+        } else {
+            indent /= 2; // <dependencies> is second-level child of <project>
+        }
+
+        for (Map.Entry<MapMatcher, DependencyDescriptorMediator> entry : mr.getAllRules().entrySet()) {
+            if (entry.getValue() instanceof OverrideDependencyDescriptorMediator) {
+                String artifactId = entry.getKey().getAttributes().get("module");
+                String groupId = entry.getKey().getAttributes().get("organisation");
+                String version = ((OverrideDependencyDescriptorMediator) entry.getValue()).getVersion();
+
+                if (artifactId == null || artifactId.equals("*") || groupId == null || groupId.equals("*")) continue;
+
+                indent(out, indent * 3);
+                out.println("<dependency>");
+                indent(out, indent * 4);
+                out.println("<groupId>" + groupId + "</groupId>");
+                indent(out, indent * 4);
+                out.println("<artifactId>" + artifactId + "</artifactId>");
+                indent(out, indent * 4);
+                out.println("<version>" + version + "</version>");
+                indent(out, indent * 3);
+                out.println("</dependency>");
+            }
+        }
+
+        if (container) {
+            indent(out, indent * 2);
+            out.println("</dependencies>");
+            indent(out, indent);
+            out.println("</dependencyManagement>");
+        }
+    }
+
+    private static DependencyDescriptor[] getDependencies(ModuleDescriptor md, PomWriterOptions options) {
         String[] confs = ConfigurationUtils.replaceWildcards(options.getConfs(), md);
 
         List<DependencyDescriptor> result = new ArrayList<>();
