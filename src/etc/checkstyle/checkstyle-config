@@ -110,6 +110,9 @@
       <property name="allowUnchecked" value="true"/>
     </module>
     -->
+    <module name="OneStatementPerLine">
+        <property name="treatTryResourcesAsStatement" value="true"/>
+    </module>
     <module name="SimplifyBooleanExpression"/>
     <module name="SimplifyBooleanReturn"/>
 

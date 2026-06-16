@@ -412,7 +412,9 @@ public final class XmlModuleDescriptorUpdater {
                 write("<" + qName);
                 if (options.isMerge() && path.equals("ivy-module")) {
                     for (int i = 0, n = attributes.getLength(); i < n; i += 1) {
-                        if (attributes.getQName(i).startsWith("xmlns:")) continue;
+                        if (attributes.getQName(i).startsWith("xmlns:")) {
+                            continue; // written next from namespace map
+                        }
                         write(" " + attributes.getQName(i) + "=\"" + substitute(settings, attributes.getValue(i)) + "\"");
                     }
                     Map<String, String> namespaces = options.getMergedDescriptor().getExtraAttributesNamespaces();
