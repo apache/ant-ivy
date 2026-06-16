@@ -361,7 +361,19 @@ public final class PomModuleDescriptorWriter {
 
     private static void printOverrides(ModuleDescriptor md, PrintWriter out, int indent, boolean container) {
         ModuleRules<DependencyDescriptorMediator> mr = md.getAllDependencyDescriptorMediators();
-        if (mr.getAllRules().isEmpty()) {
+        Map<MapMatcher, DependencyDescriptorMediator> m = new LinkedHashMap<>(mr.getAllRules());
+
+        m.values().removeIf(value -> !(value instanceof OverrideDependencyDescriptorMediator));
+        m.keySet().removeIf(key -> {
+            String artifactId = key.getAttributes().get("module");
+            return artifactId == null || artifactId.equals("*");
+        });
+        m.keySet().removeIf(key -> {
+            String groupId = key.getAttributes().get("organisation");
+            return groupId == null || groupId.equals("*");
+        });
+
+        if (m.isEmpty()) {
             return;
         }
 
@@ -374,27 +386,21 @@ public final class PomModuleDescriptorWriter {
             indent /= 2; // <dependencies> is second-level child of <project>
         }
 
-        for (Map.Entry<MapMatcher, DependencyDescriptorMediator> entry : mr.getAllRules().entrySet()) {
-            if (entry.getValue() instanceof OverrideDependencyDescriptorMediator) {
-                String artifactId = entry.getKey().getAttributes().get("module");
-                String groupId = entry.getKey().getAttributes().get("organisation");
-                String version = ((OverrideDependencyDescriptorMediator) entry.getValue()).getVersion();
+        for (Map.Entry<MapMatcher, DependencyDescriptorMediator> entry : m.entrySet()) {
+            String artifactId = entry.getKey().getAttributes().get("module");
+            String groupId = entry.getKey().getAttributes().get("organisation");
+            String version = ((OverrideDependencyDescriptorMediator) entry.getValue()).getVersion();
 
-                if (artifactId == null || artifactId.equals("*") || groupId == null || groupId.equals("*")) {
-                    continue;
-                }
-
-                indent(out, indent * 3);
-                out.println("<dependency>");
-                indent(out, indent * 4);
-                out.println("<groupId>" + groupId + "</groupId>");
-                indent(out, indent * 4);
-                out.println("<artifactId>" + artifactId + "</artifactId>");
-                indent(out, indent * 4);
-                out.println("<version>" + version + "</version>");
-                indent(out, indent * 3);
-                out.println("</dependency>");
-            }
+            indent(out, indent * 3);
+            out.println("<dependency>");
+            indent(out, indent * 4);
+            out.println("<groupId>" + groupId + "</groupId>");
+            indent(out, indent * 4);
+            out.println("<artifactId>" + artifactId + "</artifactId>");
+            indent(out, indent * 4);
+            out.println("<version>" + version + "</version>");
+            indent(out, indent * 3);
+            out.println("</dependency>");
         }
 
         if (container) {
