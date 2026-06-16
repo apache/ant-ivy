@@ -17,6 +17,8 @@
  */
 package org.apache.ivy.plugins.resolver;
 
+import java.net.URL;
+
 import org.apache.ivy.TestHelper;
 import org.apache.ivy.core.IvyContext;
 import org.apache.ivy.core.event.EventManager;
@@ -37,6 +39,7 @@ import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.core.sort.SortEngine;
 import org.apache.ivy.plugins.matcher.ExactPatternMatcher;
 import org.apache.ivy.util.MockMessageLogger;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,6 +47,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assume.assumeNoException;
 
 public class BintrayResolverTest extends AbstractDependencyResolverTest {
 
@@ -136,17 +140,20 @@ public class BintrayResolverTest extends AbstractDependencyResolverTest {
 
     @Test
     public void testBintray() throws Exception {
+        try {
+            new URL("https://jcenter.bintray.com/").getContent();
+        } catch (Exception e) {
+            assumeNoException(e);
+        }
+
         BintrayResolver resolver = new BintrayResolver();
         resolver.setSettings(settings);
-        ModuleRevisionId mrid = ModuleRevisionId
-                .newInstance("org.apache.ant", "ant-antunit", "1.2");
-        ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid,
-                false), data);
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("org.apache.ant", "ant-antunit", "1.2");
+        ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), data);
         assertNotNull(rmr);
         assertEquals(mrid, rmr.getId());
 
-        DefaultArtifact artifact = new DefaultArtifact(mrid, rmr.getPublicationDate(),
-                "ant-antunit", "jar", "jar");
+        DefaultArtifact artifact = new DefaultArtifact(mrid, rmr.getPublicationDate(), "ant-antunit", "jar", "jar");
         DownloadReport report = resolver.download(new Artifact[] {artifact}, downloadOptions());
         assertNotNull(report);
 
@@ -184,42 +191,38 @@ public class BintrayResolverTest extends AbstractDependencyResolverTest {
         MockMessageLogger mockMessageImpl = new MockMessageLogger();
         IvyContext.getContext().getIvy().getLoggerEngine().setDefaultLogger(mockMessageImpl);
 
-        ModuleRevisionId mrid = ModuleRevisionId.newInstance("org.apache", "commons-fileupload",
-            "1.0");
-        ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid,
-                false), data);
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("org.apache", "commons-fileupload", "1.0");
+        ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), data);
         assertNull(rmr);
 
-        mockMessageImpl
-                .assertLogContains("trying https://dl.bintray.com/unknown/unknown/org/apache/commons-fileupload/1.0/commons-fileupload-1.0.jar");
-        mockMessageImpl
-                .assertLogContains("tried https://dl.bintray.com/unknown/unknown/org/apache/commons-fileupload/1.0/commons-fileupload-1.0.jar");
+        mockMessageImpl.assertLogContains("trying https://dl.bintray.com/unknown/unknown/org/apache/commons-fileupload/1.0/commons-fileupload-1.0.jar");
+        mockMessageImpl.assertLogContains("tried https://dl.bintray.com/unknown/unknown/org/apache/commons-fileupload/1.0/commons-fileupload-1.0.jar");
     }
 
     @Test
     public void testBintrayArtifacts() throws Exception {
+        try {
+            new URL("https://jcenter.bintray.com/").getContent();
+        } catch (Exception e) {
+            assumeNoException(e);
+        }
+
         BintrayResolver resolver = new BintrayResolver();
         resolver.setName("test");
         resolver.setSettings(settings);
         assertEquals("test", resolver.getName());
 
-        ModuleRevisionId mrid = ModuleRevisionId
-                .newInstance("org.apache.ant", "ant-antunit", "1.2");
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("org.apache.ant", "ant-antunit", "1.2");
         DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(mrid, false);
-        dd.addIncludeRule("default", new DefaultIncludeRule(new ArtifactId(mrid.getModuleId(),
-                "ant-antunit", "javadoc", "jar"), ExactPatternMatcher.INSTANCE, null));
-        dd.addIncludeRule("default", new DefaultIncludeRule(new ArtifactId(mrid.getModuleId(),
-                "ant-antunit", "sources", "jar"), ExactPatternMatcher.INSTANCE, null));
+        dd.addIncludeRule("default", new DefaultIncludeRule(new ArtifactId(mrid.getModuleId(), "ant-antunit", "javadoc", "jar"), ExactPatternMatcher.INSTANCE, null));
+        dd.addIncludeRule("default", new DefaultIncludeRule(new ArtifactId(mrid.getModuleId(), "ant-antunit", "sources", "jar"), ExactPatternMatcher.INSTANCE, null));
         ResolvedModuleRevision rmr = resolver.getDependency(dd, data);
         assertNotNull(rmr);
         assertEquals(mrid, rmr.getId());
 
-        DefaultArtifact profiler = new DefaultArtifact(mrid, rmr.getPublicationDate(),
-                "ant-antunit", "javadoc", "jar");
-        DefaultArtifact trace = new DefaultArtifact(mrid, rmr.getPublicationDate(), "ant-antunit",
-                "sources", "jar");
-        DownloadReport report = resolver.download(new Artifact[] {profiler, trace},
-            downloadOptions());
+        DefaultArtifact profiler = new DefaultArtifact(mrid, rmr.getPublicationDate(), "ant-antunit", "javadoc", "jar");
+        DefaultArtifact trace = new DefaultArtifact(mrid, rmr.getPublicationDate(), "ant-antunit", "sources", "jar");
+        DownloadReport report = resolver.download(new Artifact[] {profiler, trace}, downloadOptions());
         assertNotNull(report);
 
         assertEquals(2, report.getArtifactsReports().length);
@@ -261,9 +264,7 @@ public class BintrayResolverTest extends AbstractDependencyResolverTest {
         resolver.setName("test");
         resolver.setSettings(settings);
 
-        assertNull(resolver.getDependency(
-            new DefaultDependencyDescriptor(ModuleRevisionId.newInstance("unknown", "unknown",
-                "1.0"), false), data));
+        assertNull(resolver.getDependency(new DefaultDependencyDescriptor(
+            ModuleRevisionId.newInstance("unknown", "unknown", "1.0"), false), data));
     }
-
 }

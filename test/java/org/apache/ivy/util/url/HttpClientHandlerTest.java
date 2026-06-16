@@ -44,9 +44,8 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
 
-public class HttpClientHandlerTest {
+public class HttpClientHandlerTest { // remote.test
 
-    // remote.test
     private File testDir;
 
     private HttpClientHandler handler;
@@ -60,8 +59,9 @@ public class HttpClientHandlerTest {
 
         handler = new HttpClientHandler();
 
-        defaultTimeoutConstraint = new NamedTimeoutConstraint("default-http-client-handler-timeout");
-        ((NamedTimeoutConstraint) defaultTimeoutConstraint).setConnectionTimeout(5000);
+        NamedTimeoutConstraint constraint = new NamedTimeoutConstraint("default-http-client-handler-timeout");
+        constraint.setConnectionTimeout(5000);
+        defaultTimeoutConstraint = constraint;
     }
 
     @After
@@ -75,10 +75,8 @@ public class HttpClientHandlerTest {
 
     @Test
     public void testIsReachable() throws Exception {
-        assertTrue("URL resource was expected to be reachable",
-                handler.isReachable(new URL("http://www.google.fr/"), defaultTimeoutConstraint));
-        assertFalse("URL resource was expected to be unreachable",
-                handler.isReachable(new URL("http://www.google.fr/unknownpage.html"), defaultTimeoutConstraint));
+        assumeTrue("URL resource was expected to be reachable", handler.isReachable(new URL("http://www.google.fr/"), defaultTimeoutConstraint));
+        assertFalse("URL resource was expected to be unreachable", handler.isReachable(new URL("http://www.google.fr/unknownpage.html"), defaultTimeoutConstraint));
     }
 
     /**
@@ -86,35 +84,26 @@ public class HttpClientHandlerTest {
      *
      * @see <a href="https://issues.apache.org/jira/browse/IVY-390">IVY-390</a>
      */
-    @SuppressWarnings({"resource", "deprecation"})
+    @SuppressWarnings("deprecation")
     @Test
     public void testGetURLInfo() throws Exception {
-        final TimeoutConstrainedURLHandler handler = new HttpClientHandler();
-        assertTrue("Default Maven URL must end with '/'", DEFAULT_M2_ROOT.endsWith("/"));
-        URLInfo info = handler.getURLInfo(new URL(DEFAULT_M2_ROOT
-                + "commons-lang/commons-lang/[1.0,3.0[/commons-lang-[1.0,3.0[.pom"), defaultTimeoutConstraint);
-
-        assertEquals(TimeoutConstrainedURLHandler.UNAVAILABLE, info);
+        try (HttpClientHandler handler = new HttpClientHandler()) {
+            assertTrue("Default Maven URL must end with '/'", DEFAULT_M2_ROOT.endsWith("/"));
+            URLInfo info = handler.getURLInfo(new URL(DEFAULT_M2_ROOT + "commons-lang/commons-lang/[1.0,3.0[/commons-lang-[1.0,3.0[.pom"), defaultTimeoutConstraint);
+            assertEquals(URLHandler.UNAVAILABLE, info);
+        }
     }
 
     @Test
     public void testContentEncoding() throws Exception {
         assumeTrue(handler.isReachable(new URL("http://carsten.codimi.de/"), 5000));
-        assertDownloadOK(new URL("http://carsten.codimi.de/gzip.yaws/daniels.html"), new File(
-                testDir, "gzip.txt"));
-        assertDownloadOK(new URL(
-                "http://carsten.codimi.de/gzip.yaws/daniels.html?deflate=on&zlib=on"), new File(
-                testDir, "deflate-zlib.txt"));
-        assertDownloadOK(new URL("http://carsten.codimi.de/gzip.yaws/daniels.html?deflate=on"),
-                new File(testDir, "deflate.txt"));
-        assertDownloadOK(new URL("http://carsten.codimi.de/gzip.yaws/a5.ps"), new File(testDir,
-                "a5-gzip.ps"));
-        assertDownloadOK(new URL("http://carsten.codimi.de/gzip.yaws/a5.ps?deflate=on"), new File(
-                testDir, "a5-deflate.ps"));
-        assertDownloadOK(new URL("http://carsten.codimi.de/gzip.yaws/nh80.pdf"), new File(testDir,
-                "nh80-gzip.pdf"));
-        assertDownloadOK(new URL("http://carsten.codimi.de/gzip.yaws/nh80.pdf?deflate=on"),
-                new File(testDir, "nh80-deflate.pdf"));
+        assertDownloadOK(new URL("http://carsten.codimi.de/gzip.yaws/daniels.html"), new File(testDir, "gzip.txt"));
+        assertDownloadOK(new URL("http://carsten.codimi.de/gzip.yaws/daniels.html?deflate=on&zlib=on"), new File(testDir, "deflate-zlib.txt"));
+        assertDownloadOK(new URL("http://carsten.codimi.de/gzip.yaws/daniels.html?deflate=on"), new File(testDir, "deflate.txt"));
+        assertDownloadOK(new URL("http://carsten.codimi.de/gzip.yaws/a5.ps"), new File(testDir, "a5-gzip.ps"));
+        assertDownloadOK(new URL("http://carsten.codimi.de/gzip.yaws/a5.ps?deflate=on"), new File(testDir, "a5-deflate.ps"));
+        assertDownloadOK(new URL("http://carsten.codimi.de/gzip.yaws/nh80.pdf"), new File(testDir, "nh80-gzip.pdf"));
+        assertDownloadOK(new URL("http://carsten.codimi.de/gzip.yaws/nh80.pdf?deflate=on"), new File(testDir, "nh80-deflate.pdf"));
     }
 
     /**
@@ -143,8 +132,7 @@ public class HttpClientHandlerTest {
 
             final File target = new File(testDir, "downloaded.xml");
             assertFalse("File " + target + " already exists", target.exists());
-            final URL src = new URL("http://localhost:" + serverBindAddr.getPort() + "/"
-                    + contextRoot + "/ivysettings.xml");
+            final URL src = new URL("http://localhost:" + serverBindAddr.getPort() + "/" + contextRoot + "/ivysettings.xml");
             // download it
             handler.download(src, target, null, defaultTimeoutConstraint);
             assertTrue("File " + target + " was not downloaded from " + src, target.isFile());
@@ -157,8 +145,7 @@ public class HttpClientHandlerTest {
 
             final File target = new File(testDir, "should-not-have-been-downloaded.xml");
             assertFalse("File " + target + " already exists", target.exists());
-            final URL src = new URL("http://localhost:" + serverBindAddr.getPort() + "/"
-                    + contextRoot + "/ivysettings.xml");
+            final URL src = new URL("http://localhost:" + serverBindAddr.getPort() + "/" + contextRoot + "/ivysettings.xml");
             // download it (expected to fail)
             Exception exception = assertThrows(IOException.class, () -> handler.download(src, target, null, defaultTimeoutConstraint));
             // we catch it and check for presence of 401 in the exception message.
@@ -172,7 +159,6 @@ public class HttpClientHandlerTest {
     private void assertDownloadOK(final URL url, final File file) throws Exception {
         handler.download(url, file, null, defaultTimeoutConstraint);
         assertTrue("Content from " + url + " wasn't downloaded to " + file, file.exists());
-        assertTrue("Unexpected content at " + file + " for resource that was downloaded from "
-                + url, file.isFile() && file.length() > 0);
+        assertTrue("Unexpected content at " + file + " for resource that was downloaded from " + url, file.isFile() && file.length() > 0);
     }
 }
