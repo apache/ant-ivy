@@ -141,24 +141,24 @@ public final class PomModuleDescriptorWriter {
                     }
 
                     if (line.contains("</dependencies>")) {
-                        if (!dependenciesPrinted && !dependencyManagement) {
-                            printDependencies(md, out, options, indent, false);
-                            dependenciesPrinted = true;
-                        }
                         if (!overridesPrinted && dependencyManagement) {
                             printOverrides(md, out, indent, false);
                             overridesPrinted = true;
                         }
+                        if (!dependenciesPrinted && !dependencyManagement) {
+                            printDependencies(md, out, options, indent, false);
+                            dependenciesPrinted = true;
+                        }
                     }
 
                     if (line.contains("</project>")) {
-                        if (!dependenciesPrinted) {
-                            printDependencies(md, out, options, lastIndent, true);
-                            dependenciesPrinted = true;
-                        }
                         if (!overridesPrinted) {
                             printOverrides(md, out, lastIndent, true);
                             overridesPrinted = true;
+                        }
+                        if (!dependenciesPrinted) {
+                            printDependencies(md, out, options, lastIndent, true);
+                            dependenciesPrinted = true;
                         }
                     }
                 }
