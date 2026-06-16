@@ -380,7 +380,9 @@ public final class PomModuleDescriptorWriter {
                 String groupId = entry.getKey().getAttributes().get("organisation");
                 String version = ((OverrideDependencyDescriptorMediator) entry.getValue()).getVersion();
 
-                if (artifactId == null || artifactId.equals("*") || groupId == null || groupId.equals("*")) continue;
+                if (artifactId == null || artifactId.equals("*") || groupId == null || groupId.equals("*")) {
+                    continue;
+                }
 
                 indent(out, indent * 3);
                 out.println("<dependency>");
