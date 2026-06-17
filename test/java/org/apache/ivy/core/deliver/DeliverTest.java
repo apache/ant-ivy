@@ -48,25 +48,6 @@ public class DeliverTest {
         cacheDir.mkdirs();
     }
 
-    /**
-     * Test case for <a href="https://issues.apache.org/jira/browse/IVY-1410">IVY-1410</a>.
-     */
-    @Test
-    public void testDeliver1410() throws Exception {
-        Project project = ivyDeliver.getProject();
-        project.setProperty("ivy.settings.file", "test/repositories/ivysettings-1.xml");
-        File ivyFile = new File(new URI(DeliverTest.class.getResource("ivy-1410.xml").toString()));
-
-        resolve(ivyFile);
-
-        ivyDeliver.setReplacedynamicrev(true);
-        ivyDeliver.doExecute();
-
-        String deliverContent = readFile(deliverDir.getAbsolutePath() + "/ivys/ivy-1.0.xml");
-        assertTrue(deliverContent.contains("org=\"org1\" name=\"mod1.1\" rev=\"1.1\""));
-        assertTrue(deliverContent.contains("org=\"org2\" name=\"mod2.1\" rev=\"0.7\""));
-    }
-
     private void resolve(File ivyFile) {
         IvyResolve ivyResolve = new IvyResolve();
         ivyResolve.setProject(ivyDeliver.getProject());
@@ -142,6 +123,43 @@ public class DeliverTest {
         assertTrue(ivyFile.contains("org=\"test\" name=\"a\" rev=\"1\" revConstraint=\"latest.integration\""));
         assertTrue(ivyFile.contains("org=\"test\" name=\"b\" rev=\"1.5\" revConstraint=\"latest.integration\" e:att=\"att\""));
         assertTrue(ivyFile.contains("org=\"junit\" name=\"junit\" rev=\"4.4\" revConstraint=\"latest.integration\""));
+    }
+
+    /**
+     * Test case for <a href="https://issues.apache.org/jira/browse/IVY-1410">IVY-1410</a>.
+     */
+    @Test
+    public void testDeliver1410() throws Exception {
+        ivyDeliver.getProject().setProperty("ivy.settings.file", "test/repositories/ivysettings-1.xml");
+
+        String ivyFile
+            = "<ivy-module version='2.0'>\n"
+            + "  <info organisation='org' module='xxx'/>\n"
+            + "  <dependencies>\n"
+            + "    <dependency org='org1' name='mod1.1' rev='1.+'/>\n"
+            + "  </dependencies>\n"
+            + "</ivy-module>\n";
+
+        ivyFile
+            = "<ivy-module version='2.0'>\n"
+            + "  <info organisation='org' module='yyy' revision='1.0'>\n"
+            + "    <extends organisation='org' module='xxx' extendType='dependencies'\n"
+            + "      location='" + writeFile(ivyFile).getName() + "' revision='latest'/>\n"
+            + "  </info>\n"
+            + "  <dependencies>\n"
+            + "    <dependency org='org2' name='mod2.1' rev='0.+'/>\n"
+            + "  </dependencies>\n"
+            + "</ivy-module>\n";
+
+        resolve(writeFile(ivyFile));
+
+        ivyDeliver.setReplacedynamicrev(true);
+        ivyDeliver.doExecute();
+
+        ivyFile = readFile(deliverDir.getAbsolutePath() + "/ivys/ivy-1.0.xml");
+
+        assertTrue(ivyFile.contains("org=\"org1\" name=\"mod1.1\" rev=\"1.1\""));
+        assertTrue(ivyFile.contains("org=\"org2\" name=\"mod2.1\" rev=\"0.7\""));
     }
 
     /**
