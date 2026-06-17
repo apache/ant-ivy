@@ -83,6 +83,7 @@ import org.apache.ivy.util.FileUtil;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.XMLHelper;
 import org.apache.ivy.util.extendable.ExtendableItemHelper;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -548,37 +549,30 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
          * @param parent
          *            a given parent module descriptor
          */
-        protected void mergeWithOtherModuleDescriptor(List<String> extendTypes,
-                ModuleDescriptor parent) {
-
+        protected void mergeWithOtherModuleDescriptor(List<String> extendTypes, ModuleDescriptor parent) {
             if (extendTypes.contains("all")) {
                 mergeAll(parent);
             } else {
                 if (extendTypes.contains("info")) {
                     mergeInfo(parent);
                 }
-
                 if (extendTypes.contains("configurations")) {
                     mergeConfigurations(parent);
                 }
-
                 if (extendTypes.contains("dependencies")) {
                     mergeDependencies(parent.getDependencies());
                 }
-
                 if (extendTypes.contains("description")) {
                     mergeDescription(parent.getDescription());
                 }
-
                 if (extendTypes.contains("licenses")) {
                     mergeLicenses(parent.getLicenses());
                 }
-
                 if (extendTypes.contains("excludes")) {
                     mergeExcludes(parent.getAllExcludeRules());
                 }
             }
-
+            mergeNamespaces(parent.getExtraAttributesNamespaces()); // IVY-1658
         }
 
         /**
@@ -719,6 +713,17 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
         public void mergeExcludes(ExcludeRule[] excludeRules) {
             for (ExcludeRule excludeRule : excludeRules) {
                 getMd().addExcludeRule(excludeRule);
+            }
+        }
+
+        private void mergeNamespaces(Map<String, String> namespaces) {
+            if (namespaces != null && !namespaces.isEmpty()) {
+                for (Map.Entry<String, String> entry : namespaces.entrySet()) {
+                    Message.debug("Merging extra attribute namesapce: " + entry);
+                    if (getMd().getExtraAttributesNamespaces().get(entry.getKey()) == null) {
+                        getMd().addExtraAttributeNamespace(entry.getKey(), entry.getValue());
+                    }
+                }
             }
         }
 
@@ -1455,5 +1460,4 @@ public class XmlModuleDescriptorParser extends AbstractModuleDescriptorParser {
     public String toString() {
         return "ivy parser";
     }
-
 }
