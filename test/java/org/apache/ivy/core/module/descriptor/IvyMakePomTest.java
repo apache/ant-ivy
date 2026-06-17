@@ -100,6 +100,73 @@ public class IvyMakePomTest {
         assertTrue("Some expected dependencies " + expectedPomArtifactIds + " were not found in the generated POM file", expectedPomArtifactIds.isEmpty());
     }
 
+    /**
+     * Test case for <a href="https://issues.apache.org/jira/browse/IVY-1653">IVY-1653</a>.
+     */
+    @Test
+    public void testMakePom1653() throws Exception {
+        File ivyFile = workdir.newFile("ivy-1653.xml");
+        writeLines(ivyFile, "UTF-8", Arrays.asList(
+            "<ivy-module version='2.0'>",
+            "  <info module='name' organisation='org' revision='1.0.0-SNAPSHOT' />",
+            "  <configurations>",
+            "    <conf name='default' />",
+            "  </configurations>",
+            "  <dependencies defaultconf='default' defaultconfmapping='*->master,runtime()'>",
+            "    <dependency org='org.springframework' name='spring-aop' rev='6.2.9' />",
+            "    <override org='org.aspectj' module='aspectjrt' rev='1.9.24' />",
+            "  </dependencies>",
+            "</ivy-module>"
+        ));
+
+        File pomFile = workdir.newFile("ivy-1653.pom");
+
+        IvyMakePom task = new IvyMakePom();
+        task.setIvyFile(ivyFile);
+        task.setPomFile(pomFile);
+        task.setPrintIvyInfo(false);
+        task.setProject(project);
+
+        IvyMakePom.Mapping mapping = task.createMapping();
+        mapping.setConf("default");
+        mapping.setScope("compile");
+
+        task.execute();
+
+        String[] expect = {
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+            "<project xmlns=\"http://maven.apache.org/POM/4.0.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"",
+            "    xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\">",
+            "",
+            "  <modelVersion>4.0.0</modelVersion>",
+            "  <groupId>org</groupId>",
+            "  <artifactId>name</artifactId>",
+            "  <packaging>jar</packaging>",
+            "  <version>1.0.0-SNAPSHOT</version>",
+            "  <dependencyManagement>",
+            "    <dependencies>",
+            "      <dependency>",
+            "        <groupId>org.aspectj</groupId>",
+            "        <artifactId>aspectjrt</artifactId>",
+            "        <version>1.9.24</version>",
+            "      </dependency>",
+            "    </dependencies>",
+            "  </dependencyManagement>",
+            "  <dependencies>",
+            "    <dependency>",
+            "      <groupId>org.springframework</groupId>",
+            "      <artifactId>spring-aop</artifactId>",
+            "      <version>6.2.9</version>",
+            "      <scope>compile</scope>",
+            "    </dependency>",
+            "  </dependencies>",
+            "</project>",
+            ""
+        };
+
+        assertEquals(String.join(System.lineSeparator(), expect), readFileToString(pomFile, "UTF-8"));
+    }
+
     @Test
     public void testMakePomWithTemplate() throws Exception {
         File ivyFile = workdir.newFile("ivy.xml");
@@ -166,6 +233,92 @@ public class IvyMakePomTest {
             "         <scope>compile</scope>",
             "      </dependency>",
             "   </dependencies>",
+            "</project>",
+            ""
+        };
+
+        assertEquals(String.join(System.lineSeparator(), expect), readFileToString(pomFile, "UTF-8"));
+    }
+
+    /**
+     * Test case for <a href="https://issues.apache.org/jira/browse/IVY-1653">IVY-1653</a>.
+     */
+    @Test
+    public void testMakePomWithTemplate1653() throws Exception {
+        File ivyFile = workdir.newFile("ivy.xml");
+        writeLines(ivyFile, "UTF-8", Arrays.asList(
+            "<ivy-module version='2.0'>",
+            "  <info module='name' organisation='org' revision='1.0.0-SNAPSHOT' />",
+            "  <configurations>",
+            "    <conf name='default' />",
+            "  </configurations>",
+            "  <dependencies defaultconf='default' defaultconfmapping='*->master,runtime()'>",
+            "    <dependency org='org.springframework' name='spring-aop' rev='6.2.9' />",
+            "    <override org='org.springframework' module='spring-core' rev='6.2.19' />",
+            "  </dependencies>",
+            "</ivy-module>"
+        ));
+
+        File pomFile = workdir.newFile("ivy.pom");
+
+        File templateFile = workdir.newFile("the.pom");
+        writeLines(templateFile, "UTF-8", Arrays.asList(
+            "<project>",
+            "  <groupId>${ivy.pom.groupId}</groupId>",
+            "  <artifactId>${ivy.pom.artifactId}</artifactId>",
+            "  <version>${ivy.pom.version}</version>",
+            "  <dependencyManagement>",
+            "    <dependencies>",
+            "      <dependency>",
+            "        <groupId>org.aspectj</groupId>",
+            "        <artifactId>aspectjrt</artifactId>",
+            "        <version>1.9.24</version>",
+            "      </dependency>",
+            "    </dependencies>",
+            "  </dependencyManagement>",
+            "</project>"
+        ));
+
+        IvyMakePom task = new IvyMakePom();
+        task.setIvyFile(ivyFile);
+        task.setPomFile(pomFile);
+        task.setPrintIvyInfo(false);
+        task.setProject(project);
+        task.setTemplateFile(templateFile);
+
+        IvyMakePom.Mapping mapping = task.createMapping();
+        mapping.setConf("default");
+        mapping.setScope("compile");
+
+        task.execute();
+
+        String[] expect = {
+            "<project>",
+            "  <groupId>org</groupId>",
+            "  <artifactId>name</artifactId>",
+            "  <version>1.0.0-SNAPSHOT</version>",
+            "  <dependencyManagement>",
+            "    <dependencies>",
+            "      <dependency>",
+            "        <groupId>org.aspectj</groupId>",
+            "        <artifactId>aspectjrt</artifactId>",
+            "        <version>1.9.24</version>",
+            "      </dependency>",
+            "      <dependency>",
+            "        <groupId>org.springframework</groupId>",
+            "        <artifactId>spring-core</artifactId>",
+            "        <version>6.2.19</version>",
+            "      </dependency>",
+            "    </dependencies>",
+            "  </dependencyManagement>",
+            "  <dependencies>",
+            "    <dependency>",
+            "      <groupId>org.springframework</groupId>",
+            "      <artifactId>spring-aop</artifactId>",
+            "      <version>6.2.9</version>",
+            "      <scope>compile</scope>",
+            "    </dependency>",
+            "  </dependencies>",
             "</project>",
             ""
         };
