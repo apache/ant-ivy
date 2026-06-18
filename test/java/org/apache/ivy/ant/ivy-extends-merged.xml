@@ -21,7 +21,7 @@
 
 	<info organisation="apache" module="resolve-extends" revision="1.2" status="release">
 		<!-- <extends organisation="apache" module="resolve-simple" revision="1.0" location="./ivy-multiconf.xml"/> -->
-
+	
 		<!-- description inherited from parent -->
 		<description>Demonstrates configuration-specific dependencies</description>
 	</info>
