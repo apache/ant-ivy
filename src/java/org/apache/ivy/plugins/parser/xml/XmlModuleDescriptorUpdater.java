@@ -1122,6 +1122,7 @@ public final class XmlModuleDescriptorUpdater {
                 InheritableItem[] items = getDependencies(merged);
                 if (writeInheritedItems(merged, items, DependencyPrinter.INSTANCE, "dependencies", false)) {
                     out.println("<!-- dependencies inherited end -->");
+                    out.println(); // separate from next section
                     out.print(getIndent());
                 }
             }
@@ -1295,7 +1296,9 @@ public final class XmlModuleDescriptorUpdater {
                 writeInheritedDependencies(merged);
             }
 
-            write(new StringBuilder("<!--").append(ch, start, length).append("-->").toString());
+            write("<!--");
+            write(String.valueOf(ch, start, length));
+            write("-->");
 
             if (inHeader) {
                 write(LINE_SEPARATOR);

@@ -43,6 +43,7 @@
 		<dependency org="org1" name="mod1.2" rev="2.0" conf="default->default"/>
 		<dependency org="org1" name="mod1.1" rev="2.0" transitive="false" conf="compile->default"/>
 		<!-- dependencies inherited end -->
+
 		<!-- not in parent -->
 		<dependency org="org2" name="mod2.1" rev="0.3" conf="default->compile(default)"/>
 		<!-- overrides parent -->
