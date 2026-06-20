@@ -311,7 +311,7 @@
             <zipfileset dir="${basedir}" includes="build-for-bin-distrib.xml" fullpath="${snapshot.full.name}/build.xml"/>
 
             <zipfileset dir="${artifacts.build.dir}/jars" includes="${final.name}" fullpath="${snapshot.full.name}/ivy-${build.version}.jar"/>
-            <zipfileset dir="${artifacts.build.dir}/jars" includes="ivy-${build.version}-cyclonedx.*" prefix="${snapshot.full.name}"/>
+            <zipfileset dir="${artifacts.build.dir}/jars" includes="ivy-${build.version}.cdx.*" prefix="${snapshot.full.name}"/>
         </zip>
         <tar destfile="${distrib.dir}/dist/${build.version}/${snapshot.full.name}-bin.tar.gz"
              compression="gzip" longfile="gnu">
@@ -335,7 +335,7 @@
             <zipfileset dir="${artifacts.build.dir}" includes="ivy.xml" fullpath="${snapshot.full.name}/ivy.xml"/>
 
             <zipfileset dir="${artifacts.build.dir}/jars" includes="${final.name}" fullpath="${snapshot.full.name}/ivy-${build.version}.jar"/>
-            <zipfileset dir="${artifacts.build.dir}/jars" includes="ivy-${build.version}-cyclonedx.*" prefix="${snapshot.full.name}"/>
+            <zipfileset dir="${artifacts.build.dir}/jars" includes="ivy-${build.version}.cdx.*" prefix="${snapshot.full.name}"/>
 
             <zipfileset dir="${build.dir}/lib" prefix="${snapshot.full.name}/lib" excludes="ant-*.jar,bcpg-*.jar,bcprov*.jar"/>
         </zip>
@@ -365,7 +365,7 @@
               tofile="${m2.distrib.dir}/ivy-${build.version}.jar"/>
         <!-- SBOMs -->
         <copy todir="${m2.distrib.dir}">
-          <fileset dir="${artifacts.build.dir}/jars" includes="ivy-${build.version}-cyclonedx.*"/>
+          <fileset dir="${artifacts.build.dir}/jars" includes="ivy-${build.version}.cdx.*"/>
         </copy>
         <!-- jar javadocs -->
         <jar destfile="${m2.distrib.dir}/ivy-${build.version}-javadoc.jar">
@@ -379,16 +379,16 @@
             <fileset dir="${m2.distrib.dir}">
                 <include name="*.pom"/>
                 <include name="*.jar"/>
-                <include name="*-cyclonedx.json"/>
-                <include name="*-cyclonedx.xml"/>
+                <include name="*.cdx.json"/>
+                <include name="*.cdx.xml"/>
             </fileset>
         </checksum>
         <checksum algorithm="sha-512" fileext=".sha512">
             <fileset dir="${m2.distrib.dir}">
                 <include name="*.pom"/>
                 <include name="*.jar"/>
-                <include name="*-cyclonedx.json"/>
-                <include name="*-cyclonedx.xml"/>
+                <include name="*.cdx.json"/>
+                <include name="*.cdx.xml"/>
             </fileset>
         </checksum>
     </target>
@@ -400,8 +400,8 @@
                 <include name="*.jar"/>
                 <include name="*.zip"/>
                 <include name="*.gz"/>
-                <include name="*.cyclonedx.json"/>
-                <include name="*.cyclonedx.xml"/>
+                <include name="*.cdx.json"/>
+                <include name="*.cdx.xml"/>
             </fileset>
         </checksum>
         <checksum algorithm="sha-512" fileext=".sha512">
@@ -410,8 +410,8 @@
                 <include name="*.jar"/>
                 <include name="*.zip"/>
                 <include name="*.gz"/>
-                <include name="*.cyclonedx.json"/>
-                <include name="*.cyclonedx.xml"/>
+                <include name="*.cdx.json"/>
+                <include name="*.cdx.xml"/>
             </fileset>
         </checksum>
     </target>
@@ -485,8 +485,8 @@
                         asciiarmor="true">
             <fileset dir="${distrib.dir}">
                 <include name="**/*.pom"/>
-                <include name="**/*-cyclonedx.json"/>
-                <include name="**/*-cyclonedx.xml"/>
+                <include name="**/*.cdx.json"/>
+                <include name="**/*.cdx.xml"/>
                 <include name="**/*.jar"/>
                 <include name="**/*.zip"/>
                 <include name="**/*.gz"/>
@@ -572,8 +572,8 @@
             <artifact name="ivy" ext="pom" type="ivy"/>
             <artifact name="ivy" ext="jar" type="sources" classifier="sources"/>
             <artifact name="ivy" ext="jar" type="javadoc" classifier="javadoc"/>
-            <artifact name="ivy" ext="xml" type="cyclonedx.xml" classifier="cyclonedx"/>
-            <artifact name="ivy" ext="json" type="cyclonedx.json" classifier="cyclonedx"/>
+            <artifact name="ivy" ext="cdx.json" type="cyclonedx"/>
+            <artifact name="ivy" ext="cdx.xml" type="cyclonedx"/>
         </ivy2:publish>
     </target>
 
@@ -752,7 +752,7 @@
 
   <target name="jar-sbom" depends="define-cyclonedx-components,jar">
     <cdx:componentbom
-        bomName="ivy-${build.version}-cyclonedx"
+        bomName="ivy-${build.version}.cdx"
         outputdirectory="${artifacts.build.dir}/jars"
         format="all"
         useComponentSupplier="true"
@@ -953,7 +953,7 @@
       <sequential
         xmlns:cdx="antlib:org.apache.ant.cyclonedx">
         <cdx:componentbom
-            bomName="${snapshot.full.name}-@{binsrc}.@{ext}.cyclonedx"
+            bomName="${snapshot.full.name}-@{binsrc}.@{ext}.cdx"
             outputdirectory="${distrib.dir}/dist/${build.version}"
             format="all"
             useComponentManufacturer="true"
@@ -1026,7 +1026,7 @@
                          binarysource="Binary Distribution">
       <component>
         <sbomLink>
-          <file file="${artifacts.build.dir}/jars/ivy-${build.version}-cyclonedx.json"/>
+          <file file="${artifacts.build.dir}/jars/ivy-${build.version}.cdx.json"/>
         </sbomLink>
         <file file="${artifacts.build.dir}/jars/${final.name}"/>
       </component>
@@ -1035,7 +1035,7 @@
                          binarysource="Binary Distribution with Dependencies">
       <component>
         <sbomLink>
-          <file file="${artifacts.build.dir}/jars/ivy-${build.version}-cyclonedx.json"/>
+          <file file="${artifacts.build.dir}/jars/ivy-${build.version}.cdx.json"/>
         </sbomLink>
         <file file="${artifacts.build.dir}/jars/${final.name}"/>
       </component>
