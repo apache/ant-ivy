@@ -91,6 +91,18 @@ public final class PomModuleDescriptorWriterTest {
         assertEquals(readResourceContents("test-write-simple-dependencies.xml"), actual);
     }
 
+    /**
+     * Test case for <a href="https://issues.apache.org/jira/browse/IVY-1655">IVY-1655</a>.
+     */
+    @Test
+    public void testDependenciesWithRange() {
+        ModuleDescriptor md = readDescriptor("test-dependencies-with-range.xml");
+
+        String actual = writeDescriptor(md, new PomWriterOptions());
+
+        assertEquals(readResourceContents("test-write-dependencies-with-range.xml"), actual);
+    }
+
     @Test
     public void testDependenciesWithScope() {
         ModuleDescriptor md = readDescriptor("test-dependencies-with-scope.pom");
