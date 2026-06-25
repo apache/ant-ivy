@@ -55,7 +55,6 @@ import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.resolve.IvyNodeCallers.Caller;
 import org.apache.ivy.core.resolve.IvyNodeEviction.EvictionData;
 import org.apache.ivy.plugins.conflict.ConflictManager;
-import org.apache.ivy.plugins.conflict.LatestCompatibleConflictManager;
 import org.apache.ivy.plugins.matcher.MatcherHelper;
 import org.apache.ivy.plugins.resolver.DependencyResolver;
 import org.apache.ivy.util.Message;
@@ -366,6 +365,16 @@ public class IvyNode implements Comparable<IvyNode> {
                 continue;
             }
 
+            // IVY-1204, IVY-1228, IVY-1585: blacklisted dependency for new rev
+            if (data.isBlacklisted(rootModuleConf, requestedDependencyRevisionId)
+                    && !isRoot() && settings.getVersionMatcher().isDynamic(getId())) {
+                IvyNode node = data.getNode(requestedDependencyRevisionId);
+                IvyNodeBlacklist blacklist = node.getBlacklistData(rootModuleConf);
+                blacklist(new IvyNodeBlacklist(dds.keySet().iterator().next(), blacklist.getSelectedNode(), node, this, rootModuleConf));
+
+                throw new RestartResolveProcess("trying to handle incompatibility of " + this);
+            }
+
             // check if not already loaded here
             IvyNode depNode = dependencies.get(requestedDependencyRevisionId);
             if (depNode == null) {
@@ -381,8 +390,8 @@ public class IvyNode implements Comparable<IvyNode> {
                     // dependency already tried to be resolved, but unsuccessfully
                     // nothing special to do
                 }
-
             }
+
             String[] confsArray = depNode.resolveSpecialConfigurations(dependencyConfigurations);
             Collection<String> confs = Arrays.asList(confsArray);
             depNode.updateConfsToFetch(confs);
