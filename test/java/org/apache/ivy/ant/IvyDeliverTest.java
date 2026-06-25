@@ -118,8 +118,9 @@ public class IvyDeliverTest {
         res.setProject(project);
         res.execute();
 
-        deliver.setPubrevision("1.2");
         deliver.setDeliverpattern("build/test/deliver/merge/ivy-[revision].xml");
+        deliver.setPubrevision("1.2");
+        deliver.setStatus("release");
         deliver.execute();
 
         // should have delivered the file to the specified destination
@@ -138,10 +139,10 @@ public class IvyDeliverTest {
                mergeLine = mergeLine.trim();
                expectedLine = expectedLine.trim();
 
-               if (!mergeLine.startsWith("<info")) {
-                   assertEquals("published descriptor matches at line[" + lineNo + "]",
-                           expectedLine.trim(), mergeLine.trim());
+               if (mergeLine.startsWith("<info")) {
+                   mergeLine = mergeLine.replaceFirst(" publication=\"\\d+\"", "");
                }
+               assertEquals("published descriptor matches at line[" + lineNo + "]", expectedLine.trim(), mergeLine.trim());
 
                ++lineNo;
                mergeLine = merged.readLine();
