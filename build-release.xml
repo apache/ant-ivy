@@ -1016,12 +1016,12 @@
   </target>
 
   <target name="src-tarball-sboms"
-          depends="prepare-distribution-sboms,snapshot-src">
+          depends="snapshot-src,prepare-distribution-sboms">
     <create-tarball-boms binsrc="src" binarysource="Source Distribution"/>
   </target>
 
   <target name="bin-tarball-sboms"
-          depends="prepare-distribution-sboms,snapshot-bin">
+          depends="snapshot-bin,prepare-distribution-sboms">
     <create-tarball-boms binsrc="bin"
                          binarysource="Binary Distribution">
       <component>
