@@ -47,20 +47,15 @@ import static org.apache.ivy.util.StringUtils.isNullOrEmpty;
 public class IvyBuildNumber extends IvyTask {
 
     public static class ResolvedModuleRevisionArtifactInfo implements ArtifactInfo {
-        private ModuleRevisionId rmr;
+        private ModuleRevisionId mrid;
 
-        public ResolvedModuleRevisionArtifactInfo(ModuleRevisionId rmr) {
-            this.rmr = rmr;
+        public ResolvedModuleRevisionArtifactInfo(ModuleRevisionId mrid) {
+            this.mrid = mrid;
         }
 
         public String getRevision() {
-            return rmr.getRevision();
+            return mrid.getRevision();
         }
-
-        public long getLastModified() {
-            return -1;
-        }
-
     }
 
     private String organisation;
@@ -219,17 +214,17 @@ public class IvyBuildNumber extends IvyTask {
             ResolvedModuleRevisionArtifactInfo info = (ResolvedModuleRevisionArtifactInfo) iter
                     .previous();
 
-            if (!matcher.accept(askedMrid, info.rmr)) {
+            if (!matcher.accept(askedMrid, info.mrid)) {
                 continue;
             }
 
-            if (matcher.needModuleDescriptor(askedMrid, info.rmr)) {
-                ResolvedModuleRevision rmr = ivy.findModule(info.rmr);
+            if (matcher.needModuleDescriptor(askedMrid, info.mrid)) {
+                ResolvedModuleRevision rmr = ivy.findModule(info.mrid);
                 if (matcher.accept(askedMrid, rmr.getDescriptor())) {
-                    foundRevision = info.rmr.getRevision();
+                    foundRevision = info.mrid.getRevision();
                 }
             } else {
-                foundRevision = info.rmr.getRevision();
+                foundRevision = info.mrid.getRevision();
             }
 
             if (foundRevision != null) {

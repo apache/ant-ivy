@@ -18,13 +18,16 @@
 package org.apache.ivy.ant;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.ivy.core.module.descriptor.Configuration;
 import org.apache.ivy.core.module.descriptor.DefaultModuleDescriptor;
 import org.apache.ivy.core.module.descriptor.DependencyDescriptor;
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
 import org.apache.ivy.core.module.id.ModuleRevisionId;
+import org.apache.ivy.core.report.ConfigurationResolveReport;
 import org.apache.ivy.core.report.ResolveReport;
 import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.core.resolve.ResolveOptions;
@@ -127,34 +130,43 @@ public class IvyDependencyUpdateChecker extends IvyPostResolveTask {
     }
 
     private void displayDependencyUpdates(ResolveReport originalReport, ResolveReport latestReport) {
-        log("Dependencies updates available :");
-        boolean dependencyUpdateDetected = false;
-        for (IvyNode latest : latestReport.getDependencies()) {
-            for (IvyNode originalDependency : originalReport.getDependencies()) {
-                if (latest.getModuleId().equals(originalDependency.getModuleId())) {
-                    ArtifactInfo in1 = toArtifactInfo(latest);
-                    ArtifactInfo in2 = toArtifactInfo(originalDependency);
-                    ArtifactInfo out = getLatestStrategy(originalDependency).findLatest(new ArtifactInfo[]{in1, in2}, null);
-                    if (out == in1) {
-                        // is this dependency a transitive or a direct dependency?
-                        // (unfortunately .isTransitive() methods do not have the same meaning)
-                        boolean isTransitiveDependency = latest.getDependencyDescriptor(latest
-                                .getRoot()) == null;
-                        if (!isTransitiveDependency || showTransitive) {
-                            log(String.format("\t%s#%s%s\t%s -> %s",
-                                    originalDependency.getResolvedId().getOrganisation(),
-                                    originalDependency.getResolvedId().getName(),
-                                    isTransitiveDependency ? " (transitive)" : "",
-                                    originalDependency.getResolvedId().getRevision(),
-                                    latest.getResolvedId().getRevision()));
-                            dependencyUpdateDetected = true;
-                        }
+        Set<String> updates = new LinkedHashSet<>();
+
+        for (String conf : latestReport.getConfigurations()) {
+            ConfigurationResolveReport newReport = latestReport.getConfigurationReport(conf);
+            ConfigurationResolveReport oldReport = originalReport.getConfigurationReport(conf);
+
+            // NOTE: getModuleRevisionIds() filters evicted and problem deps
+            for (ModuleRevisionId latest : newReport.getModuleRevisionIds()) {
+                Iterable<IvyNode> iter = oldReport.getNodes(latest.getModuleId());
+                if (iter == null) {
+                    continue;
+                }
+                for (IvyNode node : iter) {
+                    ArtifactInfo in1 = latest::getRevision;
+                    ArtifactInfo in2 = node.getResolvedId()::getRevision;
+                    ArtifactInfo out = getLatestStrategy(node).findLatest(new ArtifactInfo[]{in1, in2}, null);
+
+                    boolean revisionGT = (out == in1);
+                    boolean transitive = (node.getDependencyDescriptor(node.getRoot()) == null);
+                    if (revisionGT && (!transitive || showTransitive)) {
+                        String update = String.format("\t%s#%s%s\t%s -> %s",
+                            node.getResolvedId().getOrganisation(),
+                            node.getResolvedId().getName(),
+                            transitive ? " (transitive)" : "",
+                            node.getResolvedId().getRevision(),
+                            latest.getRevision());
+                        updates.add(update);
                     }
                 }
             }
         }
-        if (!dependencyUpdateDetected) {
-            log("\tAll dependencies are up to date");
+
+        log("Dependencies updates available :");
+        if (updates.isEmpty()) {
+            log("All dependencies are up to date");
+        } else {
+            updates.forEach(this::log);
         }
     }
 
@@ -209,18 +221,5 @@ public class IvyDependencyUpdateChecker extends IvyPostResolveTask {
             return ((HasLatestStrategy) resolver).getLatestStrategy();
         }
         return getSettings().getDefaultLatestStrategy();
-    }
-
-    private static ArtifactInfo toArtifactInfo(IvyNode node) {
-        return new ArtifactInfo() {
-            @Override
-            public String getRevision() {
-                return node.getResolvedId().getRevision();
-            }
-            @Override
-            public long getLastModified() {
-                return node.getLastModified();
-            }
-        };
     }
 }
