@@ -69,6 +69,7 @@ It also fixes issues where the dynamic revisions were replaced by versions from 
 - FIX: the `ivy:makepom` task no longer adds a dependency to the <dependencyManagement> section. (IVY-1667) (Thanks to Eric Milles)
 - FIX: the `ivy:deliver` task didn't include XML namespaces from a parent ivy module when merging the descriptors. (IVY-1658)
   (Thanks to Eric Milles)
+- FIX: the `ivy:checkdepsupdate` task no longer shows evicted versions. (IVY-1662) (Thanks to Eric Milles)
 
 == Committers and Contributors
 
