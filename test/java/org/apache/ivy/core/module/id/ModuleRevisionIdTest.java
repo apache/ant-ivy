@@ -85,6 +85,12 @@ public class ModuleRevisionIdTest {
         extraAttributes.put("nullatt", null);
         testEncodeDecodeToString(
             ModuleRevisionId.newInstance("org/apache", "pre/name", "1.0-dev8/2", extraAttributes));
+
+        String encoded = ModuleRevisionId.newInstance("org/apache", "pre/name", "1.0-dev8/2", extraAttributes).encodeToString();
+        // We expect the encoding/ordering to be stable for reproducibility.
+        // If necessary this may vary across Ivy versions,
+        // but ideally only intentionally.
+        assertEquals("+att.name:#@#:+att.value:#@#:+att/name:#@#:+att/value:#@#:+att<name:#@#:+att<value:#@#:+branch:#@#:+@#:NULL:#@:#@#:+extra:#@#:+extravalue:#@#:+module:#@#:+pre/name:#@#:+nullatt:#@#:+@#:NULL:#@:#@#:+organisation:#@#:+org/apache:#@#:+revision:#@#:+1.0-dev8/2:#@#:", encoded);
     }
 
     private void testEncodeDecodeToString(ModuleRevisionId mrid) {
