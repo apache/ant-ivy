@@ -20,6 +20,7 @@ package org.apache.ivy.core.module.id;
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.WeakHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -259,7 +260,7 @@ public class ModuleRevisionId extends UnmodifiableExtendableItem {
 
     public String encodeToString() {
         StringBuilder buf = new StringBuilder();
-        Map<String, String> attributes = new HashMap<>(getAttributes());
+        Map<String, String> attributes = new TreeMap<>(getAttributes());
         attributes.keySet().removeAll(getExtraAttributes().keySet());
         attributes.putAll(getQualifiedExtraAttributes());
 
