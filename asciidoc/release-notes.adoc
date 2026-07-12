@@ -19,7 +19,7 @@
 
 = Ivy Release Announcement
 
-XXXX Date XXXX - The Apache Ivy project is pleased to announce its 2.6.0 release.
+15 July 2026 - The Apache Ivy project is pleased to announce its 2.6.0 release.
 
 == What is Ivy?
 Apache Ivy is a tool for managing (recording, tracking, resolving and reporting) project dependencies, characterized by flexibility,
@@ -71,6 +71,7 @@ It also fixes issues where the dynamic revisions were replaced by versions from 
 - FIX: the `ivy:deliver` task didn't include XML namespaces from a parent ivy module when merging the descriptors. (IVY-1658)
   (Thanks to Eric Milles)
 - FIX: the `ivy:checkdepsupdate` task no longer shows evicted versions. (IVY-1662) (Thanks to Eric Milles)
+- FIX: CVE-2026-26032: Apache Ivy: PackagerResolver path traversal vulnerability
 
 == Committers and Contributors
 
