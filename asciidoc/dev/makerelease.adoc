@@ -95,7 +95,7 @@ Here is a ruby script you can use to sign the files:
 require 'find'
 
 Find.find('build/distrib') do |f|
-    `gpg --armor --output #{f}.asc --detach-sig #{f}` if File.file?(f) && ['.zip', '.gz', '.jar', '.pom'].include?(File.extname(f))
+    `gpg --armor --output #{f}.asc --detach-sig #{f}` if File.file?(f) && ['.zip', '.gz', '.jar', '.pom', '.xml', '.json'].include?(File.extname(f))
 end
 ----
 
@@ -128,6 +128,8 @@ Having your GPG key ID, its password, your apache ID and the associated password
 ----
 ant -f build-release.xml upload-nexus
 ----
+
+NOTE: the openpgp library used doesn't seem to support modern algorithms. The step failed for Stefan using an ECC key. The workaround is to manually sign all artifacts and using Nexus "upload bundle" feature to uplad a zip of all artifacts and signatures.
 
 Once uploaded, log in https://repository.apache.org/ with your preferred web browser (use your Apache ID).
 
