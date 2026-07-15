@@ -288,15 +288,23 @@ Regards,
 ${me}
 ----
 
-==== 17. Update this doc
+==== 17. Some Housekeeping
+
+- update `doap_Ivy.rdf` in this repository and add the release.
+- log in to https://reporter.apache.org/addrelease.html?ant and add the release information
+- mark the version as released and a newr elease version to Jira https://issues.apache.org/jira/projects/IVY?selectedItem=com.atlassian.jira.jira-projects-plugin:release-page
+- update Ant's homepage and the news page to anounce the release
+- After a few days "svn rm" the older release artifacts from https://dist.apache.org/repos/dist/release/ant/ivy
+
+==== 18. Update this doc
 
 If you feel like anything is missing or misleading in this release doc, update it as soon as you encounter the problem.
 
-==== 18. Merge your modifications back to the master if necessary.
+==== 19. Merge your modifications back to the master if necessary.
 
 Modifications on the template files do not need to be merged, but if you had troubles during your release you may want to merge your fixes back to the trunk.
 
-==== 19. Prepare next release
+==== 20. Prepare next release
 
 In the master branch, update the file version.properties with the version of the next release so that anyone building from the trunk will obtain jar with the correct version number.
 
