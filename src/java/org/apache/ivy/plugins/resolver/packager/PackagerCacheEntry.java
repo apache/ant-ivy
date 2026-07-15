@@ -237,7 +237,7 @@ public class PackagerCacheEntry {
     }
 
     private static File getSubdir(File rootDir, ModuleRevisionId mr) {
-        return new File(rootDir, mr.getOrganisation() + File.separatorChar + mr.getName()
-                + File.separatorChar + mr.getRevision());
+        String subDir = IvyPatternHelper.substitute("[organisation]/[module]/[revision]", mr);
+        return new File(rootDir, subDir);
     }
 }
