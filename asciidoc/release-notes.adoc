@@ -52,6 +52,8 @@ Note, if you have resolved dependencies with version of Ivy prior to 2.6.1, you 
 - DOCUMENTATION: bla bla bla (jira:IVY-1234[]) (Thanks to Jane Doe)
 ////
 
+- IMPROVEMENT: switched to using XMLUnit 2.x in tests (jira:IVY-1670[])
+
 == Committers and Contributors
 
 Here is the list of people who have contributed source code and documentation up to this release. Many thanks to all of them, and also to the whole IvyDE community contributing ideas and feedback, and promoting the use of Apache Ivy !

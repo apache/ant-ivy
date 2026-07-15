@@ -38,12 +38,15 @@ import org.apache.ivy.util.FileUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.xmlunit.diff.DefaultNodeMatcher;
 
 import static org.apache.ivy.core.module.descriptor.Configuration.Visibility.PUBLIC;
-import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.xmlunit.matchers.CompareMatcher.isSimilarTo;
+import static org.xmlunit.diff.ElementSelectors.byNameAndAllAttributes;
 
 public class XmlModuleDescriptorWriterTest {
     private static String LICENSE;
@@ -162,14 +165,15 @@ public class XmlModuleDescriptorWriterTest {
         XmlModuleDescriptorWriter.write(md, LICENSE, dest);
 
         assertTrue(dest.exists());
-        String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(dest)))
-                .replaceAll("\r\n", "\n").replace('\r', '\n');
+        String wrote = FileUtil.readEntirely(new BufferedReader(new FileReader(dest)));
         wrote = wrote.replaceFirst("publication=\"([0-9])*\"", "publication=\"20140429153143\"");
         System.out.println(wrote);
 
-        String expected = readEntirely("test-write-extrainfo-from-maven.xml").replaceAll("\r\n",
-            "\n").replace('\r', '\n');
-        assertXMLEqual(expected, wrote);
+        String expected = readEntirely("test-write-extrainfo-from-maven.xml");
+        assertThat(wrote,
+                   isSimilarTo(expected)
+                   .withNodeMatcher(new DefaultNodeMatcher(byNameAndAllAttributes))
+                   .ignoreWhitespace());
     }
 
     @Test
