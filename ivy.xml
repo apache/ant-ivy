@@ -47,7 +47,13 @@
     <dependencies>
         <dependency org="org.apache.ant" name="ant" rev="${apache-ant.version}" conf="default,ant"/>
         <dependency org="org.apache.httpcomponents" name="httpclient" rev="${httpclient.version}" conf="default,httpclient->runtime,master"/>
-        <dependency org="org.apache.commons" name="commons-compress" rev="${commons-compress.version}" conf="default,pack200"/>
+        <dependency org="org.apache.commons" name="commons-compress"
+                    rev="${commons-compress.version}"
+                    conf="default,pack200->default,optional">
+          <exclude org="com.github.luben"/>
+          <exclude org="org.brotli"/>
+          <exclude org="org.tikaani"/>
+        </dependency>
         <dependency org="org.apache.commons" name="commons-vfs2" rev="${commons-vfs2.version}" conf="default,vfs"/>
         <dependency org="oro" name="oro" rev="${oro.version}" conf="default,oro"/>
         <dependency org="com.jcraft" name="jsch" rev="${jsch.version}" conf="default,sftp"/>
