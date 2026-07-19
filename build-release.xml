@@ -699,9 +699,6 @@
           type="VCS"
           url="https://gitbox.apache.org/repos/asf/ant-ivy.git"/>
       <externalReference
-          type="BUILD_SYSTEM"
-          url="https://ci-builds.apache.org/job/Ant/job/Ivy/"/>
-      <externalReference
           type="ISSUE_TRACKER"
           url="http://issues.apache.org/jira/browse/IVY"/>
       <externalReference
@@ -726,9 +723,6 @@
       <externalReference
           type="VCS"
           url="https://gitbox.apache.org/repos/asf/ant.git"/>
-      <externalReference
-          type="BUILD_SYSTEM"
-          url="https://ci-builds.apache.org/job/Ant/"/>
       <externalReference
           type="ISSUE_TRACKER"
           url="https://bz.apache.org/bugzilla/buglist.cgi?product=Ant"/>
