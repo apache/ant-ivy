@@ -52,7 +52,7 @@
                     conf="default,pack200->default,optional">
           <exclude org="com.github.luben"/>
           <exclude org="org.brotli"/>
-          <exclude org="org.tikaani"/>
+          <exclude org="org.tukaani"/>
         </dependency>
         <dependency org="org.apache.commons" name="commons-vfs2" rev="${commons-vfs2.version}" conf="default,vfs"/>
         <dependency org="oro" name="oro" rev="${oro.version}" conf="default,oro"/>
