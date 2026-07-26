@@ -24,6 +24,10 @@
 
     <property name="final.name" value="ivy.jar"/>
 
+    <condition property="jdk9+">
+      <javaversion atleast="9"/>
+    </condition>
+
     <target name="init-ivy-user-home" unless="ivy.use.local.home">
         <condition property="ivy.home" value="${env.IVY_HOME}">
             <isset property="env.IVY_HOME"/>

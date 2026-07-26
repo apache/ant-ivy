@@ -655,7 +655,7 @@
         </generate-tagsdoc>
     </target>
 
-  <target name="define-cyclonedx-components">
+  <target name="define-cyclonedx-components" if="jdk9+">
     <ivy:cachepath organisation="org.apache.ant"
                    module="ant-cyclonedx"
                    revision="${ant-cyclonedx.version}"
@@ -744,7 +744,7 @@
     </cdx:externalreferenceset>
   </target>
 
-  <target name="jar-sbom" depends="define-cyclonedx-components,jar">
+  <target name="jar-sbom" depends="define-cyclonedx-components,jar" if="jdk9+">
     <cdx:componentbom
         bomName="ivy-${build.version}.cdx"
         outputdirectory="${artifacts.build.dir}/jars"
@@ -937,7 +937,9 @@
     </cdx:componentbom>
   </target>
 
-  <target name="prepare-distribution-sboms" depends="define-cyclonedx-components">
+  <target name="prepare-distribution-sboms"
+          depends="define-cyclonedx-components"
+          if="jdk9+">
     <macrodef name="create-tarball-bom">
       <attribute name="binsrc"/>
       <attribute name="binarysource"/>
@@ -1010,12 +1012,14 @@
   </target>
 
   <target name="src-tarball-sboms"
-          depends="snapshot-src,prepare-distribution-sboms">
+          depends="snapshot-src,prepare-distribution-sboms"
+          if="jdk9+">
     <create-tarball-boms binsrc="src" binarysource="Source Distribution"/>
   </target>
 
   <target name="bin-tarball-sboms"
-          depends="snapshot-bin,prepare-distribution-sboms">
+          depends="snapshot-bin,prepare-distribution-sboms"
+          if="jdk9+">
     <create-tarball-boms binsrc="bin"
                          binarysource="Binary Distribution">
       <component>
