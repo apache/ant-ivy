@@ -25,12 +25,16 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.IvyContext;
@@ -226,6 +230,31 @@ public final class PomModuleDescriptorWriter {
         }
     }
 
+    /**
+     * Translates dynamic revision to Maven-compatible version string.
+     */
+    private static String translate(String version) {
+        version = version.trim();
+        if (version.endsWith("+")) { // 1+, 1.+, 1.2+, 1.2.+
+            version = version.replaceFirst("\\.?\\s*\\+$", ""); // drop dot-plus
+            String[] tokens = version.split("\\s*\\.\\s*"); // split on the dots
+            // try to increment the least-significant token; the exclusive limit
+            Matcher matcher = Pattern.compile("(\\D*)(\\d+)").matcher(tokens[tokens.length - 1]);
+            if (matcher.matches()) {
+                tokens[tokens.length - 1] = matcher.group(1) + new BigInteger(matcher.group(2)).add(new BigInteger("1"));
+            }
+            version = "[" + version + "," + String.join(".", tokens) + ")";
+        } else {
+            if (version.startsWith("]")) {
+                version = "(" + version.substring(1, version.length());
+            }
+            if (version.endsWith("[")) {
+                version = version.substring(0, version.length() - 1) + ")";
+            }
+        }
+        return version;
+    }
+
     private static void printDependencies(ModuleDescriptor md, PrintWriter out,
             PomWriterOptions options, int indent, boolean printDependencies) {
         List<ExtraDependency> extraDeps = options.getExtraDependencies();
@@ -259,28 +288,29 @@ public final class PomModuleDescriptorWriter {
 
             for (DependencyDescriptor dd : dds) {
                 ModuleRevisionId mrid = dd.getDependencyRevisionId();
-                ExcludeRule[] excludes = null;
-                if (dd.canExclude()) {
-                    excludes = dd.getAllExcludeRules();
-                }
+                String safer = translate(mrid.getRevision()); // IVY-1655
+                String scope = mapping.getScope(dd.getModuleConfigurations());
+                boolean optional = mapping.isOptional(dd.getModuleConfigurations());
+                BiConsumer<String, String> dependencyPrinter = (type, classifier) -> {
+                    printDependency(out, indent,
+                        mrid.getOrganisation(),
+                        mrid.getName(),
+                        safer,
+                        type,
+                        classifier,
+                        scope,
+                        optional,
+                        dd.isTransitive(),
+                        dd.canExclude() ? dd.getAllExcludeRules() : null);
+                };
+
                 DependencyArtifactDescriptor[] dads = dd.getAllDependencyArtifacts();
                 if (dads.length > 0) {
                     for (DependencyArtifactDescriptor dad : dads) {
-                        String type = dad.getType();
-                        String classifier = dad.getExtraAttribute("classifier");
-                        String scope = mapping.getScope(dd.getModuleConfigurations());
-                        boolean optional = mapping.isOptional(dd.getModuleConfigurations());
-                        printDependency(out, indent, mrid.getOrganisation(), mrid.getName(),
-                            mrid.getRevision(), type, classifier, scope, optional,
-                            dd.isTransitive(), excludes);
+                        dependencyPrinter.accept(dad.getType(), dad.getExtraAttribute("classifier"));
                     }
                 } else {
-                    String scope = mapping.getScope(dd.getModuleConfigurations());
-                    boolean optional = mapping.isOptional(dd.getModuleConfigurations());
-                    final String classifier = dd.getExtraAttribute("classifier");
-                    printDependency(out, indent, mrid.getOrganisation(), mrid.getName(),
-                        mrid.getRevision(), null, classifier, scope, optional, dd.isTransitive(),
-                        excludes);
+                    dependencyPrinter.accept(null, dd.getExtraAttribute("classifier"));
                 }
             }
 
@@ -460,5 +490,4 @@ public final class PomModuleDescriptorWriter {
             throw new UnsupportedOperationException();
         }
     }
-
 }
