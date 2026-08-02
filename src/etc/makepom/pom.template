@@ -31,6 +31,7 @@
   <version>${ivy.pom.version}</version>
   <name>Apache Ivy</name>
   <url>${ivy.pom.url}</url>
+  <description>${ivy.pom.description}</description>
   <scm>
     <connection>scm:git:https://gitbox.apache.org/repos/asf/ant-ivy.git</connection>
     <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/ant-ivy.git</developerConnection>
