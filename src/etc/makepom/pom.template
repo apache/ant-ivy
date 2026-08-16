@@ -32,6 +32,17 @@
   <name>Apache Ivy</name>
   <url>${ivy.pom.url}</url>
   <description>${ivy.pom.description}</description>
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <organization>
+    <name>The Apache Software Foundation</name>
+    <url>https://www.apache.org/</url>
+  </organization>
   <scm>
     <connection>scm:git:https://gitbox.apache.org/repos/asf/ant-ivy.git</connection>
     <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/ant-ivy.git</developerConnection>

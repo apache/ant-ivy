@@ -22,7 +22,9 @@
     <info organisation="org.apache.ivy"
            module="ivy"
            status="integration">
-        <description homepage="http://ant.apache.org/ivy/">
+        <license name="Apache Software License 2.0" url="https://www.apache.org/licenses/LICENSE-2.0"/>
+        <ivyauthor name="Apache Ant Development Team" url="https://ant.apache.org/"/>
+        <description homepage="https://ant.apache.org/ivy/">
         Apache Ivy is a tool for managing (recording, tracking, resolving and reporting) project dependencies.
         </description>
     </info>
