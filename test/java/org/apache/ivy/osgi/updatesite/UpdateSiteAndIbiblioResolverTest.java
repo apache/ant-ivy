@@ -18,7 +18,7 @@
 package org.apache.ivy.osgi.updatesite;
 
 import java.io.File;
-import java.text.ParseException;
+import java.net.URL;
 
 import org.apache.ivy.Ivy;
 import org.apache.ivy.core.cache.RepositoryCacheManager;
@@ -32,11 +32,12 @@ import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.osgi.core.BundleInfo;
 import org.apache.ivy.plugins.resolver.ChainResolver;
 import org.apache.ivy.plugins.resolver.IBiblioResolver;
+
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.apache.ivy.plugins.resolver.IBiblioResolver.DEFAULT_M2_ROOT;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assume.assumeNoException;
 
 public class UpdateSiteAndIbiblioResolverTest {
 
@@ -56,7 +57,15 @@ public class UpdateSiteAndIbiblioResolverTest {
 
     @Before
     public void setUp() throws Exception {
+        try {
+            new URL(IBiblioResolver.DEFAULT_M2_ROOT).getContent();
+        } catch (Exception e) {
+            assumeNoException(e);
+        }
+
         settings = new IvySettings();
+        settings.setVariable("ivy.ibiblio.default.artifact.root", IBiblioResolver.DEFAULT_M2_ROOT);
+        settings.setVariable("ivy.ibiblio.default.artifact.pattern", "[organisation]/[module]/[revision]/[artifact]-[revision].[ext]");
 
         chain = new ChainResolver();
         chain.setName("chain");
@@ -69,9 +78,6 @@ public class UpdateSiteAndIbiblioResolverTest {
 
         resolver2 = new IBiblioResolver();
         resolver2.setName("maven2");
-        settings.setVariable("ivy.ibiblio.default.artifact.root", DEFAULT_M2_ROOT);
-        settings.setVariable("ivy.ibiblio.default.artifact.pattern",
-            "[organisation]/[module]/[revision]/[artifact]-[revision].[ext]");
         resolver2.setSettings(settings);
 
         chain.add(resolver);
@@ -98,19 +104,15 @@ public class UpdateSiteAndIbiblioResolverTest {
         data = new ResolveData(ivy.getResolveEngine(), new ResolveOptions());
     }
 
-   @Test
-    public void testArtifactRef() throws ParseException {
-
+    @Test
+    public void testArtifactRef() throws Exception {
         // Simple Dependency for ibiblio
         ModuleRevisionId mrid1 = ModuleRevisionId.newInstance("log4j", "log4j", "1.2.16");
-        ResolvedModuleRevision rmr1 = chain.getDependency(new DefaultDependencyDescriptor(mrid1,
-                false), data);
+        ResolvedModuleRevision rmr1 = chain.getDependency(new DefaultDependencyDescriptor(mrid1, false), data);
 
         // Simple Dependency for updatesite
-        ModuleRevisionId mrid2 = ModuleRevisionId.newInstance(BundleInfo.BUNDLE_TYPE,
-            "org.apache.ivy", "2.0.0.final_20090108225011");
-        ResolvedModuleRevision rmr2 = chain.getDependency(new DefaultDependencyDescriptor(mrid2,
-                false), data);
+        ModuleRevisionId mrid2 = ModuleRevisionId.newInstance(BundleInfo.BUNDLE_TYPE, "org.apache.ivy", "2.0.0.final_20090108225011");
+        ResolvedModuleRevision rmr2 = chain.getDependency(new DefaultDependencyDescriptor(mrid2, false), data);
 
         assertNotNull(rmr1);
         assertNotNull(rmr2);
@@ -121,5 +123,4 @@ public class UpdateSiteAndIbiblioResolverTest {
         chain.exists(artifacts2[0]);
         chain.exists(artifacts1[0]);
     }
-
 }
