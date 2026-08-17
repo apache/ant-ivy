@@ -40,7 +40,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.apache.ivy.core.module.descriptor.Configuration.Visibility.PUBLIC;
-import static org.custommonkey.xmlunit.XMLAssert.assertXMLEqual;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -169,7 +168,7 @@ public class XmlModuleDescriptorWriterTest {
 
         String expected = readEntirely("test-write-extrainfo-from-maven.xml").replaceAll("\r\n",
             "\n").replace('\r', '\n');
-        assertXMLEqual(expected, wrote);
+        assertEquals(expected, wrote);
     }
 
     @Test
