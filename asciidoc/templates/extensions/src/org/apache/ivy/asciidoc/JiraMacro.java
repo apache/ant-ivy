@@ -20,21 +20,17 @@ package org.apache.ivy.asciidoc;
 import java.util.Map;
 import java.util.HashMap;
 
-import org.asciidoctor.ast.AbstractBlock;
+import org.asciidoctor.ast.ContentNode;
 import org.asciidoctor.extension.InlineMacroProcessor;
 
 public class JiraMacro extends InlineMacroProcessor {
 
-    public JiraMacro(String macroName, Map<String, Object> config) {
-        super(macroName, config);
-    }
-
     @Override
-    public String process(AbstractBlock parent, String target, Map<String, Object> attributes) {
+    public String process(ContentNode parent, String target, Map<String, Object> attributes) {
         Map<String, Object> options = new HashMap<String, Object>();
         options.put("type", ":link");
         options.put("target", "https://issues.apache.org/jira/browse/" + target);
-        return createInline(parent, "anchor", target, attributes, options).convert();
+        return createPhraseNode(parent, "anchor", target, attributes, options).convert();
     }
 
 }
