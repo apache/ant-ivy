@@ -1019,22 +1019,23 @@
 
   <target name="bin-tarball-sboms"
           depends="snapshot-bin,prepare-distribution-sboms"
+          xmlns:cdx="antlib:org.apache.ant.cyclonedx"
           if="jdk9+">
     <create-tarball-boms binsrc="bin"
                          binarysource="Binary Distribution">
       <component>
-        <sbomLink>
+        <cdx:sbomLink>
           <file file="${artifacts.build.dir}/jars/ivy-${build.version}.cdx.json"/>
-        </sbomLink>
+        </cdx:sbomLink>
         <file file="${artifacts.build.dir}/jars/${final.name}"/>
       </component>
     </create-tarball-boms>
     <create-tarball-boms binsrc="bin-with-deps"
                          binarysource="Binary Distribution with Dependencies">
       <component>
-        <sbomLink>
+        <cdx:sbomLink>
           <file file="${artifacts.build.dir}/jars/ivy-${build.version}.cdx.json"/>
-        </sbomLink>
+        </cdx:sbomLink>
         <file file="${artifacts.build.dir}/jars/${final.name}"/>
       </component>
     </create-tarball-boms>
