@@ -156,9 +156,8 @@ public abstract class AbstractPatternsBasedResolver extends BasicResolver {
         return names;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public Map<String, String>[] listTokenValues(String[] tokens, Map<String, Object> criteria) {
+    public Set<Map<String, String>> listTokenValues(Set<String> tokens, Map<String, Object> criteria) {
         Set<Map<String, String>> result = new LinkedHashSet<>();
 
         // use ivy patterns
@@ -184,17 +183,17 @@ public abstract class AbstractPatternsBasedResolver extends BasicResolver {
             }
         }
 
-        return result.toArray(new Map[result.size()]);
+        return result;
     }
 
     protected String getModuleDescriptorExtension() {
         return "xml";
     }
 
-    private Set<Map<String, String>> resolveTokenValues(String[] tokens, String pattern,
+    private Set<Map<String, String>> resolveTokenValues(Set<String> tokens, String pattern,
             Map<String, Object> criteria, boolean noMd) {
         Set<Map<String, String>> result = new LinkedHashSet<>();
-        Set<String> tokenSet = new HashSet<>(Arrays.asList(tokens));
+        Set<String> tokenSet = new HashSet<>(tokens);
 
         Map<String, String> tokenValues = new HashMap<>();
         for (Map.Entry<String, Object> entry : criteria.entrySet()) {
@@ -250,8 +249,7 @@ public abstract class AbstractPatternsBasedResolver extends BasicResolver {
             } else if (noMd && "module".equals(token)) {
                 newCriteria.put("artifact", value);
             }
-            result.addAll(resolveTokenValues(tokenSet.toArray(new String[tokenSet.size()]),
-                moreResolvedPattern, newCriteria, noMd));
+            result.addAll(resolveTokenValues(tokenSet, moreResolvedPattern, newCriteria, noMd));
         }
 
         return result;

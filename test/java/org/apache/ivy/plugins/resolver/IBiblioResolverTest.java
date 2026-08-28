@@ -24,6 +24,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -155,7 +156,6 @@ public class IBiblioResolverTest extends AbstractDependencyResolverTest {
             l.get(0));
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
     @Test
     public void testMaven2Listing() {
         IBiblioResolver resolver = new IBiblioResolver();
@@ -173,20 +173,22 @@ public class IBiblioResolverTest extends AbstractDependencyResolverTest {
         RevisionEntry[] revisions = resolver.listRevisions(modules[0]);
         assertTrue(revisions.length > 0);
 
-        Map otherTokenValues = new HashMap();
+        Map<String, String> otherTokenValues = new HashMap<>();
         otherTokenValues.put(IvyPatternHelper.ORGANISATION_KEY, "commons-lang");
         String[] values = resolver.listTokenValues(IvyPatternHelper.MODULE_KEY, otherTokenValues);
         assertNotNull(values);
         assertEquals(1, values.length);
         assertEquals("commons-lang", values[0]);
 
-        Map[] valuesMaps = resolver.listTokenValues(new String[] {IvyPatternHelper.MODULE_KEY},
-            otherTokenValues);
-        Set vals = new HashSet();
-        for (Map valuesMap : valuesMaps) {
+        Map<String, Object> criteria = new HashMap<>();
+        criteria.putAll(otherTokenValues);
+        Set<Map<String, String>> valuesMaps = resolver.listTokenValues(
+            Collections.singleton(IvyPatternHelper.MODULE_KEY), criteria);
+        Set<String> vals = new HashSet<>();
+        for (Map<String, String> valuesMap : valuesMaps) {
             vals.add(valuesMap.get(IvyPatternHelper.MODULE_KEY));
         }
-        values = (String[]) vals.toArray(new String[vals.size()]);
+        values = vals.toArray(new String[vals.size()]);
         assertEquals(1, values.length);
         assertEquals("commons-lang", values[0]);
     }
