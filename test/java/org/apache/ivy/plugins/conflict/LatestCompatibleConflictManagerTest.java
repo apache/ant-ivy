@@ -17,9 +17,6 @@
  */
 package org.apache.ivy.plugins.conflict;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.io.IOException;
 import java.text.ParseException;
 
@@ -28,17 +25,24 @@ import org.apache.ivy.TestFixture;
 import org.apache.ivy.TestHelper;
 import org.apache.ivy.core.report.ConfigurationResolveReport;
 import org.apache.ivy.core.report.ResolveReport;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class LatestCompatibleConflictManagerTest {
-    private TestFixture fixture;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+public final class LatestCompatibleConflictManagerTest {
+
+    private final TestFixture fixture = new TestFixture();
 
     @Before
     public void setUp() {
-        fixture = new TestFixture();
         LatestCompatibleConflictManager cm = new LatestCompatibleConflictManager();
+        cm.setName("latest-compatible");
+
+        fixture.clean();
         fixture.getSettings().addConfigured(cm);
         fixture.getSettings().setDefaultConflictManager(cm);
     }
@@ -51,8 +55,7 @@ public class LatestCompatibleConflictManagerTest {
     @Test
     public void testInitFromSettings() throws Exception {
         Ivy ivy = new Ivy();
-        ivy.configure(LatestCompatibleConflictManagerTest.class
-                .getResource("ivysettings-latest-compatible.xml"));
+        ivy.configure(getClass().getResource("ivysettings-latest-compatible.xml"));
         ConflictManager cm = ivy.getSettings().getDefaultConflictManager();
         assertTrue(cm instanceof LatestCompatibleConflictManager);
     }
@@ -105,11 +108,40 @@ public class LatestCompatibleConflictManagerTest {
         resolveAndAssert("#A;1", "#B;1.4, #C;2.5, #D;1.5");
     }
 
+    /**
+     * Test case for <a href="https://issues.apache.org/jira/browse/IVY-1204">IVY-1204</a>.
+     */
+    @Test
+    public void testCompatibilityResolve1204() throws Exception {
+        fixture
+            .addMD("#A;1.0").addMD("#A;1.1")
+            .addMD("#B;2.0->#A;1.0").addMD("#B;2.1->#A;1.0")
+            .addMD("#C;3.0->{ #A;1.0, #B;2.0 }").addMD("#C;3.1->{ #A;1.1, #B;2.1 }")
+            .addMD("#D;1->{ #A;1.+, #B;2.+, #C;3.+ }")
+            .init();
+        resolveAndAssert("#D;1", "#A;1.0, #B;2.0, #C;3.0");
+    }
+
+    /**
+     * Test case for <a href="https://issues.apache.org/jira/browse/IVY-1585">IVY-1585</a>.
+     */
+    @Test
+    public void testCompatibilityResolve1585() throws Exception {
+        fixture
+            .addMD("#A;1.0").addMD("#A;1.1")
+            .addMD("#B;2.0->#A;1.0").addMD("#B;2.1->#A;1.1").addMD("#B;2.2->#A;1.1")
+            .addMD("#C;3.0->#A;1.0").addMD("#C;3.1->#A;1.1")
+            .addMD("#D;1->{ #A;[0.0,), #B;[0.0,), #C;3.0 }")
+            .init();
+        // first pass should blacklist #B;2.2, second pass should blacklist #B;2.1
+        resolveAndAssert("#D;1", "#A;1.0, #B;2.0, #C;3.0");
+    }
+
     @Test
     public void testCompatibilityResolveCircularDependency1() throws Exception {
-        fixture.addMD("#A;6->{ #B;[3.0,3.5] #C;4.6 }").addMD("#B;3.4->#D;2.5")
-                .addMD("#B;3.5->#D;3.0").addMD("#C;4.6->#D;2.5").addMD("#D;3.0->#B;3.5") // circular
-                                                                                         // dependency
+        fixture.addMD("#A;6->{ #B;[3.0,3.5] #C;4.6 }").addMD("#B;3.4->#D;2.5").addMD("#B;3.5->#D;3.0")
+                .addMD("#C;4.6->#D;2.5")
+                .addMD("#D;3.0->#B;3.5") // circular dependency
                 .addMD("#D;2.5->#B;3.4") // circular dependency
                 .init();
         resolveAndAssert("#A;6", "#B;3.4, #C;4.6, #D;2.5");
@@ -138,8 +170,6 @@ public class LatestCompatibleConflictManagerTest {
 
     /**
      * Resolve must fail with a conflict.
-     *
-     * @throws Exception if something goes wrong
      */
     @Test(expected = StrictConflictException.class)
     public void testConflict() throws Exception {
@@ -151,8 +181,6 @@ public class LatestCompatibleConflictManagerTest {
 
     /**
      * Resolve must fail with a conflict.
-     *
-     * @throws Exception if something goes wrong
      */
     @Test(expected = StrictConflictException.class)
     public void testDynamicRootConflict() throws Exception {
