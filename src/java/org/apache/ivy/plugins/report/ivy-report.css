@@ -27,10 +27,7 @@ div#logo {
     padding-bottom: 10px;
     background: white;
     text-align: center;
-}
-
-#logo img {
-    border: 0;
+    width: 142px;
 }
 
 div#date {
@@ -39,10 +36,8 @@ div#date {
     padding-bottom: 40px;
 }
 
-
 h1 {
     margin-bottom: 2px;
-
     border-color: #7A9437;
     border-style: solid;
     border-width: 0 0 3px 0;
@@ -82,11 +77,6 @@ span#organisation {
     text-decoration: none;
 }
 
-/*
-background: #ABAD85 #CED4BD
-background: #DEE4CD
- */
-
 #confmenu a.active {
     color: #7A9437;
     background: #DEE4CD;
@@ -125,7 +115,7 @@ background: #DEE4CD
 }
 
 #content a:hover {
-  background: #898B5E;
+    background: #898B5E;
 }
 
 h2 {
@@ -167,16 +157,18 @@ span.resolved {
     font-size: small;
 }
 
-#content table  {
+#content table {
     border-collapse: collapse;
     width: 90%;
     margin: auto;
     margin-top: 5px;
 }
+
 #content thead {
     background-color: #CED4BD;
     border: 1px solid #7A9437;
 }
+
 #content tbody {
     border-collapse: collapse;
     background-color: #FFFFFF;
@@ -267,4 +259,11 @@ td.title {
 td.title:first-letter {
     color: #7A9437;
     background-color: transparent;
+}
+
+/* Firefox seems to need this */
+
+svg.icon {
+    heigth: 1rem;
+    width: 1rem;
 }
