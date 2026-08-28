@@ -26,20 +26,31 @@ import org.apache.ivy.util.url.TimeoutConstrainedURLHandler;
 import org.apache.ivy.util.url.URLHandlerDispatcher;
 import org.apache.ivy.util.url.URLHandlerRegistry;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeTrue;
 
 /**
- * split from XmlIvyConfigurationParserTest due to dependency on network resource
+ * Split from XmlIvyConfigurationParserTest due to dependency on network resource.
  */
-public class OnlineXmlSettingsParserTest {
-    // remote.test
+public class OnlineXmlSettingsParserTest { // remote.test
+
+    @Before
+    public void setUp() throws Exception {
+        URLHandlerDispatcher dispatcher = new URLHandlerDispatcher();
+        TimeoutConstrainedURLHandler httpHandler = URLHandlerRegistry.getHttp();
+        dispatcher.setDownloader("http", httpHandler);
+        dispatcher.setDownloader("https", httpHandler);
+        URLHandlerRegistry.setDefault(dispatcher);
+
+        assumeTrue(httpHandler.isReachable(new URL("https://ant.apache.org/")));
+    }
 
     @Test
     public void testIncludeHttpUrl() throws Exception {
-        configureURLHandler();
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
         parser.parse(new URL("https://ant.apache.org/ivy/test/ivysettings-include-http-url.xml"));
@@ -52,11 +63,9 @@ public class OnlineXmlSettingsParserTest {
     @Test
     public void testIncludeHttpRelativeUrl() throws Exception {
         // Use a settings file via http that use an include with relative url
-        configureURLHandler();
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
-        parser.parse(new URL(
-                "https://ant.apache.org/ivy/test/ivysettings-include-http-relative-url.xml"));
+        parser.parse(new URL("https://ant.apache.org/ivy/test/ivysettings-include-http-relative-url.xml"));
 
         DependencyResolver resolver = settings.getResolver("ivyrep");
         assertNotNull(resolver);
@@ -66,11 +75,9 @@ public class OnlineXmlSettingsParserTest {
     @Test
     public void testIncludeHttpRelativeFile() throws Exception {
         // Use a settings file via http that use an include with relative file
-        configureURLHandler();
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
-        parser.parse(new URL(
-                "https://ant.apache.org/ivy/test/ivysettings-include-http-relative-file.xml"));
+        parser.parse(new URL("https://ant.apache.org/ivy/test/ivysettings-include-http-relative-file.xml"));
 
         DependencyResolver resolver = settings.getResolver("ivyrep");
         assertNotNull(resolver);
@@ -82,23 +89,12 @@ public class OnlineXmlSettingsParserTest {
         // Use a settings file via http that use an include with absolute file
         // WARNING : this test will only work if the test are launched from the project root
         // directory
-        configureURLHandler();
         IvySettings settings = new IvySettings();
         XmlSettingsParser parser = new XmlSettingsParser(settings);
-        parser.parse(new URL(
-                "https://ant.apache.org/ivy/test/ivysettings-include-http-absolute-file.xml"));
+        parser.parse(new URL("https://ant.apache.org/ivy/test/ivysettings-include-http-absolute-file.xml"));
 
         DependencyResolver inc = settings.getResolver("includeworks");
         assertNotNull(inc);
         assertTrue(inc instanceof ChainResolver);
     }
-
-    private void configureURLHandler() {
-        URLHandlerDispatcher dispatcher = new URLHandlerDispatcher();
-        TimeoutConstrainedURLHandler httpHandler = URLHandlerRegistry.getHttp();
-        dispatcher.setDownloader("http", httpHandler);
-        dispatcher.setDownloader("https", httpHandler);
-        URLHandlerRegistry.setDefault(dispatcher);
-    }
-
 }

@@ -17,14 +17,8 @@
  */
 package org.apache.ivy.osgi.updatesite;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.io.File;
-import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.text.ParseException;
 import java.util.Iterator;
 
 import org.apache.ivy.core.cache.CacheResourceOptions;
@@ -34,11 +28,15 @@ import org.apache.ivy.osgi.repo.ModuleDescriptorWrapper;
 import org.apache.ivy.osgi.repo.RepoDescriptor;
 import org.apache.ivy.util.CacheCleaner;
 import org.apache.ivy.util.CollectionUtils;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.xml.sax.SAXException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeNoException;
 
 public class UpdateSiteLoaderTest {
 
@@ -48,10 +46,12 @@ public class UpdateSiteLoaderTest {
 
     @Before
     public void setUp() {
-        IvySettings ivySettings = new IvySettings();
         cache = new File("build/cache");
         cache.mkdirs();
+
+        IvySettings ivySettings = new IvySettings();
         ivySettings.setDefaultCache(cache);
+
         CacheResourceOptions options = new CacheResourceOptions();
         loader = new UpdateSiteLoader(ivySettings.getDefaultRepositoryCacheManager(), null, options, null);
     }
@@ -62,9 +62,14 @@ public class UpdateSiteLoaderTest {
     }
 
     @Test
-    public void testIvyDE() throws IOException, ParseException, SAXException, URISyntaxException {
-        RepoDescriptor site = loader.load(new URI(
-                "https://archive.apache.org/dist/ant/ivyde/updatesite/"));
+    public void testIvyDE() throws Exception {
+        URI uri = new URI("https://archive.apache.org/dist/ant/ivyde/updatesite/");
+        try {
+            uri.toURL().getContent();
+        } catch (Exception e) {
+            assumeNoException(e);
+        }
+        RepoDescriptor site = loader.load(uri);
         assertTrue(site.getModules().hasNext());
         Iterator<ModuleDescriptorWrapper> it = site.getModules();
         while (it.hasNext()) {
@@ -73,19 +78,16 @@ public class UpdateSiteLoaderTest {
         }
     }
 
-    @Ignore // download site seems to have changed
+    @Ignore("download site seems to have changed")
     @Test
-    public void testM2Eclipse() throws IOException, ParseException, SAXException,
-            URISyntaxException {
-        RepoDescriptor site = loader.load(new URI(
-                "https://download.eclipse.org/technology/m2e/releases/"));
+    public void testM2Eclipse() throws Exception {
+        RepoDescriptor site = loader.load(new URI("https://download.eclipse.org/technology/m2e/releases/"));
         assertTrue(CollectionUtils.toList(site.getModules()).size() > 20);
     }
 
     @Ignore
     @Test
-    public void testHeliosEclipse() throws IOException, ParseException, SAXException,
-            URISyntaxException {
+    public void testHeliosEclipse() throws Exception {
         RepoDescriptor site = loader.load(new URI("https://download.eclipse.org/releases/helios/"));
         assertTrue(CollectionUtils.toList(site.getModules()).size() > 900);
     }

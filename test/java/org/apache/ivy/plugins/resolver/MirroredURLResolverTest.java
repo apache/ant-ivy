@@ -17,6 +17,8 @@
  */
 package org.apache.ivy.plugins.resolver;
 
+import java.net.URL;
+
 import org.apache.ivy.TestHelper;
 import org.apache.ivy.core.event.EventManager;
 import org.apache.ivy.core.module.descriptor.DefaultDependencyDescriptor;
@@ -28,6 +30,7 @@ import org.apache.ivy.core.resolve.ResolvedModuleRevision;
 import org.apache.ivy.core.settings.IvySettings;
 import org.apache.ivy.core.settings.XmlSettingsParser;
 import org.apache.ivy.core.sort.SortEngine;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,6 +38,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeNoException;
 
 public class MirroredURLResolverTest {
 
@@ -49,16 +53,14 @@ public class MirroredURLResolverTest {
         settings = new IvySettings();
         engine = new ResolveEngine(settings, new EventManager(), new SortEngine(settings));
         data = new ResolveData(engine, new ResolveOptions());
+
         TestHelper.createCache();
         settings.setDefaultCache(TestHelper.cache);
-        settings.setVariable("test.mirroredurl.mirrorlist-solo.url",
-            this.getClass().getResource("mirrorlist-solo.txt").toExternalForm());
-        settings.setVariable("test.mirroredurl.mirrorlist-failover.url", this.getClass()
-                .getResource("mirrorlist-failover.txt").toExternalForm());
-        settings.setVariable("test.mirroredurl.mirrorlist-fail.url",
-            this.getClass().getResource("mirrorlist-fail.txt").toExternalForm());
-        new XmlSettingsParser(settings).parse(MirroredURLResolverTest.class
-                .getResource("mirror-resolver-settings.xml"));
+        settings.setVariable("test.mirroredurl.mirrorlist-solo.url",     getClass().getResource("mirrorlist-solo.txt").toExternalForm());
+        settings.setVariable("test.mirroredurl.mirrorlist-failover.url", getClass().getResource("mirrorlist-failover.txt").toExternalForm());
+        settings.setVariable("test.mirroredurl.mirrorlist-fail.url",     getClass().getResource("mirrorlist-fail.txt").toExternalForm());
+
+        new XmlSettingsParser(settings).parse(getClass().getResource("mirror-resolver-settings.xml"));
     }
 
     @After
@@ -69,40 +71,42 @@ public class MirroredURLResolverTest {
     @Test
     public void testSolo() throws Exception {
         DependencyResolver resolver = settings.getResolver("solo");
-        assertNotNull(resolver);
         assertTrue(resolver instanceof MirroredURLResolver);
-        MirroredURLResolver mirrored = (MirroredURLResolver) resolver;
 
-        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(
-                ModuleRevisionId.newInstance("commons-lang", "commons-lang", "2.4"), false);
-        ResolvedModuleRevision rmr = mirrored.getDependency(dd, data);
+        try {
+            new URL("https://repo1.maven.org/maven2/").getContent();
+        } catch (Exception e) {
+            assumeNoException(e);
+        }
+
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("commons-lang", "commons-lang", "2.4");
+        ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), data);
         assertNotNull(rmr);
     }
 
     @Test
     public void testFailover() throws Exception {
         DependencyResolver resolver = settings.getResolver("failover");
-        assertNotNull(resolver);
         assertTrue(resolver instanceof MirroredURLResolver);
-        MirroredURLResolver mirrored = (MirroredURLResolver) resolver;
 
-        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(
-                ModuleRevisionId.newInstance("commons-lang", "commons-lang", "2.4"), false);
-        ResolvedModuleRevision rmr = mirrored.getDependency(dd, data);
+        try {
+            new URL("https://repo1.maven.org/maven2/").getContent();
+        } catch (Exception e) {
+            assumeNoException(e);
+        }
+
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("commons-lang", "commons-lang", "2.4");
+        ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), data);
         assertNotNull(rmr);
     }
 
     @Test
     public void testFail() throws Exception {
         DependencyResolver resolver = settings.getResolver("fail");
-        assertNotNull(resolver);
         assertTrue(resolver instanceof MirroredURLResolver);
-        MirroredURLResolver mirrored = (MirroredURLResolver) resolver;
 
-        DefaultDependencyDescriptor dd = new DefaultDependencyDescriptor(
-                ModuleRevisionId.newInstance("commons-lang", "commons-lang", "2.4"), false);
-        ResolvedModuleRevision rmr = mirrored.getDependency(dd, data);
+        ModuleRevisionId mrid = ModuleRevisionId.newInstance("commons-lang", "commons-lang", "2.4");
+        ResolvedModuleRevision rmr = resolver.getDependency(new DefaultDependencyDescriptor(mrid, false), data);
         assertNull(rmr);
     }
-
 }

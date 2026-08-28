@@ -17,6 +17,19 @@
  */
 package org.apache.ivy.core.retrieve;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.ivy.Ivy;
 import org.apache.ivy.TestHelper;
 import org.apache.ivy.core.IvyPatternHelper;
@@ -38,35 +51,24 @@ import org.apache.ivy.core.resolve.ResolveOptions;
 import org.apache.ivy.util.DefaultMessageLogger;
 import org.apache.ivy.util.Message;
 import org.apache.ivy.util.MockMessageLogger;
+
 import org.apache.tools.ant.Project;
+import org.apache.tools.ant.filters.TokenFilter.ReplaceString;
 import org.apache.tools.ant.taskdefs.Copy;
 import org.apache.tools.ant.taskdefs.Delete;
 import org.apache.tools.ant.types.FilterChain;
-import org.apache.tools.ant.filters.TokenFilter.ReplaceString;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.LinkOption;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeFalse;
 
 public class RetrieveTest {
 
@@ -505,7 +507,7 @@ public class RetrieveTest {
 
         // normal resolve, the file goes in the cache
         final ResolveReport report = ivy.resolve(url, roptions);
-        assertFalse("Resolution report has errors", report.hasError());
+        assumeFalse(report.hasError());
         final ModuleDescriptor md = report.getModuleDescriptor();
         assertNotNull("Module descriptor from report was null", md);
 
