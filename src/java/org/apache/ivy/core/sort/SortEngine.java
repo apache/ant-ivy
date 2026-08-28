@@ -24,10 +24,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.ivy.core.module.descriptor.ModuleDescriptor;
+import org.apache.ivy.core.module.id.ModuleRevisionId;
 import org.apache.ivy.core.resolve.IvyNode;
 import org.apache.ivy.plugins.circular.CircularDependencyException;
 import org.apache.ivy.plugins.circular.CircularDependencyStrategy;
 import org.apache.ivy.plugins.circular.IgnoreCircularDependencyStrategy;
+import org.apache.ivy.plugins.version.AbstractVersionMatcher;
 import org.apache.ivy.plugins.version.VersionMatcher;
 import org.apache.ivy.util.Checks;
 
@@ -120,7 +122,19 @@ public class SortEngine {
     }
 
     protected VersionMatcher getVersionMatcher() {
-        return settings.getVersionMatcher();
+        VersionMatcher matcher = new AbstractVersionMatcher("all") {
+
+            @Override
+            public boolean isDynamic(ModuleRevisionId askedMrid) {
+                return false;
+            }
+
+            @Override
+            public boolean accept(ModuleRevisionId askedMrid, ModuleRevisionId foundMrid) {
+                return true;
+            }
+        };
+        return matcher;
     }
 
 }
